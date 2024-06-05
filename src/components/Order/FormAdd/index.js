@@ -8,7 +8,6 @@ import {
   VStack,
   HStack,
   useToast,
-  NumberInputField,
   Flex,
   Stack,
   Text,
@@ -36,6 +35,7 @@ import axios from "axios";
 import { TbFileImport } from "react-icons/tb";
 import TextArea from "antd/es/input/TextArea";
 import { OrderContext } from "../../../provider/order";
+import { CardOrder } from "../CardOrder";
 
 const defaultItem = {
   itemName: "",
@@ -277,42 +277,42 @@ const CreateOrderForm = ({ id }) => {
 
   const handleProvinceChange = (provinceName) => {
     const provinceIndex = provincesList.find(
-      (province) => province.province_name == provinceName
+      (province) => province.full_name == provinceName
     );
-    const provinceId = provinceIndex?.province_id;
+    const provinceId = provinceIndex?.id;
     apiGetPublicDistrict(provinceId);
   };
 
   const handleProvinceChange2 = (provinceName) => {
     const provinceIndex = provincesList2.find(
-      (province) => province.province_name == provinceName
+      (province) => province.full_name == provinceName
     );
-    const provinceId = provinceIndex?.province_id;
+    const provinceId = provinceIndex?.id;
     apiGetPublicDistrict2(provinceId);
   };
 
   const handleDistrictChange = (districtName) => {
     const districtIndex = districtsList.find(
-      (district) => district.district_name == districtName
+      (district) => district.full_name == districtName
     );
-    const districtId = districtIndex?.district_id;
+    const districtId = districtIndex?.id;
     apiGetPublicWard(districtId);
   };
 
   const handleDistrictChange2 = (districtName) => {
     const districtIndex = districtsList2.find(
-      (district) => district.district_name == districtName
+      (district) => district.full_name == districtName
     );
-    const districtId = districtIndex?.district_id;
+    const districtId = districtIndex?.id;
     apiGetPublicWard2(districtId);
   };
 
   const apiGetPublicProvinces = async () => {
     try {
       const response = await axios.get(
-        "https://vapi.vnappmob.com/api/province/"
+        "https://esgoo.net/api-tinhthanh/1/0.htm"
       );
-      setProvincesList(response.data.results);
+      setProvincesList(response.data.data);
     } catch (error) {
       console.log(error.message);
     }
@@ -321,9 +321,10 @@ const CreateOrderForm = ({ id }) => {
   const apiGetPublicProvinces2 = async () => {
     try {
       const response = await axios.get(
-        "https://vapi.vnappmob.com/api/province/"
+        "https://esgoo.net/api-tinhthanh/1/0.htm"
       );
-      setProvincesList2(response.data.results);
+
+      setProvincesList2(response.data.data);
     } catch (error) {
       console.log(error.message);
     }
@@ -332,9 +333,9 @@ const CreateOrderForm = ({ id }) => {
   const apiGetPublicDistrict = async (provinceId) => {
     try {
       const response = await axios.get(
-        `https://vapi.vnappmob.com/api/province/district/${provinceId}`
+        `https://esgoo.net/api-tinhthanh/2/${provinceId}.htm`
       );
-      setDistrictsList(response.data.results);
+      setDistrictsList(response.data.data);
     } catch (error) {
       console.log(error.message);
     }
@@ -343,9 +344,9 @@ const CreateOrderForm = ({ id }) => {
   const apiGetPublicDistrict2 = async (provinceId) => {
     try {
       const response = await axios.get(
-        `https://vapi.vnappmob.com/api/province/district/${provinceId}`
+        `https://esgoo.net/api-tinhthanh/2/${provinceId}.htm`
       );
-      setDistrictsList2(response.data.results);
+      setDistrictsList2(response.data.data);
     } catch (error) {
       console.log(error.message);
     }
@@ -354,9 +355,10 @@ const CreateOrderForm = ({ id }) => {
   const apiGetPublicWard = async (districtId) => {
     try {
       const response = await axios.get(
-        `https://vapi.vnappmob.com/api/province/ward/${districtId}`
+        `https://esgoo.net/api-tinhthanh/3/${districtId}.htm`
       );
-      setWardsList(response.data.results);
+
+      setWardsList(response.data.data);
     } catch (error) {
       console.log(error.message);
     }
@@ -365,9 +367,10 @@ const CreateOrderForm = ({ id }) => {
   const apiGetPublicWard2 = async (districtId) => {
     try {
       const response = await axios.get(
-        `https://vapi.vnappmob.com/api/province/ward/${districtId}`
+        `https://esgoo.net/api-tinhthanh/3/${districtId}.htm`
       );
-      setWardsList2(response.data.results);
+
+      setWardsList2(response.data.data);
     } catch (error) {
       console.log(error.message);
     }
@@ -612,38 +615,36 @@ const CreateOrderForm = ({ id }) => {
   useEffect(() => {
     if (id) {
       const provinceId = provincesList.find(
-        (item) => item.province_name === order?.provinceGet
+        (item) => item.full_name === order?.provinceGet
       );
-      if (provinceId?.province_id)
-        apiGetPublicDistrict(provinceId?.province_id);
+      if (provinceId?.id) apiGetPublicDistrict(provinceId?.id);
     }
   }, [provincesList, order, id]);
 
   useEffect(() => {
     if (id) {
       const provinceId = provincesList2.find(
-        (item) => item.province_name === order?.provinceDelivery
+        (item) => item.full_name === order?.provinceDelivery
       );
-      if (provinceId?.province_id)
-        apiGetPublicDistrict2(provinceId?.province_id);
+      if (provinceId?.id) apiGetPublicDistrict2(provinceId?.id);
     }
   }, [provincesList2, order, id]);
 
   useEffect(() => {
     if (id) {
       const districtId = districtsList.find(
-        (item) => item.district_name === order?.districtGet
+        (item) => item.full_name === order?.districtGet
       );
-      if (districtId?.district_id) apiGetPublicWard(districtId?.district_id);
+      if (districtId?.id) apiGetPublicWard(districtId?.id);
     }
   }, [districtsList, order, id]);
 
   useEffect(() => {
     if (id) {
       const districtId = districtsList2.find(
-        (item) => item.district_name === order?.districtDelivery
+        (item) => item.full_name === order?.districtDelivery
       );
-      if (districtId?.district_id) apiGetPublicWard2(districtId?.district_id);
+      if (districtId?.id) apiGetPublicWard2(districtId?.id);
     }
   }, [districtsList2, order, id]);
 
@@ -672,7 +673,7 @@ const CreateOrderForm = ({ id }) => {
           </Button>
         </>
       )}
-      <Box padding={"0 3%"} maxW={"1200px"} margin={"0 auto"}>
+      <Box padding={"0 3%"} maxW={"1400px"} margin={"0 auto"}>
         {ModalItem}
         <Stack maxW={"1200px"}>
           <Card type="inner" title="Thông tin Công Ty">
@@ -767,7 +768,7 @@ const CreateOrderForm = ({ id }) => {
             <Card
               title="Thông tin lấy hàng"
               type="inner"
-              style={{ width: "48%" }}
+              style={{ width: "60%" }}
             >
               <Stack spacing={4}>
                 <Form layout="vertical">
@@ -806,7 +807,7 @@ const CreateOrderForm = ({ id }) => {
                     />
                   </Form.Item>
 
-                  <HStack mb={"2%"}>
+                  <HStack mb={5} mt={5}>
                     <Select
                       onChange={(event) => {
                         handleChangeOrder("provinceGet", event);
@@ -814,32 +815,32 @@ const CreateOrderForm = ({ id }) => {
                         handleProvinceChange(event);
                       }}
                       value={order?.provinceGet}
+                      style={{ width: "100%" }}
                     >
                       {id ? (
                         provincesList
                           .filter(
                             (province) =>
-                              province.province_name === order?.provinceGet
+                              province.full_name === order?.provinceGet
                           )
                           .map((province) => (
-                            <option
-                              key={province.province_id}
-                              value={province.province_id}
-                            >
-                              {province.province_name}
+                            <option key={province.id} value={province.id}>
+                              {province.full_name}
                             </option>
                           ))
                       ) : (
                         <>
                           <option value="">Chọn tỉnh/thành phố</option>
-                          {provincesList.map((province) => (
-                            <option
-                              key={province.province_id}
-                              value={province.province_name}
-                            >
-                              {province.province_name}
-                            </option>
-                          ))}
+                          {provincesList
+                            .filter((value) => value.id === "79")
+                            .map((province) => (
+                              <option
+                                key={province.id}
+                                value={province.full_name}
+                              >
+                                {province.full_name}
+                              </option>
+                            ))}
                         </>
                       )}
                     </Select>
@@ -849,19 +850,17 @@ const CreateOrderForm = ({ id }) => {
                         handleDistrictChange(event);
                       }}
                       value={order?.districtGet}
+                      style={{ width: "100%" }}
                     >
                       {id ? (
                         districtsList
                           .filter(
                             (district) =>
-                              district.district_name === order?.districtGet
+                              district.full_name === order?.districtGet
                           )
                           .map((district) => (
-                            <option
-                              key={district.district_id}
-                              value={district.district_id}
-                            >
-                              {district.district_name}
+                            <option key={district.id} value={district.id}>
+                              {district.full_name}
                             </option>
                           ))
                       ) : (
@@ -870,9 +869,9 @@ const CreateOrderForm = ({ id }) => {
                           {districtsList.map((district) => (
                             <option
                               key={district.id}
-                              value={district.district_name}
+                              value={district.full_name}
                             >
-                              {district.district_name}
+                              {district.full_name}
                             </option>
                           ))}
                         </>
@@ -881,21 +880,22 @@ const CreateOrderForm = ({ id }) => {
                     <Select
                       onChange={(event) => handleChangeOrder("wardGet", event)}
                       value={order?.wardGet}
+                      style={{ width: "100%" }}
                     >
                       {id ? (
                         wardsList
-                          .filter((ward) => ward.ward_name === order?.wardGet)
+                          .filter((ward) => ward.full_name === order?.wardGet)
                           .map((ward) => (
-                            <option key={ward.ward_id} value={ward.ward_id}>
-                              {ward.ward_name}
+                            <option key={ward.id} value={ward.id}>
+                              {ward.full_name}
                             </option>
                           ))
                       ) : (
                         <>
                           <option value="">Chọn xã/phường</option>
                           {wardsList.map((ward) => (
-                            <option key={ward.id} value={ward.ward_name}>
-                              {ward.ward_name}
+                            <option key={ward.id} value={ward.full_name}>
+                              {ward.full_name}
                             </option>
                           ))}
                         </>
@@ -921,7 +921,7 @@ const CreateOrderForm = ({ id }) => {
             <Card
               title="Thông tin giao hàng"
               type="inner"
-              style={{ width: "48%" }}
+              style={{ width: "60%" }}
             >
               <Stack spacing={4}>
                 <Form layout="vertical">
@@ -960,7 +960,7 @@ const CreateOrderForm = ({ id }) => {
                       ly={id ? true : false}
                     />
                   </Form.Item>
-                  <HStack>
+                  <HStack mt={5}>
                     <Select
                       onChange={(event) => {
                         handleChangeOrder("provinceDelivery", event);
@@ -968,19 +968,17 @@ const CreateOrderForm = ({ id }) => {
                         handleProvinceChange2(event);
                       }}
                       value={order?.provinceDelivery}
+                      style={{ width: "100%" }}
                     >
                       {id ? (
                         provincesList2
                           .filter(
                             (province) =>
-                              province.province_name === order?.provinceGet
+                              province.full_name === order?.provinceGet
                           )
                           .map((province) => (
-                            <option
-                              key={province.province_id}
-                              value={province.province_id}
-                            >
-                              {province.province_name}
+                            <option key={province.id} value={province.id}>
+                              {province.full_name}
                             </option>
                           ))
                       ) : (
@@ -988,10 +986,10 @@ const CreateOrderForm = ({ id }) => {
                           <option value="">Chọn tỉnh/thành phố</option>
                           {provincesList2.map((province) => (
                             <option
-                              key={province.province_id}
-                              value={province.province_name}
+                              key={province.id}
+                              value={province.full_name}
                             >
-                              {province.province_name}
+                              {province.full_name}
                             </option>
                           ))}
                         </>
@@ -1003,19 +1001,17 @@ const CreateOrderForm = ({ id }) => {
                         handleDistrictChange2(event);
                       }}
                       value={order?.districtDelivery}
+                      style={{ width: "100%" }}
                     >
                       {id ? (
                         districtsList2
                           .filter(
                             (district) =>
-                              district.district_name === order?.districtDelivery
+                              district.full_name === order?.districtDelivery
                           )
                           .map((district) => (
-                            <option
-                              key={district.district_id}
-                              value={district.district_id}
-                            >
-                              {district.district_name}
+                            <option key={district.id} value={district.id}>
+                              {district.full_name}
                             </option>
                           ))
                       ) : (
@@ -1024,9 +1020,9 @@ const CreateOrderForm = ({ id }) => {
                           {districtsList2.map((district) => (
                             <option
                               key={district.id}
-                              value={district.district_name}
+                              value={district.full_name}
                             >
-                              {district.district_name}
+                              {district.full_name}
                             </option>
                           ))}
                         </>
@@ -1037,23 +1033,24 @@ const CreateOrderForm = ({ id }) => {
                         handleChangeOrder("wardDelivery", event)
                       }
                       value={order?.wardDelivery}
+                      style={{ width: "100%" }}
                     >
                       {id ? (
                         wardsList2
                           .filter(
-                            (ward) => ward.ward_name === order?.wardDelivery
+                            (ward) => ward.full_name === order?.wardDelivery
                           )
                           .map((ward) => (
-                            <option key={ward.ward_id} value={ward.ward_id}>
-                              {ward.ward_name}
+                            <option key={ward.id} value={ward.id}>
+                              {ward.full_name}
                             </option>
                           ))
                       ) : (
                         <>
                           <option value="">Chọn xã/phường</option>
                           {wardsList2.map((ward) => (
-                            <option key={ward.id} value={ward.ward_name}>
-                              {ward.ward_name}
+                            <option key={ward.id} value={ward.full_name}>
+                              {ward.full_name}
                             </option>
                           ))}
                         </>
@@ -1066,99 +1063,17 @@ const CreateOrderForm = ({ id }) => {
           </Flex>
           <Stack>
             {order?.items.map((item, index) => (
-              <Card
-                key={index}
-                style={{ marginBottom: "1%" }}
-                title={`Tên mặt hàng: ${item?.itemName}`}
-                className="order-item"
-                extra={
-                  !id ? (
-                    <>
-                      <a
-                        style={{ marginRight: "30px", color: "#69b1ff" }}
-                        onClick={() => {
-                          // let orderItems = [...order?.items];
-                          // orderItems.splice(index, 1);
-                          // setOrder({ ...order, items: orderItems });
-                          setItemSelected(item);
-                          setSelectedIndex(index);
-                          onOpen();
-                        }}
-                      >
-                        Sửa
-                      </a>
-                      <a
-                        style={{ color: "red" }}
-                        onClick={() => {
-                          let orderItems = [...order?.items];
-                          orderItems.splice(index, 1);
-                          setOrder({ ...order, items: orderItems });
-                        }}
-                      >
-                        Xóa
-                      </a>
-                    </>
-                  ) : null
-                }
-              >
-                <Form>
-                  <Flex justifyContent={"space-between"}>
-                    <HStack>
-                      <Form.Item label="Khối lượng">
-                        <Input
-                          disabled={id ? true : false}
-                          value={item?.unitWeight}
-                          min={0}
-                          type="number"
-                        />
-                      </Form.Item>
-                      <Form.Item label="Số lượng">
-                        <Input
-                          disabled={id ? true : false}
-                          value={item?.quantityItem}
-                          min={0}
-                          type="number"
-                        />
-                      </Form.Item>
-                    </HStack>
-                    <HStack>
-                      <Form.Item label="Dài(m)">
-                        <Input
-                          disabled={id ? true : false}
-                          value={item?.length}
-                          precision={2}
-                          type="number"
-                          min={0}
-                        />
-                      </Form.Item>
-                      <Form.Item label="Rộng(m)">
-                        <Input
-                          disabled={id ? true : false}
-                          value={item?.width}
-                          precision={2}
-                          type="number"
-                          min={0}
-                        />
-                      </Form.Item>
-                      <Form.Item label="Cao(m)">
-                        <Input
-                          disabled={id ? true : false}
-                          value={item?.height}
-                          precision={2}
-                          type="number"
-                          min={0}
-                        />
-                      </Form.Item>
-                      <Form.Item label="Màu sắc">
-                        <Input
-                          disabled={id ? true : false}
-                          value={item?.color}
-                        />
-                      </Form.Item>
-                    </HStack>
-                  </Flex>
-                </Form>
-              </Card>
+              <CardOrder
+                key={index + item.itemName}
+                id={id}
+                index={index}
+                item={item}
+                order={order}
+                setItemSelected={setItemSelected}
+                setSelectedIndex={setSelectedIndex}
+                onOpen={onOpen}
+                setOrder={setOrder}
+              />
             ))}
           </Stack>
           <Box height={"2%"}></Box>
@@ -1166,16 +1081,45 @@ const CreateOrderForm = ({ id }) => {
             <Card type="inner" title="Thông tin mặt hàng">
               <Form layout="vertical">
                 <Flex justifyContent={"space-between"}>
-                  <Stack w={"48%"}>
-                    <Form.Item label="Tên mặt hàng">
-                      <Input
-                        disabled={id ? true : false}
-                        value={itemData?.itemName}
-                        onChange={(e) =>
-                          handleItemChange("itemName", e.target.value)
-                        }
-                      />
-                    </Form.Item>
+                  <Stack w={"100%"}>
+                    <Stack direction="row">
+                      <Stack w={"50%"}>
+                        <Form.Item label="Tên mặt hàng">
+                          <Input
+                            disabled={id ? true : false}
+                            value={itemData?.itemName}
+                            onChange={(e) =>
+                              handleItemChange("itemName", e.target.value)
+                            }
+                          />
+                        </Form.Item>
+                      </Stack>
+                      {/* <Stack w={"30%"}>
+                        <Form.Item label="Mã sản phẩm">
+                          <Input
+                            disabled={id ? true : false}
+                            // value={itemData?.itemName}
+                            // onChange={(e) =>
+                            //   handleItemChange("itemName", e.target.value)
+                            // }
+                          />
+                        </Form.Item>
+                      </Stack> */}
+                      <Stack w={"50%"}>
+                        <Form.Item label="Loại Hàng">
+                          <Select
+                            disabled={id ? true : false}
+                            defaultValue="1"
+                            onChange={handleChange}
+                            options={[
+                              { value: "1", label: "Hàng hóa thông thường" },
+                              { value: "2", label: "Hàng cồng kềnh" },
+                              { value: "3", label: "Hàng dễ vỡ" },
+                            ]}
+                          />
+                        </Form.Item>
+                      </Stack>
+                    </Stack>
                     <FormControl display="flex" alignItems="center">
                       <FormLabel
                         mb="0"
@@ -1239,8 +1183,6 @@ const CreateOrderForm = ({ id }) => {
                           }
                         />
                       </Form.Item>
-                    </HStack>
-                    <HStack>
                       <Form.Item label="Dài(m)">
                         <Input
                           disabled={id ? true : false}
@@ -1287,11 +1229,9 @@ const CreateOrderForm = ({ id }) => {
                         />
                       </Form.Item>
                     </HStack>
-                  </Stack>
-                  <Stack w={"50%"}>
                     <Form.Item label="Mô tả">
                       <TextArea
-                        rows={7}
+                        rows={5}
                         disabled={id ? true : false}
                         value={itemData?.description}
                         onChange={(e) =>

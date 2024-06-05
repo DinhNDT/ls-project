@@ -3,13 +3,15 @@ import {
   Stack,
   Flex,
   Box,
-  Heading,
   Text,
   Button,
   Image,
-  IconButton,
+  InputGroup,
+  InputLeftAddon,
+  Input as InputC,
+  InputRightElement,
 } from "@chakra-ui/react";
-import { Link } from "react-router-dom";
+import { Form, Input } from "antd";
 
 export default function CallToActionWithVideo() {
   return (
@@ -22,55 +24,59 @@ export default function CallToActionWithVideo() {
         direction={{ base: "column", md: "row" }}
       >
         <Stack flex={1} spacing={{ base: 5, md: 10 }}>
-          <Heading
-            lineHeight={1.1}
-            fontWeight={600}
-            fontSize={{ base: "3xl", sm: "4xl", lg: "6xl" }}
+          <Box
+            border={"1px solid #E5E5E5"}
+            borderRadius={10}
+            p={25}
+            boxShadow={" rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px"}
+            backgroundColor={"white"}
           >
-            <Text
-              as={"span"}
-              position={"relative"}
-              _after={{
-                content: "''",
-                width: "full",
-                height: "30%",
-                position: "absolute",
-                bottom: 1,
-                left: 0,
-                bg: "red.400",
-                zIndex: -1,
-              }}
-            >
-              Write once,
+            <Text fontSize={24} fontWeight={500}>
+              Kiểm tra đơn hàng
             </Text>
-            <br />
-            <Text as={"span"} color={"red.400"}>
-              use everywhere!
-            </Text>
-          </Heading>
-          <Text color={"gray.500"}>
-            Snippy is a rich coding snippets app that lets you create your own
-            code snippets, categorize them, and even sync them in the cloud so
-            you can use them anywhere. All that is free!
-          </Text>
-          <Stack
-            spacing={{ base: 4, sm: 6 }}
-            direction={{ base: "column", sm: "row" }}
+            <Box mt={25}>
+              <InputGroup>
+                <InputLeftAddon>Mã đơn hàng:</InputLeftAddon>
+                <InputC type="tel" placeholder="id..." />
+
+                <InputRightElement width="3.5rem">
+                  <Button h="1.75rem" size="sm" onClick={() => {}}>
+                    Gửi
+                  </Button>
+                </InputRightElement>
+              </InputGroup>
+            </Box>
+          </Box>
+          <Box
+            border={"1px solid #E5E5E5"}
+            borderRadius={10}
+            p={25}
+            boxShadow={" rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px"}
+            backgroundColor={"white"}
           >
-            <Button
-              rounded={"full"}
-              size={"lg"}
-              fontWeight={"normal"}
-              px={6}
-              colorScheme={"red"}
-              bg={"red.400"}
-              _hover={{ bg: "red.500" }}
-              as={Link}
-              to={"/sign-in"}
-            >
-              Get started
-            </Button>
-          </Stack>
+            <Text fontSize={24} fontWeight={500}>
+              Liên hệ với chúng tôi
+            </Text>
+            <Box mt={25}>
+              <Form layout="vertical" style={{ maxWidth: 600 }} size="middle">
+                <Form.Item label="Họ Và Tên:">
+                  <Input />
+                </Form.Item>
+                <Form.Item label="Số Điện Thoại:">
+                  <Input />
+                </Form.Item>
+                <Form.Item label="Email:">
+                  <Input />
+                </Form.Item>
+                <Form.Item label="Nội Dung:">
+                  <Input.TextArea />
+                </Form.Item>
+              </Form>
+              <Button h="2.55rem" size="md" onClick={() => {}} float={"right"}>
+                Gửi
+              </Button>
+            </Box>
+          </Box>
         </Stack>
         <Flex
           flex={1}

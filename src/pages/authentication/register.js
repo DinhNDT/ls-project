@@ -50,22 +50,16 @@ export default function RegisterPage() {
       align={"center"}
       justify={"center"}
       bg={useColorModeValue("gray.50", "gray.800")}
+      borderRadius={10}
+      boxShadow={"lg"}
     >
       <Stack spacing={8} mx={"auto"} maxW={"lg"} py={12} px={6}>
         <Stack align={"center"}>
           <Heading fontSize={"4xl"} textAlign={"center"}>
-            Join With Us
+            Đăng Ký Ngay
           </Heading>
-          <Text fontSize={"lg"} color={"gray.600"}>
-            to enjoy all of our cool features ✌️
-          </Text>
         </Stack>
-        <Box
-          rounded={"lg"}
-          bg={useColorModeValue("white", "gray.700")}
-          boxShadow={"lg"}
-          p={8}
-        >
+        <Box rounded={"lg"} bg={useColorModeValue("white", "gray.700")} p={8}>
           <Stack spacing={4}>
             <HStack>
               <Box>
@@ -101,7 +95,7 @@ export default function RegisterPage() {
                 </InputRightElement>
               </InputGroup>
             </FormControl>
-            <Stack spacing={10} pt={2}>
+            {/* <Stack spacing={10} pt={2}>
               <Button
                 loadingText="Submitting"
                 size="lg"
@@ -113,7 +107,7 @@ export default function RegisterPage() {
               >
                 Đăng kí
               </Button>
-            </Stack>
+            </Stack> */}
             <Stack pt={6}>
               <Text align={"center"}>
                 Đã có tài khoản?{" "}
@@ -125,12 +119,6 @@ export default function RegisterPage() {
           </Stack>
         </Box>
       </Stack>
-      <Blur
-        position={"absolute"}
-        top={50}
-        left={30}
-        style={{ filter: "blur(70px)" }}
-      />
     </Flex>
   );
 }

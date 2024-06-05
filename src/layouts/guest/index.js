@@ -3,6 +3,7 @@ import AdminFooter from "../components/footer";
 import { Route, Routes, Navigate } from "react-router-dom";
 import routes from "../../routes";
 import { Box, useDisclosure } from "@chakra-ui/react";
+import BgImageHome from "../../assets/img/svg/wave.svg";
 
 function GuestLayout() {
   const { onOpen } = useDisclosure();
@@ -20,7 +21,17 @@ function GuestLayout() {
   return (
     <Box>
       <AdminHeader onOpen={onOpen} notHaveSidebar={true} />
-      <Box>
+      <Box
+        backgroundImage={`url(${BgImageHome})`}
+        backgroundPosition="center"
+        backgroundRepeat="no-repeat"
+        bgSize={"cover"}
+        height={"100%"}
+        minHeight={900}
+        display={"flex"}
+        justifyContent={"center"}
+        alignItems={"center"}
+      >
         <Routes>
           {getRoutes(routes)}
           <Route path="*" element={<Navigate to="/" replace />} />

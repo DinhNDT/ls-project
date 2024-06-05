@@ -2,7 +2,6 @@
 
 import {
   Box,
-  Flex,
   Stack,
   Heading,
   Text,
@@ -10,39 +9,15 @@ import {
   Input,
   Button,
   SimpleGrid,
-  Avatar,
-  AvatarGroup,
   useBreakpointValue,
   Icon,
-  Checkbox,
+  useToast,
+  Spinner,
 } from "@chakra-ui/react";
 import axios from "axios";
 import { useContext, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { GlobalContext } from "../../provider";
-
-const avatars = [
-  {
-    name: "Ryan Florence",
-    url: "https://bit.ly/ryan-florence",
-  },
-  {
-    name: "Segun Adebayo",
-    url: "https://bit.ly/sage-adebayo",
-  },
-  {
-    name: "Kent Dodds",
-    url: "https://bit.ly/kent-c-dodds",
-  },
-  {
-    name: "Prosper Otemuyiwa",
-    url: "https://bit.ly/prosper-baba",
-  },
-  {
-    name: "Christian Nwamba",
-    url: "https://bit.ly/code-beast",
-  },
-];
 
 const Blur = (props) => {
   return (
@@ -68,26 +43,30 @@ const Blur = (props) => {
 
 export default function LoginPage() {
   const navigate = useNavigate();
+  const toast = useToast({ position: "top" });
+
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const  logginRef = useRef(null);
-  
+  const [isLoading, setLoading] = useState(false);
+  const logginRef = useRef(null);
 
   const loginContext = useContext(GlobalContext);
   const { setIsLogin, setUserInformation } = loginContext;
 
   const handleKeyPress = (event) => {
-    if (event.key === 'Enter') {
+    if (event.key === "Enter") {
       logginRef.current.click();
     }
   };
 
   const handleLoginFunction = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
       // check username and password
       if (!username && !password) {
         alert("Please field username and password");
+        setLoading(false);
         return;
       }
       const payload = { username, password };
@@ -95,8 +74,11 @@ export default function LoginPage() {
       if (requestLoginFunction.status === 200) {
         const userDecode = requestLoginFunction.data;
         setUserInformation(userDecode);
-        setIsLogin(true);
-        alert("Đăng nhập thành công");
+        toast({
+          title: "Đăng nhập thành công",
+          status: "success",
+          isClosable: true,
+        });
         const userRole = userDecode.role;
         if (userRole === "Admin") {
           navigate("/admin");
@@ -116,11 +98,21 @@ export default function LoginPage() {
         }
         navigate("/");
       } else {
-        alert("Đăng nhập thất bại");
+        toast({
+          title: "Đăng nhập thất bại",
+          status: "error",
+          isClosable: true,
+        });
+        setLoading(false);
       }
     } catch (err) {
       console.error(err);
-      alert("Đăng nhập thất bại");
+      toast({
+        title: "Đăng nhập thất bại",
+        status: "error",
+        isClosable: true,
+      });
+      setLoading(false);
     }
   };
 
@@ -137,65 +129,10 @@ export default function LoginPage() {
           <Heading
             lineHeight={1.1}
             fontSize={{ base: "3xl", sm: "4xl", md: "5xl", lg: "6xl" }}
+            textAlign={"center"}
           >
-            Chào mừng đến với 
+            Chào mừng đến với hệ thống Logistic
           </Heading>
-          <Stack direction={"row"} spacing={4} align={"center"}>
-            <AvatarGroup>
-              {avatars.map((avatar) => (
-                <Avatar
-                  key={avatar.name}
-                  name={avatar.name}
-                  src={avatar.url}
-                  // eslint-disable-next-line react-hooks/rules-of-hooks
-                  size={useBreakpointValue({ base: "md", md: "lg" })}
-                  position={"relative"}
-                  zIndex={2}
-                  _before={{
-                    content: '""',
-                    width: "full",
-                    height: "full",
-                    rounded: "full",
-                    transform: "scale(1.125)",
-                    bgGradient: "linear(to-bl, red.400,pink.400)",
-                    position: "absolute",
-                    zIndex: -1,
-                    top: 0,
-                    left: 0,
-                  }}
-                />
-              ))}
-            </AvatarGroup>
-            <Text fontFamily={"heading"} fontSize={{ base: "4xl", md: "6xl" }}>
-              +
-            </Text>
-            <Flex
-              align={"center"}
-              justify={"center"}
-              fontFamily={"heading"}
-              fontSize={{ base: "sm", md: "lg" }}
-              bg={"gray.800"}
-              color={"white"}
-              rounded={"full"}
-              minWidth={useBreakpointValue({ base: "44px", md: "60px" })}
-              minHeight={useBreakpointValue({ base: "44px", md: "60px" })}
-              position={"relative"}
-              _before={{
-                content: '""',
-                width: "full",
-                height: "full",
-                rounded: "full",
-                transform: "scale(1.125)",
-                bgGradient: "linear(to-bl, orange.400,yellow.400)",
-                position: "absolute",
-                zIndex: -1,
-                top: 0,
-                left: 0,
-              }}
-            >
-              YOU
-            </Flex>
-          </Stack>
         </Stack>
         <Stack
           bg={"gray.50"}
@@ -203,6 +140,8 @@ export default function LoginPage() {
           p={{ base: 4, sm: 6, md: 8 }}
           spacing={{ base: 8 }}
           maxW={{ lg: "lg" }}
+          position={"relative"}
+          boxShadow={"rgba(99, 99, 99, 0.2) 0px 2px 8px 0px"}
         >
           <Stack spacing={4}>
             <Heading
@@ -210,15 +149,11 @@ export default function LoginPage() {
               lineHeight={1.1}
               fontSize={{ base: "2xl", sm: "3xl", md: "4xl" }}
             >
-              Join our team
+              Đăng nhập ngay
               <Text as={"span"} bgColor={"#F56565"} bgClip="text">
                 !
               </Text>
             </Heading>
-            <Text color={"gray.500"} fontSize={{ base: "sm", sm: "md" }}>
-              We will bring you great experiences and exciting amenities. Put
-              customer satisfaction first!
-            </Text>
           </Stack>
           <Box as={"form"} mt={4}>
             <Stack spacing={4}>
@@ -248,23 +183,7 @@ export default function LoginPage() {
                 onChange={(e) => setPassword(e.target.value)}
               />
             </Stack>
-            <Stack
-              direction={{ base: "column", sm: "row" }}
-              align={"start"}
-              justify={"space-between"}
-              mt={"20px"}
-            >
-              <Checkbox>Ghi nhớ đăng nhập</Checkbox>
-              <Text
-                color={"blue.400"}
-                cursor={"pointer"}
-                _hover={{ textDecoration: "underline" }}
-                as={Link}
-                to={"/identify"}
-              >
-                Quên mật khẩu?
-              </Text>
-            </Stack>
+
             <Button
               fontFamily={"heading"}
               mt={5}
@@ -278,11 +197,10 @@ export default function LoginPage() {
               }}
               ref={logginRef}
               onClick={handleLoginFunction}
-
             >
               Đăng nhập
             </Button>
-            <Stack
+            {/* <Stack
               mt={3}
               color={"blue.400"}
               _hover={{ textDecoration: "underline" }}
@@ -290,16 +208,28 @@ export default function LoginPage() {
               <Link to={"/sign-up"} style={{ margin: "0 auto" }}>
                 Không có tài khoản? Đăng kí ngay
               </Link>
-            </Stack>
+            </Stack> */}
           </Box>
+          {isLoading && (
+            <Box
+              position={"absolute"}
+              width={"100%"}
+              height={"100%"}
+              backgroundColor={"black"}
+              opacity={0.3}
+              borderRadius={15}
+              top={0}
+              left={0}
+              display={"flex"}
+              justifyContent={"center"}
+              alignItems={"center"}
+              zIndex={10}
+            >
+              <Spinner color="red" size="xl" />
+            </Box>
+          )}
         </Stack>
       </Container>
-      <Blur
-        position={"absolute"}
-        top={-10}
-        left={-10}
-        style={{ filter: "blur(70px)" }}
-      />
     </Box>
   );
 }

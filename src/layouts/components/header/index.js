@@ -14,6 +14,10 @@ import {
   MenuDivider,
   MenuItem,
   MenuList,
+  Tabs,
+  TabList,
+  Tab,
+  TabIndicator,
 } from "@chakra-ui/react";
 // eslint-disable-next-line
 import { FiMenu, FiBell, FiChevronDown } from "react-icons/fi";
@@ -41,33 +45,50 @@ const MobileNav = ({ onOpen, notHaveSidebar, ...rest }) => {
       bg={flexBG}
       {...rest}
     >
-      {notHaveSidebar && (
+      <Flex alignItems="center" gap={45}>
+        {notHaveSidebar && (
+          <Text
+            display={{ base: "none", md: "flex" }}
+            fontSize="2xl"
+            fontFamily="monospace"
+            fontWeight="bold"
+            style={{ cursor: "pointer" }}
+            onClick={() => navigate("/")}
+          >
+            Logo
+          </Text>
+        )}
+        {!notHaveSidebar && (
+          <IconButton
+            display={{ base: "flex", md: "none" }}
+            onClick={onOpen}
+            variant="outline"
+            aria-label="open menu"
+            icon={<FiMenu />}
+          />
+        )}
         <Text
-          display={{ base: "none", md: "flex" }}
+          display={{ base: "flex", md: "none" }}
           fontSize="2xl"
           fontFamily="monospace"
           fontWeight="bold"
+          style={{ cursor: "pointer" }}
+          onClick={() => navigate("/")}
         >
           Logo
         </Text>
-      )}
-      {!notHaveSidebar && (
-        <IconButton
-          display={{ base: "flex", md: "none" }}
-          onClick={onOpen}
-          variant="outline"
-          aria-label="open menu"
-          icon={<FiMenu />}
-        />
-      )}
-      <Text
-        display={{ base: "flex", md: "none" }}
-        fontSize="2xl"
-        fontFamily="monospace"
-        fontWeight="bold"
-      >
-        Logo
-      </Text>
+        <Tabs position="relative" variant="unstyled">
+          <TabList onChange={(value) => console.log(value)}>
+            <Tab height={91} onClick={() => navigate("/")}>
+              Trang chủ
+            </Tab>
+            <Tab>Cước vận chuyển</Tab>
+            <Tab>Hỗ trợ</Tab>
+            <Tab>Về chúng tôi</Tab>
+          </TabList>
+          <TabIndicator height="2px" bg="blue.500" borderRadius="1px" />
+        </Tabs>
+      </Flex>
       {notHaveSidebar ? (
         <Stack
           flex={{ base: 1, md: 0 }}
@@ -92,16 +113,16 @@ const MobileNav = ({ onOpen, notHaveSidebar, ...rest }) => {
           >
             Sign In
           </Button>
-          <Button
+          {/* <Button
             as={"a"}
             fontSize={"sm"}
             fontWeight={400}
             display={{ base: "none", md: "inline-flex" }}
             variant={"link"}
-            href={"/sign-up"}
+            onClick={() => navigate("/sign-up")}
           >
             Đăng kí
-          </Button>
+          </Button> */}
           <Button
             as={"a"}
             display={{ base: "none", md: "inline-flex" }}
@@ -117,7 +138,7 @@ const MobileNav = ({ onOpen, notHaveSidebar, ...rest }) => {
               navigate("/sign-in");
             }}
           >
-           Đăng nhập
+            Đăng nhập
           </Button>
         </Stack>
       ) : (
