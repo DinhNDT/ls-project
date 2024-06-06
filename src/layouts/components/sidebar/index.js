@@ -138,7 +138,7 @@ const SideBar = () => {
                   marginRight: "10px",
                 }}
               />
-              Logo
+              LOGISTIC
             </h1>
           </div>
         </div>

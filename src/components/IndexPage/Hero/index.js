@@ -37,7 +37,7 @@ export default function CallToActionWithVideo() {
             <Box mt={25}>
               <InputGroup>
                 <InputLeftAddon>Mã đơn hàng:</InputLeftAddon>
-                <InputC type="tel" placeholder="id..." />
+                <InputC type="tel" placeholder="Nhập mã đơn hàng" />
 
                 <InputRightElement width="3.5rem">
                   <Button h="1.75rem" size="sm" onClick={() => {}}>
@@ -60,16 +60,16 @@ export default function CallToActionWithVideo() {
             <Box mt={25}>
               <Form layout="vertical" style={{ maxWidth: 600 }} size="middle">
                 <Form.Item label="Họ Và Tên:">
-                  <Input />
+                  <Input placeholder="Nhập họ tên" />
                 </Form.Item>
                 <Form.Item label="Số Điện Thoại:">
-                  <Input />
+                  <Input placeholder="Nhập số điện thoại"/>
                 </Form.Item>
                 <Form.Item label="Email:">
-                  <Input />
+                  <Input placeholder="Nhập email" />
                 </Form.Item>
                 <Form.Item label="Nội Dung:">
-                  <Input.TextArea />
+                  <Input.TextArea placeholder="Nhập nội dung" />
                 </Form.Item>
               </Form>
               <Button h="2.55rem" size="md" onClick={() => {}} float={"right"}>

@@ -55,7 +55,7 @@ const MobileNav = ({ onOpen, notHaveSidebar, ...rest }) => {
             style={{ cursor: "pointer" }}
             onClick={() => navigate("/")}
           >
-            Logo
+            Logistic
           </Text>
         )}
         {!notHaveSidebar && (
@@ -113,7 +113,7 @@ const MobileNav = ({ onOpen, notHaveSidebar, ...rest }) => {
           >
             Sign In
           </Button>
-          {/* <Button
+          <Button
             as={"a"}
             fontSize={"sm"}
             fontWeight={400}
@@ -122,7 +122,7 @@ const MobileNav = ({ onOpen, notHaveSidebar, ...rest }) => {
             onClick={() => navigate("/sign-up")}
           >
             Đăng kí
-          </Button> */}
+          </Button>
           <Button
             as={"a"}
             display={{ base: "none", md: "inline-flex" }}

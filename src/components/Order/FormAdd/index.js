@@ -766,15 +766,15 @@ const CreateOrderForm = ({ id }) => {
           <Box height={"2%"}></Box>
           <Flex justifyContent={"space-between"} mb={"1%"}>
             <Card
-              title="Thông tin lấy hàng"
+              title="Thông tin gửi hàng"
               type="inner"
               style={{ width: "60%" }}
             >
               <Stack spacing={4}>
                 <Form layout="vertical">
                   <HStack>
-                    <Form.Item required label="Số điện thoại người gửi">
-                      <Input
+                    <Form.Item required label="Số điện thoại">
+                      <Input placeholder="Nhập số điện thoại"
                         onChange={(event) =>
                           handleChangeOrder("getPhone", event.target.value)
                         }
@@ -782,8 +782,8 @@ const CreateOrderForm = ({ id }) => {
                         disabled={id ? true : false}
                       />
                     </Form.Item>
-                    <Form.Item required label="Họ tên người gửi">
-                      <Input
+                    <Form.Item required label="Họ tên">
+                      <Input placeholder="Nhập họ tên"
                         onChange={(event) =>
                           handleChangeOrder("getTo", event.target.value)
                         }
@@ -792,22 +792,8 @@ const CreateOrderForm = ({ id }) => {
                       />
                     </Form.Item>
                   </HStack>
-                  <Form.Item required label="Địa chỉ gửi hàng">
-                    <Input
-                      onChange={(event) =>
-                        handleChangeOrder(
-                          "locationDetailGet",
-                          event.target.value
-                        )
-                      }
-                      w={"94%"}
-                      value={order?.locationDetailGet}
-                      isReadOn
-                      disabled={id ? true : false}
-                    />
-                  </Form.Item>
-
-                  <HStack mb={5} mt={5}>
+                  <Form.Item required label="Địa chỉ">
+                  <HStack mb={3} mt={1}>
                     <Select
                       onChange={(event) => {
                         handleChangeOrder("provinceGet", event);
@@ -902,8 +888,22 @@ const CreateOrderForm = ({ id }) => {
                       )}
                     </Select>
                   </HStack>
+                  {/* <Form.Item required label="Địa chỉ"> */}
+                    <Input placeholder="Nhập địa chỉ"
+                      onChange={(event) =>
+                        handleChangeOrder(
+                          "locationDetailGet",
+                          event.target.value
+                        )
+                      }
+                      w={"94%"}
+                      value={order?.locationDetailGet}
+                      isReadOn
+                      disabled={id ? true : false}
+                    />
+                  </Form.Item>
 
-                  <Form.Item required label="Ngày lấy hàng">
+                  <Form.Item required label="Ngày gửi hàng">
                     <Input
                       type="datetime-local"
                       onChange={(event) =>
@@ -919,15 +919,15 @@ const CreateOrderForm = ({ id }) => {
             </Card>
             <Box w={"3%"}></Box>
             <Card
-              title="Thông tin giao hàng"
+              title="Thông tin nhận hàng"
               type="inner"
               style={{ width: "60%" }}
             >
               <Stack spacing={4}>
                 <Form layout="vertical">
                   <HStack>
-                    <Form.Item required label="Số điện thoại người nhận">
-                      <Input
+                    <Form.Item required label="Số điện thoại">
+                      <Input placeholder="Nhập số điện thoại"
                         onChange={(event) =>
                           handleChangeOrder("deliveryPhone", event.target.value)
                         }
@@ -935,8 +935,8 @@ const CreateOrderForm = ({ id }) => {
                         disabled={id ? true : false}
                       />
                     </Form.Item>
-                    <Form.Item required label="Họ tên người nhận">
-                      <Input
+                    <Form.Item required label="Họ tên">
+                      <Input placeholder="Nhập họ tên"
                         onChange={(event) =>
                           handleChangeOrder("deliveryTo", event.target.value)
                         }
@@ -945,22 +945,8 @@ const CreateOrderForm = ({ id }) => {
                       />
                     </Form.Item>
                   </HStack>
-                  <Form.Item required label="Địa chỉ lấy hàng">
-                    <Input
-                      onChange={(event) =>
-                        handleChangeOrder(
-                          "locationDetailDelivery",
-                          event.target.value
-                        )
-                      }
-                      w={"94%"}
-                      value={order?.locationDetailDelivery}
-                      isReadOn
-                      disabled={id ? true : false}
-                      ly={id ? true : false}
-                    />
-                  </Form.Item>
-                  <HStack mt={5}>
+                  <Form.Item required label="Địa chỉ">
+                  <HStack mt={1} mb={3}>
                     <Select
                       onChange={(event) => {
                         handleChangeOrder("provinceDelivery", event);
@@ -1057,6 +1043,21 @@ const CreateOrderForm = ({ id }) => {
                       )}
                     </Select>
                   </HStack>
+                  {/* <Form.Item required label="Địa chỉ"> */}
+                    <Input placeholder="Nhập địa chỉ"
+                      onChange={(event) =>
+                        handleChangeOrder(
+                          "locationDetailDelivery",
+                          event.target.value
+                        )
+                      }
+                      w={"94%"}
+                      value={order?.locationDetailDelivery}
+                      isReadOn
+                      disabled={id ? true : false}
+                      ly={id ? true : false}
+                    />
+                  </Form.Item>
                 </Form>
               </Stack>
             </Card>
@@ -1085,7 +1086,7 @@ const CreateOrderForm = ({ id }) => {
                     <Stack direction="row">
                       <Stack w={"50%"}>
                         <Form.Item label="Tên mặt hàng">
-                          <Input
+                          <Input placeholder="Nhập tên mặt hàng"
                             disabled={id ? true : false}
                             value={itemData?.itemName}
                             onChange={(e) =>
@@ -1105,11 +1106,11 @@ const CreateOrderForm = ({ id }) => {
                           />
                         </Form.Item>
                       </Stack> */}
-                      <Stack w={"50%"}>
+                      {/* <Stack w={"50%"}>
                         <Form.Item label="Loại Hàng">
-                          <Select
+                          <Select placeholder="Chọn loại hàng"
                             disabled={id ? true : false}
-                            defaultValue="1"
+                            // defaultValue="0"
                             onChange={handleChange}
                             options={[
                               { value: "1", label: "Hàng hóa thông thường" },
@@ -1118,7 +1119,7 @@ const CreateOrderForm = ({ id }) => {
                             ]}
                           />
                         </Form.Item>
-                      </Stack>
+                      </Stack> */}
                     </Stack>
                     <FormControl display="flex" alignItems="center">
                       <FormLabel
@@ -1155,7 +1156,7 @@ const CreateOrderForm = ({ id }) => {
                       </Form.Item>
                     )}
                     <HStack>
-                      <Form.Item label="Khối lượng">
+                      <Form.Item label="Khối lượng(kg)">
                         <Input
                           disabled={id ? true : false}
                           value={itemData?.unitWeight}
@@ -1220,7 +1221,7 @@ const CreateOrderForm = ({ id }) => {
                         />
                       </Form.Item>
                       <Form.Item label="Màu sắc">
-                        <Input
+                        <Input placeholder="Nhập màu sắc"
                           disabled={id ? true : false}
                           value={itemData?.color}
                           onChange={(e) =>
@@ -1230,7 +1231,7 @@ const CreateOrderForm = ({ id }) => {
                       </Form.Item>
                     </HStack>
                     <Form.Item label="Mô tả">
-                      <TextArea
+                      <TextArea placeholder="Nhập nội dung"
                         rows={5}
                         disabled={id ? true : false}
                         value={itemData?.description}

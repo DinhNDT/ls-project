@@ -83,7 +83,7 @@ export const CardOrder = ({
         <Form>
           <Flex justifyContent={"space-between"}>
             <HStack>
-              <Form.Item label="Khối lượng">
+              <Form.Item label="Khối lượng(kg)">
                 <Input
                   disabled={id ? true : false}
                   value={item?.unitWeight}

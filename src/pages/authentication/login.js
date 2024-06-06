@@ -158,7 +158,7 @@ export default function LoginPage() {
           <Box as={"form"} mt={4}>
             <Stack spacing={4}>
               <Input
-                placeholder="username"
+                placeholder="Tên đăng nhập"
                 bg={"gray.100"}
                 border={0}
                 color={"gray.500"}
@@ -170,7 +170,7 @@ export default function LoginPage() {
                 onChange={(e) => setUsername(e.target.value)}
               />
               <Input
-                placeholder="Password"
+                placeholder="Mật khẩu"
                 bg={"gray.100"}
                 border={0}
                 color={"gray.500"}
