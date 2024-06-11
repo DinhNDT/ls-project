@@ -8,6 +8,7 @@ import {
   ModalBody,
   ModalCloseButton,
   Button,
+  useToast,
 } from "@chakra-ui/react";
 import { useContext, useEffect, useState } from "react";
 import FormUpdate from "../FormUpdate";
@@ -22,6 +23,8 @@ import { OrderContext } from "../../../provider/order";
 function TableComponent() {
   const userContext = useContext(GlobalContext);
   const { headers } = userContext;
+  const toast = useToast({ position: "top" });
+
   const orderContext = useContext(OrderContext);
   const { setKeySelected, setSelectedItem } = orderContext;
 
@@ -71,7 +74,11 @@ function TableComponent() {
       );
 
       if (updatePrice.status === 200) {
-        alert("Cập nhật thành công");
+        toast({
+          title: "Cập nhật thành công",
+          status: "success",
+          isClosable: true,
+        });
         setReload(true);
         setOpenModalUpdate(false);
         setDistance(defaultPrices);
@@ -87,7 +94,11 @@ function TableComponent() {
       });
 
       if (updatePrice.status === 200) {
-        alert("Tạo thành công");
+        toast({
+          title: "Tạo thành công",
+          status: "success",
+          isClosable: true,
+        });
         setReload(true);
         setOpenModalAdd(false);
         setDistance(defaultPrices);

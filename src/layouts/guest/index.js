@@ -27,7 +27,7 @@ function GuestLayout() {
         backgroundRepeat="no-repeat"
         bgSize={"cover"}
         height={"100%"}
-        minHeight={900}
+        minHeight={1100}
         display={"flex"}
         justifyContent={"center"}
         alignItems={"center"}

@@ -2,48 +2,125 @@
 
 import {
   Flex,
-  Box,
-  FormControl,
-  FormLabel,
-  Input,
-  InputGroup,
-  HStack,
-  InputRightElement,
   Stack,
-  useBreakpointValue,
-  Button,
   Heading,
   Text,
   useColorModeValue,
+  Box,
+  FormControl,
+  FormLabel,
+  Button,
   Link,
-  Icon,
+  HStack,
+  useToast,
 } from "@chakra-ui/react";
-import { useState } from "react";
-import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
+import { Checkbox, Form, Input, Select } from "antd";
+import axios from "axios";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+
+const LINK_POLICY =
+  "https://docs.google.com/document/d/1KRtwWgw9lFQap-qzTHs31p76g5SGtbsv/edit?usp=sharing&ouid=107245805655341164503&rtpof=true&sd=true";
 
 export default function RegisterPage() {
-  const [showPassword, setShowPassword] = useState(false);
-  const Blur = (props) => {
-    return (
-      <Icon
-        width={useBreakpointValue({ base: "100%", md: "40vw", lg: "30vw" })}
-        zIndex={useBreakpointValue({ base: -1, md: -1, lg: 0 })}
-        height="560px"
-        viewBox="0 0 528 560"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-        {...props}
-      >
-        <circle cx="71" cy="161" r="111" fill="#F56565" />
-        {/* <circle cx='244' cy='206' r='139' fill='#ED64A6' /> */}
-        <circle cy="291" r="139" fill="#ED64A6" />
-        <circle cx="80.5" cy="189.5" r="101.5" fill="#ED8936" />
-        <circle cx="196.5" cy="317.5" r="101.5" fill="#ECC94B" />
-        <circle cx="70.5" cy="458.5" r="101.5" fill="#48BB78" />
-        <circle cx="426.5" cy="355.5" r="101.5" fill="#4299E1" />
-      </Icon>
-    );
+  const [form] = Form.useForm();
+  const [isReadPolicy, setIsReadPolicy] = useState();
+  const [provincesList, setProvincesList] = useState([]);
+  const [districtsList, setDistrictsList] = useState([]);
+  const [wardsList, setWardsList] = useState([]);
+  const toast = useToast({ position: "top" });
+  const navigate = useNavigate();
+
+  const apiGetPublicProvinces = async () => {
+    try {
+      const response = await axios.get(
+        "https://esgoo.net/api-tinhthanh/1/0.htm"
+      );
+      setProvincesList(response.data.data);
+    } catch (error) {
+      console.log(error.message);
+    }
   };
+
+  const apiGetPublicDistrict = async (provinceId) => {
+    try {
+      const response = await axios.get(
+        `https://esgoo.net/api-tinhthanh/2/${provinceId}.htm`
+      );
+      setDistrictsList(response.data.data);
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
+  const apiGetPublicWard = async (districtId) => {
+    try {
+      const response = await axios.get(
+        `https://esgoo.net/api-tinhthanh/3/${districtId}.htm`
+      );
+
+      setWardsList(response.data.data);
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
+  const handleProvinceChange = (provinceId) => {
+    apiGetPublicDistrict(provinceId);
+  };
+
+  const handleDistrictChange = (id) => {
+    apiGetPublicWard(id);
+  };
+
+  const apiPostCreateCompany = async (payload) => {
+    try {
+      const response = await axios.post("/Company/api/CreateCompany", payload);
+      if (response.status === 200) {
+        toast({
+          title: "Đăng ký thành công",
+          status: "success",
+          isClosable: true,
+        });
+        navigate("/sign-in");
+      }
+    } catch (error) {
+      toast({
+        title: "Đăng ký thất bại",
+        description: error.message,
+        status: "error",
+        isClosable: true,
+      });
+    }
+  };
+
+  const onFinish = (valueForm) => {
+    const {
+      province,
+      ward,
+      district,
+      address,
+      confirm,
+      companyId,
+      citizenId,
+      ...rest
+    } = valueForm;
+
+    const formSubmit = {
+      ...rest,
+      img: "https://i.imgur.com/9i2ANHO.jpeg",
+      companyLocation: `${address}, ${ward}, ${district}, ${province}`,
+      dateOfBirth: "2024-06-11T07:55:03.452Z",
+      companyId: Number(companyId),
+      citizenId: Number(citizenId),
+    };
+
+    apiPostCreateCompany(formSubmit);
+  };
+
+  useEffect(() => {
+    apiGetPublicProvinces();
+  }, []);
 
   return (
     <Flex
@@ -52,71 +129,285 @@ export default function RegisterPage() {
       bg={useColorModeValue("gray.50", "gray.800")}
       borderRadius={10}
       boxShadow={"lg"}
+      width={700}
     >
-      <Stack spacing={8} mx={"auto"} maxW={"lg"} py={12} px={6}>
+      <Stack spacing={4} padding={25} paddingTop={0} width={"100%"}>
         <Stack align={"center"}>
-          <Heading fontSize={"4xl"} textAlign={"center"}>
-            Đăng Ký Ngay
+          <Heading textAlign={"center"}>
+            Đăng kí ngay{" "}
+            <Text
+              as={"span"}
+              bgColor={"#F56565"}
+              bgClip="text"
+              fontSize={"55px"}
+            >
+              !
+            </Text>
           </Heading>
         </Stack>
-        <Box rounded={"lg"} bg={useColorModeValue("white", "gray.700")} p={8}>
-          <Stack spacing={4}>
-            <HStack>
-              <Box>
-                <FormControl id="firstName" isRequired>
-                  <FormLabel>Họ</FormLabel>
-                  <Input type="text" />
-                </FormControl>
-              </Box>
-              <Box>
-                <FormControl id="lastName" isRequired>
-                  <FormLabel>Tên</FormLabel>
-                  <Input type="text" />
-                </FormControl>
-              </Box>
-            </HStack>
-            <FormControl id="email" isRequired>
-              <FormLabel>Địa chỉ email</FormLabel>
-              <Input type="email" />
-            </FormControl>
-            <FormControl id="password" isRequired>
-              <FormLabel>Mật khẩu</FormLabel>
-              <InputGroup>
-                <Input type={showPassword ? "text" : "password"} />
-                <InputRightElement h={"full"}>
-                  <Button
-                    variant={"ghost"}
-                    onClick={() =>
-                      setShowPassword((showPassword) => !showPassword)
-                    }
+        <Box rounded={"lg"}>
+          <Form
+            form={form}
+            size="middle"
+            name="register"
+            onFinish={onFinish}
+            autoComplete="off"
+            layout="vertical"
+            scrollToFirstError
+          >
+            <Stack spacing={1}>
+              <FormControl isRequired>
+                <FormLabel>Tài Khoản</FormLabel>
+                <Form.Item
+                  name="userName"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Vui lòng nhập tên tài khoản",
+                    },
+                  ]}
+                >
+                  <Input />
+                </Form.Item>
+              </FormControl>
+              <FormControl isRequired>
+                <FormLabel>Mật Khẩu</FormLabel>
+                <Form.Item
+                  name="password"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Vui lòng nhập mật khẩu",
+                    },
+                  ]}
+                  hasFeedback
+                >
+                  <Input.Password />
+                </Form.Item>
+              </FormControl>
+              <FormControl isRequired>
+                <FormLabel>Nhập Lại Mật Khẩu</FormLabel>
+                <Form.Item
+                  name="confirm"
+                  dependencies={["password"]}
+                  hasFeedback
+                  rules={[
+                    {
+                      required: true,
+                      message: "Vui lòng nhập lại mật khẩu!",
+                    },
+                    ({ getFieldValue }) => ({
+                      validator(_, value) {
+                        if (!value || getFieldValue("password") === value) {
+                          return Promise.resolve();
+                        }
+                        return Promise.reject(
+                          new Error("Mật khậu nhập không khớp")
+                        );
+                      },
+                    }),
+                  ]}
+                >
+                  <Input.Password />
+                </Form.Item>
+              </FormControl>
+              <FormControl isRequired>
+                <FormLabel>Tên Công Ty</FormLabel>
+                <Form.Item
+                  name="companyName"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Vui lòng nhập tên công ty",
+                    },
+                  ]}
+                >
+                  <Input />
+                </Form.Item>
+              </FormControl>
+              <FormControl isRequired>
+                <FormLabel>Mã Số Thuế</FormLabel>
+                <Form.Item
+                  name="companyId"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Vui lòng nhập Mã Số Thuế",
+                    },
+                  ]}
+                >
+                  <Input />
+                </Form.Item>
+              </FormControl>
+              <FormControl isRequired>
+                <FormLabel>Căn Cước Công Dân</FormLabel>
+                <Form.Item
+                  name="citizenId"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Vui lòng nhập Căn Cước Công Dân",
+                    },
+                  ]}
+                >
+                  <Input />
+                </Form.Item>
+              </FormControl>
+              <FormControl isRequired>
+                <FormLabel>Tên Người Đại Diện</FormLabel>
+                <Form.Item
+                  name="fullName"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Vui lòng nhập Tên Người Đại Diện",
+                    },
+                  ]}
+                >
+                  <Input />
+                </Form.Item>
+              </FormControl>
+              <FormControl isRequired>
+                <FormLabel>Số Điện Thoại</FormLabel>
+                <Form.Item
+                  name="phone"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Vui lòng nhập Số Điện Thoại",
+                    },
+                  ]}
+                >
+                  <Input maxLength={10} />
+                </Form.Item>
+              </FormControl>
+              <FormControl isRequired>
+                <FormLabel>Email Công Ty</FormLabel>
+                <Form.Item
+                  name="email"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Vui lòng nhập Tên Email Công Ty",
+                    },
+                  ]}
+                >
+                  <Input />
+                </Form.Item>
+              </FormControl>
+              <HStack>
+                <FormControl isRequired>
+                  <FormLabel>Tỉnh/Thành</FormLabel>
+                  <Form.Item
+                    name="province"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Vui lòng chọn Tỉnh/Thành",
+                      },
+                    ]}
                   >
-                    {showPassword ? <ViewIcon /> : <ViewOffIcon />}
-                  </Button>
-                </InputRightElement>
-              </InputGroup>
-            </FormControl>
-            {/* <Stack spacing={10} pt={2}>
-              <Button
-                loadingText="Submitting"
-                size="lg"
-                bg={"#F56565"}
-                color={"white"}
-                _hover={{
-                  bg: "pink.300",
-                }}
-              >
-                Đăng kí
-              </Button>
-            </Stack> */}
-            <Stack pt={6}>
-              <Text align={"center"}>
-                Đã có tài khoản?{" "}
-                <Link color={"blue.400"} href="/sign-in">
-                  Đăng nhập
-                </Link>
-              </Text>
+                    <Select
+                      onChange={(_, option) => {
+                        handleProvinceChange(option.key);
+                      }}
+                      placeholder="Chọn Tỉnh/thành"
+                    >
+                      {provincesList
+                        .filter((value) => value.id === "79")
+                        .map((province) => (
+                          <option key={province.id} value={province.full_name}>
+                            {province.full_name}
+                          </option>
+                        ))}
+                    </Select>
+                  </Form.Item>
+                </FormControl>
+                <FormControl isRequired>
+                  <FormLabel>Quận/Huyện</FormLabel>
+                  <Form.Item
+                    name="district"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Vui lòng chọn Quận/Huyện",
+                      },
+                    ]}
+                  >
+                    <Select
+                      onChange={(_, option) => {
+                        handleDistrictChange(option.key);
+                      }}
+                      placeholder="Chọn Quận/Huyện"
+                    >
+                      {districtsList.map((district) => (
+                        <option key={district.id} value={district.full_name}>
+                          {district.full_name}
+                        </option>
+                      ))}
+                    </Select>
+                  </Form.Item>
+                </FormControl>
+                <FormControl isRequired>
+                  <FormLabel>Xã/Phường</FormLabel>
+                  <Form.Item
+                    name="ward"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Vui lòng chọn Xã/Phường",
+                      },
+                    ]}
+                  >
+                    <Select placeholder="Chọn Xã/Phường">
+                      {wardsList.map((ward) => (
+                        <option key={ward.id} value={ward.full_name}>
+                          {ward.full_name}
+                        </option>
+                      ))}
+                    </Select>
+                  </Form.Item>
+                </FormControl>
+              </HStack>
+              <FormControl isRequired>
+                <FormLabel>Địa Chỉ</FormLabel>
+                <Form.Item
+                  name="address"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Vui lòng nhập Địa Chỉ",
+                    },
+                  ]}
+                >
+                  <Input />
+                </Form.Item>
+              </FormControl>
+              <Stack spacing={10} pt={2}>
+                <Button
+                  isDisabled={!isReadPolicy}
+                  size="lg"
+                  bg={"#F56565"}
+                  color={"white"}
+                  _hover={{
+                    bg: "pink.300",
+                  }}
+                  onClick={() => form.submit()}
+                >
+                  Đăng kí
+                </Button>
+              </Stack>
+              <Stack>
+                <Checkbox onChange={(e) => setIsReadPolicy(e.target.checked)}>
+                  Tôi đã đọc và đồng ý với{" "}
+                  <Link color={"blue.400"} href={LINK_POLICY} isExternal>
+                    điều khoản
+                  </Link>{" "}
+                  của người dùng{" "}
+                </Checkbox>
+              </Stack>
             </Stack>
-          </Stack>
+          </Form>
         </Box>
       </Stack>
     </Flex>

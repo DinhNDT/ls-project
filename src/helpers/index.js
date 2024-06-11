@@ -24,7 +24,7 @@ function formatMoney(number) {
 function getDateNowIso() {
   let isoDateString = Date.now();
   let originalDate = new Date(isoDateString);
-  originalDate.setHours(originalDate.getHours() + 7);
+  // originalDate.setHours(originalDate.getHours() + 7);
 
   let newIsoDateString = originalDate.toISOString();
   return newIsoDateString;

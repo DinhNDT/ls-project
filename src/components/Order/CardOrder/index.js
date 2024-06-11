@@ -13,7 +13,7 @@ export const CardOrder = ({
   onOpen,
   setOrder,
 }) => {
-  const [isHidingDetail, setIsHidingDetail] = useState(true);
+  const [isHidingDetail, setIsHidingDetail] = useState(false);
   return (
     <Card
       key={index}

@@ -10,7 +10,6 @@ import {
   useToast,
   Flex,
   Stack,
-  Text,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -21,21 +20,26 @@ import {
   useDisclosure,
   Switch,
 } from "@chakra-ui/react";
-import { Card, Form, Input, Select, Button as ButtonAntd } from "antd";
-import { FiBox, FiRefreshCw, FiXCircle, FiCheckCircle } from "react-icons/fi";
+import {
+  Card,
+  Form,
+  Input,
+  Select,
+  Button as ButtonAntd,
+  DatePicker,
+  Tooltip,
+  Drawer,
+} from "antd";
 import { useNavigate } from "react-router-dom";
 import { GlobalContext } from "../../../provider";
-import {
-  convertOrder,
-  formatDate,
-  formatMoney,
-  getDateNowIso,
-} from "../../../helpers";
+import { convertOrder, getDateNowIso } from "../../../helpers";
 import axios from "axios";
 import { TbFileImport } from "react-icons/tb";
 import TextArea from "antd/es/input/TextArea";
 import { OrderContext } from "../../../provider/order";
 import { CardOrder } from "../CardOrder";
+import dayjs from "dayjs";
+import { SummaryOrder } from "../SummaryOrder";
 
 const defaultItem = {
   itemName: "",
@@ -50,6 +54,8 @@ const defaultItem = {
   color: "",
 };
 
+const FORMAT_TIME = "YYYY-MM-DD HH:mm:ss";
+
 const CreateOrderForm = ({ id }) => {
   const navigate = useNavigate();
   const userContext = useContext(GlobalContext);
@@ -60,7 +66,7 @@ const CreateOrderForm = ({ id }) => {
   const [order, setOrder] = useState({
     orderDate: getDateNowIso(),
     companyId: "",
-    dayGet: "",
+    dayGet: dayjs(),
     locationDetailGet: "",
     provinceGet: "",
     cityGet: "",
@@ -80,6 +86,17 @@ const CreateOrderForm = ({ id }) => {
   });
 
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const toast = useToast({ position: "top" });
+  const [isOpenDrawer, setOpenDrawer] = useState(false);
+
+  const showDrawer = () => {
+    setOpenDrawer(true);
+  };
+
+  const onCloseDrawer = () => {
+    setOpenDrawer(false);
+  };
+
   const [selectedItem, setItemSelected] = useState(defaultItem);
   const [selectedIndex, setSelectedIndex] = useState(null);
 
@@ -256,13 +273,21 @@ const CreateOrderForm = ({ id }) => {
       });
       if (getCompany.status === 200) {
         let companyData = getCompany.data;
+        let address = companyData[0]?.companyLocation?.split(",").at(0).trim();
+        let ward = companyData[0]?.companyLocation?.split(",").at(1).trim();
+        let district = companyData[0]?.companyLocation?.split(",").at(2).trim();
+        let province = companyData[0]?.companyLocation?.split(",").at(3).trim();
+        handleChangeOrder("provinceGet", province);
+        handleChangeOrder("cityGet", province);
+        handleChangeOrder("districtGet", district);
+        handleChangeOrder("wardGet", ward);
+        handleChangeOrder("locationDetailGet", address);
         setCompanyData(companyData[0]);
       }
     } catch (error) {
       console.error(error);
     }
   };
-  const toast = useToast();
 
   const handleUpdateItem = () => {
     const updatedItems = [...order.items];
@@ -277,7 +302,7 @@ const CreateOrderForm = ({ id }) => {
 
   const handleProvinceChange = (provinceName) => {
     const provinceIndex = provincesList.find(
-      (province) => province.full_name == provinceName
+      (province) => province.full_name === provinceName
     );
     const provinceId = provinceIndex?.id;
     apiGetPublicDistrict(provinceId);
@@ -285,7 +310,7 @@ const CreateOrderForm = ({ id }) => {
 
   const handleProvinceChange2 = (provinceName) => {
     const provinceIndex = provincesList2.find(
-      (province) => province.full_name == provinceName
+      (province) => province.full_name === provinceName
     );
     const provinceId = provinceIndex?.id;
     apiGetPublicDistrict2(provinceId);
@@ -293,7 +318,7 @@ const CreateOrderForm = ({ id }) => {
 
   const handleDistrictChange = (districtName) => {
     const districtIndex = districtsList.find(
-      (district) => district.full_name == districtName
+      (district) => district.full_name === districtName
     );
     const districtId = districtIndex?.id;
     apiGetPublicWard(districtId);
@@ -301,7 +326,7 @@ const CreateOrderForm = ({ id }) => {
 
   const handleDistrictChange2 = (districtName) => {
     const districtIndex = districtsList2.find(
-      (district) => district.full_name == districtName
+      (district) => district.full_name === districtName
     );
     const districtId = districtIndex?.id;
     apiGetPublicWard2(districtId);
@@ -436,15 +461,12 @@ const CreateOrderForm = ({ id }) => {
           headers,
         });
         if (UpdateOrder.status === 200) {
-          // toast({
-          //   title: "Update Order success.",
-          //   description: "We've received your order.",
-          //   status: "success",
-          //   duration: 3000,
-          //   isClosable: true,
-          // });
-          // navigate(url);
-          alert("Gửi thông tin đơn hàng thành công");
+          toast({
+            title: "Gửi thông tin đơn hàng thành công!.",
+            status: "success",
+            isClosable: true,
+          });
+
           setKeySelected("1");
         } else {
           console.log("Can't update order");
@@ -452,18 +474,18 @@ const CreateOrderForm = ({ id }) => {
       } else {
         const AddCompany = await axios.post("/Order", payload, { headers });
         if (AddCompany.status === 200) {
-          // toast({
-          //   title: "Order submitted.",
-          //   description: "We've received your order.",
-          //   status: "success",
-          //   duration: 3000,
-          //   isClosable: true,
-          // });
-          alert("Đã gửi thông tin đơn hàng");
+          toast({
+            title: "Đã gửi thông tin đơn hàng!",
+            status: "success",
+            isClosable: true,
+          });
           setKeySelected("1");
-          // navigate(url);
         } else {
-          alert("Không thể tạo đơn");
+          toast({
+            title: "Không thể tạo đơn!",
+            status: "error",
+            isClosable: true,
+          });
         }
       }
     } catch (err) {
@@ -601,6 +623,7 @@ const CreateOrderForm = ({ id }) => {
       handleFetchData();
     }
     apiGetPublicProvinces();
+    // apiGetPublicDistrict("79");
     apiGetPublicProvinces2();
   }, [headers]);
 
@@ -694,7 +717,7 @@ const CreateOrderForm = ({ id }) => {
                         handleChangeOrder("companyId", event);
                         handleGetCompanyInformation(event);
                       }}
-                      value={order.companyId}
+                      value={order?.companyId}
                     >
                       <option value="">Chọn công ty</option>
                       {company.map((company) => (
@@ -759,12 +782,13 @@ const CreateOrderForm = ({ id }) => {
                   placeholder="input placeholder"
                   rows={1}
                   value={companyData?.companyLocation}
+                  disabled
                 />
               </Form.Item>
             </Form>
           </Card>
           <Box height={"2%"}></Box>
-          <Flex justifyContent={"space-between"} mb={"1%"}>
+          <Flex justifyContent={"space-between"} mb={"2px"}>
             <Card
               title="Thông tin gửi hàng"
               type="inner"
@@ -774,7 +798,8 @@ const CreateOrderForm = ({ id }) => {
                 <Form layout="vertical">
                   <HStack>
                     <Form.Item required label="Số điện thoại">
-                      <Input placeholder="Nhập số điện thoại"
+                      <Input
+                        placeholder="Nhập số điện thoại"
                         onChange={(event) =>
                           handleChangeOrder("getPhone", event.target.value)
                         }
@@ -783,7 +808,8 @@ const CreateOrderForm = ({ id }) => {
                       />
                     </Form.Item>
                     <Form.Item required label="Họ tên">
-                      <Input placeholder="Nhập họ tên"
+                      <Input
+                        placeholder="Nhập họ tên"
                         onChange={(event) =>
                           handleChangeOrder("getTo", event.target.value)
                         }
@@ -793,103 +819,8 @@ const CreateOrderForm = ({ id }) => {
                     </Form.Item>
                   </HStack>
                   <Form.Item required label="Địa chỉ">
-                  <HStack mb={3} mt={1}>
-                    <Select
-                      onChange={(event) => {
-                        handleChangeOrder("provinceGet", event);
-                        handleChangeOrder("cityGet", event);
-                        handleProvinceChange(event);
-                      }}
-                      value={order?.provinceGet}
-                      style={{ width: "100%" }}
-                    >
-                      {id ? (
-                        provincesList
-                          .filter(
-                            (province) =>
-                              province.full_name === order?.provinceGet
-                          )
-                          .map((province) => (
-                            <option key={province.id} value={province.id}>
-                              {province.full_name}
-                            </option>
-                          ))
-                      ) : (
-                        <>
-                          <option value="">Chọn tỉnh/thành phố</option>
-                          {provincesList
-                            .filter((value) => value.id === "79")
-                            .map((province) => (
-                              <option
-                                key={province.id}
-                                value={province.full_name}
-                              >
-                                {province.full_name}
-                              </option>
-                            ))}
-                        </>
-                      )}
-                    </Select>
-                    <Select
-                      onChange={(event) => {
-                        handleChangeOrder("districtGet", event);
-                        handleDistrictChange(event);
-                      }}
-                      value={order?.districtGet}
-                      style={{ width: "100%" }}
-                    >
-                      {id ? (
-                        districtsList
-                          .filter(
-                            (district) =>
-                              district.full_name === order?.districtGet
-                          )
-                          .map((district) => (
-                            <option key={district.id} value={district.id}>
-                              {district.full_name}
-                            </option>
-                          ))
-                      ) : (
-                        <>
-                          <option value="">Chọn quận/huyện</option>
-                          {districtsList.map((district) => (
-                            <option
-                              key={district.id}
-                              value={district.full_name}
-                            >
-                              {district.full_name}
-                            </option>
-                          ))}
-                        </>
-                      )}
-                    </Select>
-                    <Select
-                      onChange={(event) => handleChangeOrder("wardGet", event)}
-                      value={order?.wardGet}
-                      style={{ width: "100%" }}
-                    >
-                      {id ? (
-                        wardsList
-                          .filter((ward) => ward.full_name === order?.wardGet)
-                          .map((ward) => (
-                            <option key={ward.id} value={ward.id}>
-                              {ward.full_name}
-                            </option>
-                          ))
-                      ) : (
-                        <>
-                          <option value="">Chọn xã/phường</option>
-                          {wardsList.map((ward) => (
-                            <option key={ward.id} value={ward.full_name}>
-                              {ward.full_name}
-                            </option>
-                          ))}
-                        </>
-                      )}
-                    </Select>
-                  </HStack>
-                  {/* <Form.Item required label="Địa chỉ"> */}
-                    <Input placeholder="Nhập địa chỉ"
+                    <Input
+                      placeholder="Nhập địa chỉ"
                       onChange={(event) =>
                         handleChangeOrder(
                           "locationDetailGet",
@@ -901,17 +832,115 @@ const CreateOrderForm = ({ id }) => {
                       isReadOn
                       disabled={id ? true : false}
                     />
+                    <HStack mb={1} mt={3}>
+                      <Select
+                        onChange={(event) => {
+                          handleChangeOrder("provinceGet", event);
+                          handleChangeOrder("cityGet", event);
+                          handleProvinceChange(event);
+                        }}
+                        value={order?.provinceGet}
+                        style={{ width: "100%" }}
+                      >
+                        {id ? (
+                          provincesList
+                            .filter(
+                              (province) =>
+                                province.full_name === order?.provinceGet
+                            )
+                            .map((province) => (
+                              <option key={province.id} value={province.id}>
+                                {province.full_name}
+                              </option>
+                            ))
+                        ) : (
+                          <>
+                            <option value="">Chọn tỉnh/thành phố</option>
+                            {provincesList
+                              .filter((value) => value.id === "79")
+                              .map((province) => (
+                                <option
+                                  key={province.id}
+                                  value={province.full_name}
+                                >
+                                  {province.full_name}
+                                </option>
+                              ))}
+                          </>
+                        )}
+                      </Select>
+                      <Select
+                        onChange={(event) => {
+                          handleChangeOrder("districtGet", event);
+                          handleDistrictChange(event);
+                        }}
+                        value={order?.districtGet}
+                        style={{ width: "100%" }}
+                      >
+                        {id ? (
+                          districtsList
+                            .filter(
+                              (district) =>
+                                district.full_name === order?.districtGet
+                            )
+                            .map((district) => (
+                              <option key={district.id} value={district.id}>
+                                {district.full_name}
+                              </option>
+                            ))
+                        ) : (
+                          <>
+                            <option value="">Chọn quận/huyện</option>
+                            {districtsList.map((district) => (
+                              <option
+                                key={district.id}
+                                value={district.full_name}
+                              >
+                                {district.full_name}
+                              </option>
+                            ))}
+                          </>
+                        )}
+                      </Select>
+                      <Select
+                        onChange={(event) =>
+                          handleChangeOrder("wardGet", event)
+                        }
+                        value={order?.wardGet}
+                        style={{ width: "100%" }}
+                      >
+                        {id ? (
+                          wardsList
+                            .filter((ward) => ward.full_name === order?.wardGet)
+                            .map((ward) => (
+                              <option key={ward.id} value={ward.id}>
+                                {ward.full_name}
+                              </option>
+                            ))
+                        ) : (
+                          <>
+                            <option value="">Chọn xã/phường</option>
+                            {wardsList.map((ward) => (
+                              <option key={ward.id} value={ward.full_name}>
+                                {ward.full_name}
+                              </option>
+                            ))}
+                          </>
+                        )}
+                      </Select>
+                    </HStack>
+                    {/* <Form.Item required label="Địa chỉ"> */}
                   </Form.Item>
 
                   <Form.Item required label="Ngày gửi hàng">
-                    <Input
-                      type="datetime-local"
-                      onChange={(event) =>
-                        handleChangeOrder("dayGet", event.target.value)
-                      }
-                      disabled={id ? true : false}
-                      min={getDateNowIso()}
-                      value={order?.dayGet}
+                    <DatePicker
+                      onChange={(_, time) => {
+                        handleChangeOrder("dayGet", time.replace(" ", "T"));
+                      }}
+                      defaultValue={order?.dayGet}
+                      format={FORMAT_TIME}
+                      showTime
+                      disabled={!!id}
                     />
                   </Form.Item>
                 </Form>
@@ -927,7 +956,8 @@ const CreateOrderForm = ({ id }) => {
                 <Form layout="vertical">
                   <HStack>
                     <Form.Item required label="Số điện thoại">
-                      <Input placeholder="Nhập số điện thoại"
+                      <Input
+                        placeholder="Nhập số điện thoại"
                         onChange={(event) =>
                           handleChangeOrder("deliveryPhone", event.target.value)
                         }
@@ -936,7 +966,8 @@ const CreateOrderForm = ({ id }) => {
                       />
                     </Form.Item>
                     <Form.Item required label="Họ tên">
-                      <Input placeholder="Nhập họ tên"
+                      <Input
+                        placeholder="Nhập họ tên"
                         onChange={(event) =>
                           handleChangeOrder("deliveryTo", event.target.value)
                         }
@@ -946,105 +977,8 @@ const CreateOrderForm = ({ id }) => {
                     </Form.Item>
                   </HStack>
                   <Form.Item required label="Địa chỉ">
-                  <HStack mt={1} mb={3}>
-                    <Select
-                      onChange={(event) => {
-                        handleChangeOrder("provinceDelivery", event);
-                        handleChangeOrder("cityDelivery", event);
-                        handleProvinceChange2(event);
-                      }}
-                      value={order?.provinceDelivery}
-                      style={{ width: "100%" }}
-                    >
-                      {id ? (
-                        provincesList2
-                          .filter(
-                            (province) =>
-                              province.full_name === order?.provinceGet
-                          )
-                          .map((province) => (
-                            <option key={province.id} value={province.id}>
-                              {province.full_name}
-                            </option>
-                          ))
-                      ) : (
-                        <>
-                          <option value="">Chọn tỉnh/thành phố</option>
-                          {provincesList2.map((province) => (
-                            <option
-                              key={province.id}
-                              value={province.full_name}
-                            >
-                              {province.full_name}
-                            </option>
-                          ))}
-                        </>
-                      )}
-                    </Select>
-                    <Select
-                      onChange={(event) => {
-                        handleChangeOrder("districtDelivery", event);
-                        handleDistrictChange2(event);
-                      }}
-                      value={order?.districtDelivery}
-                      style={{ width: "100%" }}
-                    >
-                      {id ? (
-                        districtsList2
-                          .filter(
-                            (district) =>
-                              district.full_name === order?.districtDelivery
-                          )
-                          .map((district) => (
-                            <option key={district.id} value={district.id}>
-                              {district.full_name}
-                            </option>
-                          ))
-                      ) : (
-                        <>
-                          <option value="">Chọn quận/huyện</option>
-                          {districtsList2.map((district) => (
-                            <option
-                              key={district.id}
-                              value={district.full_name}
-                            >
-                              {district.full_name}
-                            </option>
-                          ))}
-                        </>
-                      )}
-                    </Select>
-                    <Select
-                      onChange={(event) =>
-                        handleChangeOrder("wardDelivery", event)
-                      }
-                      value={order?.wardDelivery}
-                      style={{ width: "100%" }}
-                    >
-                      {id ? (
-                        wardsList2
-                          .filter(
-                            (ward) => ward.full_name === order?.wardDelivery
-                          )
-                          .map((ward) => (
-                            <option key={ward.id} value={ward.id}>
-                              {ward.full_name}
-                            </option>
-                          ))
-                      ) : (
-                        <>
-                          <option value="">Chọn xã/phường</option>
-                          {wardsList2.map((ward) => (
-                            <option key={ward.id} value={ward.full_name}>
-                              {ward.full_name}
-                            </option>
-                          ))}
-                        </>
-                      )}
-                    </Select>
-                  </HStack>
-                  {/* <Form.Item required label="Địa chỉ"> */}
-                    <Input placeholder="Nhập địa chỉ"
+                    <Input
+                      placeholder="Nhập địa chỉ"
                       onChange={(event) =>
                         handleChangeOrder(
                           "locationDetailDelivery",
@@ -1057,11 +991,127 @@ const CreateOrderForm = ({ id }) => {
                       disabled={id ? true : false}
                       ly={id ? true : false}
                     />
+                    <HStack mt={3} mb={1}>
+                      <Select
+                        onChange={(event) => {
+                          handleChangeOrder("provinceDelivery", event);
+                          handleChangeOrder("cityDelivery", event);
+                          handleProvinceChange2(event);
+                        }}
+                        value={order?.provinceDelivery}
+                        style={{ width: "100%" }}
+                      >
+                        {id ? (
+                          provincesList2
+                            .filter(
+                              (province) =>
+                                province.full_name === order?.provinceGet
+                            )
+                            .map((province) => (
+                              <option key={province.id} value={province.id}>
+                                {province.full_name}
+                              </option>
+                            ))
+                        ) : (
+                          <>
+                            <option value="">Chọn tỉnh/thành phố</option>
+                            {provincesList2.map((province) => (
+                              <option
+                                key={province.id}
+                                value={province.full_name}
+                              >
+                                {province.full_name}
+                              </option>
+                            ))}
+                          </>
+                        )}
+                      </Select>
+                      <Select
+                        onChange={(event) => {
+                          handleChangeOrder("districtDelivery", event);
+                          handleDistrictChange2(event);
+                        }}
+                        value={order?.districtDelivery}
+                        style={{ width: "100%" }}
+                      >
+                        {id ? (
+                          districtsList2
+                            .filter(
+                              (district) =>
+                                district.full_name === order?.districtDelivery
+                            )
+                            .map((district) => (
+                              <option key={district.id} value={district.id}>
+                                {district.full_name}
+                              </option>
+                            ))
+                        ) : (
+                          <>
+                            <option value="">Chọn quận/huyện</option>
+                            {districtsList2.map((district) => (
+                              <option
+                                key={district.id}
+                                value={district.full_name}
+                              >
+                                {district.full_name}
+                              </option>
+                            ))}
+                          </>
+                        )}
+                      </Select>
+                      <Select
+                        onChange={(event) =>
+                          handleChangeOrder("wardDelivery", event)
+                        }
+                        value={order?.wardDelivery}
+                        style={{ width: "100%" }}
+                      >
+                        {id ? (
+                          wardsList2
+                            .filter(
+                              (ward) => ward.full_name === order?.wardDelivery
+                            )
+                            .map((ward) => (
+                              <option key={ward.id} value={ward.id}>
+                                {ward.full_name}
+                              </option>
+                            ))
+                        ) : (
+                          <>
+                            <option value="">Chọn xã/phường</option>
+                            {wardsList2.map((ward) => (
+                              <option key={ward.id} value={ward.full_name}>
+                                {ward.full_name}
+                              </option>
+                            ))}
+                          </>
+                        )}
+                      </Select>
+                    </HStack>
+                    {/* <Form.Item required label="Địa chỉ"> */}
                   </Form.Item>
                 </Form>
               </Stack>
             </Card>
           </Flex>
+          <Box height={"2%"} mb={10}>
+            <Tooltip
+              title={
+                !orderBill?.expectedDeliveryDate
+                  ? "Vui lòng điền các thông tin trên"
+                  : ""
+              }
+            >
+              <ButtonAntd
+                style={{ width: "25%", float: "right" }}
+                type="primary"
+                disabled={!orderBill?.expectedDeliveryDate}
+                onClick={showDrawer}
+              >
+                {id ? "Xem Đơn Hàng" : "Tạo Đơn Hàng"}
+              </ButtonAntd>
+            </Tooltip>
+          </Box>
           <Stack>
             {order?.items.map((item, index) => (
               <CardOrder
@@ -1077,7 +1127,6 @@ const CreateOrderForm = ({ id }) => {
               />
             ))}
           </Stack>
-          <Box height={"2%"}></Box>
           {!id && (
             <Card type="inner" title="Thông tin mặt hàng">
               <Form layout="vertical">
@@ -1086,7 +1135,8 @@ const CreateOrderForm = ({ id }) => {
                     <Stack direction="row">
                       <Stack w={"50%"}>
                         <Form.Item label="Tên mặt hàng">
-                          <Input placeholder="Nhập tên mặt hàng"
+                          <Input
+                            placeholder="Nhập tên mặt hàng"
                             disabled={id ? true : false}
                             value={itemData?.itemName}
                             onChange={(e) =>
@@ -1221,7 +1271,8 @@ const CreateOrderForm = ({ id }) => {
                         />
                       </Form.Item>
                       <Form.Item label="Màu sắc">
-                        <Input placeholder="Nhập màu sắc"
+                        <Input
+                          placeholder="Nhập màu sắc"
                           disabled={id ? true : false}
                           value={itemData?.color}
                           onChange={(e) =>
@@ -1231,7 +1282,8 @@ const CreateOrderForm = ({ id }) => {
                       </Form.Item>
                     </HStack>
                     <Form.Item label="Mô tả">
-                      <TextArea placeholder="Nhập nội dung"
+                      <TextArea
+                        placeholder="Nhập nội dung"
                         rows={5}
                         disabled={id ? true : false}
                         value={itemData?.description}
@@ -1240,29 +1292,34 @@ const CreateOrderForm = ({ id }) => {
                         }
                       />
                     </Form.Item>
-                    <ButtonAntd
-                      type="primary"
-                      onClick={() => {
-                        setOrder({
-                          ...order,
-                          items: [
-                            ...order?.items,
-                            {
-                              ...itemData,
-                              height: parseFloat(itemData?.height),
-                              length: parseFloat(itemData?.length),
-                              quantityItem: parseInt(itemData?.quantityItem),
-                              unitPrice: parseFloat(itemData?.unitPrice),
-                              unitWeight: parseFloat(itemData?.unitWeight),
-                              width: parseFloat(itemData?.width),
-                            },
-                          ],
-                        });
-                        setItemData(defaultItem);
-                      }}
+                    <div
+                      style={{ display: "flex", justifyContent: "flex-end" }}
                     >
-                      Thêm mặt hàng
-                    </ButtonAntd>
+                      <ButtonAntd
+                        style={{ width: "25%" }}
+                        type="primary"
+                        onClick={() => {
+                          setOrder({
+                            ...order,
+                            items: [
+                              ...order?.items,
+                              {
+                                ...itemData,
+                                height: parseFloat(itemData?.height),
+                                length: parseFloat(itemData?.length),
+                                quantityItem: parseInt(itemData?.quantityItem),
+                                unitPrice: parseFloat(itemData?.unitPrice),
+                                unitWeight: parseFloat(itemData?.unitWeight),
+                                width: parseFloat(itemData?.width),
+                              },
+                            ],
+                          });
+                          setItemData(defaultItem);
+                        }}
+                      >
+                        Thêm mặt hàng
+                      </ButtonAntd>
+                    </div>
                   </Stack>
                 </Flex>
               </Form>
@@ -1270,89 +1327,21 @@ const CreateOrderForm = ({ id }) => {
           )}
         </Stack>
       </Box>
-      {orderBill?.expectedDeliveryDate && (
-        <Flex
-          className="actionbar"
-          position={"fixed"}
-          bottom={0}
-          height={"12vh"}
-          w="86.6%"
-          right={"16px"}
-          background={"white"}
-          zIndex={"999999"}
-          padding={"1% 2%"}
-          boxShadow={"rgba(99, 99, 99, 0.2) 0px 2px 8px 0px"}
-          alignItems={"center"}
-        >
-          <FormControl>
-            <FormLabel>Thời gian giao hàng dự kiến:</FormLabel>
-            <Text>{formatDate(orderBill?.expectedDeliveryDate)}</Text>
-          </FormControl>
-          <FormControl>
-            <FormLabel>Giá bảo hiểm đơn hàng:</FormLabel>
-            <Text>{formatMoney(Math.ceil(orderBill?.totalInsurance))} VNĐ</Text>
-          </FormControl>
-          <FormControl>
-            <FormLabel>Giá vận chuyển:</FormLabel>
-            <Text>{formatMoney(Math.ceil(orderBill?.deliveryPrice))} VNĐ</Text>
-          </FormControl>
-          {id && userInformation?.role === "Staff" ? (
-            <>
-              {order.status === 2 && (
-                <Flex>
-                  <Button
-                    display={"flex"}
-                    justifyContent={"center"}
-                    alignItems={"center"}
-                    mr={"8px"}
-                    colorScheme="red"
-                    onClick={() => handleUpdateOrder(4)}
-                  >
-                    <FiXCircle style={{ marginRight: "5px" }} />
-                    Từ chối
-                  </Button>
-                  <Button
-                    colorScheme="green"
-                    display={"flex"}
-                    justifyContent={"center"}
-                    alignItems={"center"}
-                    onClick={() => handleUpdateOrder(3)}
-                  >
-                    <FiCheckCircle style={{ marginRight: "5px" }} />
-                    Chấp nhận
-                  </Button>
-                </Flex>
-              )}
-            </>
-          ) : (userInformation?.role === "Staff" ||
-              userInformation?.role === "Company") &&
-            !id ? (
-            <>
-              <Flex>
-                <Button
-                  display={"flex"}
-                  justifyContent={"center"}
-                  alignItems={"center"}
-                  mr={"8px"}
-                >
-                  <FiRefreshCw style={{ marginRight: "5px" }} />
-                  Làm mới
-                </Button>
-                <Button
-                  colorScheme="blue"
-                  display={"flex"}
-                  justifyContent={"center"}
-                  alignItems={"center"}
-                  onClick={handleSubmit}
-                >
-                  <FiBox style={{ marginRight: "5px" }} />
-                  Tạo đơn
-                </Button>
-              </Flex>
-            </>
-          ) : null}
-        </Flex>
-      )}
+      <Drawer
+        title="Tóm tắt đơn hàng"
+        onClose={onCloseDrawer}
+        open={isOpenDrawer}
+        width={550}
+      >
+        <SummaryOrder
+          id={id}
+          orderBill={orderBill}
+          userInformation={userInformation}
+          order={order}
+          handleUpdateOrder={handleUpdateOrder}
+          handleSubmit={handleSubmit}
+        />
+      </Drawer>
     </>
   );
 };
