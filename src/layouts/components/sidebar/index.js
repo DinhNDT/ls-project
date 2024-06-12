@@ -9,7 +9,11 @@ import {
   FiShoppingCart,
 } from "react-icons/fi";
 import React, { useContext, useEffect, useState } from "react";
-import { DesktopOutlined, LogoutOutlined } from "@ant-design/icons";
+import {
+  DesktopOutlined,
+  LogoutOutlined,
+  BellOutlined,
+} from "@ant-design/icons";
 import { Breadcrumb, Layout, Menu, theme } from "antd";
 import { GlobalContext } from "../../../provider";
 import { useNavigate } from "react-router-dom";
@@ -29,6 +33,7 @@ import PriceListManagementPage from "../../../pages/admin/price-list-management"
 import DistanceManagementPage from "../../../pages/admin/distance-management";
 import WeightManagementPage from "../../../pages/admin/weight-management";
 import StockDetailPage from "../../../pages/admin/stock-detail";
+
 const { Header, Content, Footer, Sider } = Layout;
 
 function getItem(label, key, icon, children) {
@@ -158,12 +163,7 @@ const SideBar = () => {
         >
           <Flex flexDirection="row-reverse">
             <HStack>
-              <Avatar
-                size={"sm"}
-                src={
-                  "https://images.unsplash.com/photo-1619946794135-5bc917a27793?ixlib=rb-0.3.5&q=80&fm=jpg&crop=faces&fit=crop&h=200&w=200&s=b616b2c5b373a80ffc9636ba24f7a4a9"
-                }
-              />
+              <Avatar size={"sm"} src={"https://i.imgur.com/9i2ANHO.jpeg"} />
               <VStack
                 display={{ base: "none", md: "flex" }}
                 alignItems="flex-start"
@@ -172,6 +172,7 @@ const SideBar = () => {
               >
                 <Text fontSize="sm">{userInformation?.fullName}</Text>
               </VStack>
+              <BellOutlined style={{ fontSize: "17px" }} />
             </HStack>
           </Flex>
         </Header>

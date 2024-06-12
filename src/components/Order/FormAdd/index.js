@@ -32,7 +32,7 @@ import {
 } from "antd";
 import { useNavigate } from "react-router-dom";
 import { GlobalContext } from "../../../provider";
-import { convertOrder, getDateNowIso } from "../../../helpers";
+import { convertOrder } from "../../../helpers";
 import axios from "axios";
 import { TbFileImport } from "react-icons/tb";
 import TextArea from "antd/es/input/TextArea";
@@ -54,7 +54,8 @@ const defaultItem = {
   color: "",
 };
 
-const FORMAT_TIME = "YYYY-MM-DD HH:mm:ss";
+export const FORMAT_TIME = "YYYY-MM-DD HH:mm:ss";
+const FORMAT_TIME_SUBMIT = "YYYY-MM-DDTHH:mm:ss";
 
 const CreateOrderForm = ({ id }) => {
   const navigate = useNavigate();
@@ -64,9 +65,9 @@ const CreateOrderForm = ({ id }) => {
   const { setKeySelected } = orderContext;
 
   const [order, setOrder] = useState({
-    orderDate: getDateNowIso(),
+    orderDate: dayjs().format(FORMAT_TIME_SUBMIT),
     companyId: "",
-    dayGet: dayjs(),
+    dayGet: dayjs().format(FORMAT_TIME_SUBMIT),
     locationDetailGet: "",
     provinceGet: "",
     cityGet: "",
@@ -179,6 +180,18 @@ const CreateOrderForm = ({ id }) => {
     reader.readAsBinaryString(file);
   };
 
+  const handleTransferAddress = (companyData) => {
+    let address = companyData[0]?.companyLocation?.split(",").at(0).trim();
+    let ward = companyData[0]?.companyLocation?.split(",").at(1).trim();
+    let district = companyData[0]?.companyLocation?.split(",").at(2).trim();
+    let province = companyData[0]?.companyLocation?.split(",").at(3).trim();
+    handleChangeOrder("provinceGet", province);
+    handleChangeOrder("cityGet", province);
+    handleChangeOrder("districtGet", district);
+    handleChangeOrder("wardGet", ward);
+    handleChangeOrder("locationDetailGet", address);
+  };
+
   const handleFetchData = async () => {
     if (userInformation?.role === "Company") {
       try {
@@ -192,6 +205,7 @@ const CreateOrderForm = ({ id }) => {
           let companyData = getCompany.data;
           setOrder({ ...order, companyId: companyData[0]?.companyId });
           setCompanyData(companyData[0]);
+          handleTransferAddress(companyData);
         }
       } catch (err) {
         console.error(err);
@@ -218,6 +232,7 @@ const CreateOrderForm = ({ id }) => {
           let companyData = getOrder.data;
           if (companyData.length) {
             let data = companyData[0];
+            console.log("data:", data);
             setOrder(data);
             setOrderBill({
               totalInsurance: data?.totalInsurance,
@@ -273,15 +288,7 @@ const CreateOrderForm = ({ id }) => {
       });
       if (getCompany.status === 200) {
         let companyData = getCompany.data;
-        let address = companyData[0]?.companyLocation?.split(",").at(0).trim();
-        let ward = companyData[0]?.companyLocation?.split(",").at(1).trim();
-        let district = companyData[0]?.companyLocation?.split(",").at(2).trim();
-        let province = companyData[0]?.companyLocation?.split(",").at(3).trim();
-        handleChangeOrder("provinceGet", province);
-        handleChangeOrder("cityGet", province);
-        handleChangeOrder("districtGet", district);
-        handleChangeOrder("wardGet", ward);
-        handleChangeOrder("locationDetailGet", address);
+        handleTransferAddress(companyData);
         setCompanyData(companyData[0]);
       }
     } catch (error) {
@@ -448,6 +455,9 @@ const CreateOrderForm = ({ id }) => {
         ...order,
         ...orderBill,
         accountId: userInformation?.accounId,
+        // dayGet: id
+        //   ? order.dayGet
+        //   : order.dayGet.format(FORMAT_TIME).replace(" ", "T"),
       };
       let userRole = userInformation?.role;
       let url =
@@ -456,6 +466,8 @@ const CreateOrderForm = ({ id }) => {
           : userRole === "Company"
           ? "/company/manage-order"
           : "";
+
+      console.log("payload:", payload);
       if (id) {
         const UpdateOrder = await axios.put("/Order/update-order", payload, {
           headers,
@@ -623,7 +635,7 @@ const CreateOrderForm = ({ id }) => {
       handleFetchData();
     }
     apiGetPublicProvinces();
-    // apiGetPublicDistrict("79");
+    apiGetPublicDistrict("79");
     apiGetPublicProvinces2();
   }, [headers]);
 
@@ -670,6 +682,15 @@ const CreateOrderForm = ({ id }) => {
       if (districtId?.id) apiGetPublicWard2(districtId?.id);
     }
   }, [districtsList2, order, id]);
+
+  const [form] = Form.useForm();
+
+  useEffect(() => {
+    if (id) {
+      if (!order.dayGet) return;
+      form.setFieldValue("dayGet", dayjs(order?.dayGet, FORMAT_TIME));
+    }
+  }, [id, order]);
 
   return (
     <>
@@ -795,7 +816,7 @@ const CreateOrderForm = ({ id }) => {
               style={{ width: "60%" }}
             >
               <Stack spacing={4}>
-                <Form layout="vertical">
+                <Form form={form} layout="vertical">
                   <HStack>
                     <Form.Item required label="Số điện thoại">
                       <Input
@@ -819,20 +840,7 @@ const CreateOrderForm = ({ id }) => {
                     </Form.Item>
                   </HStack>
                   <Form.Item required label="Địa chỉ">
-                    <Input
-                      placeholder="Nhập địa chỉ"
-                      onChange={(event) =>
-                        handleChangeOrder(
-                          "locationDetailGet",
-                          event.target.value
-                        )
-                      }
-                      w={"94%"}
-                      value={order?.locationDetailGet}
-                      isReadOn
-                      disabled={id ? true : false}
-                    />
-                    <HStack mb={1} mt={3}>
+                    <HStack mb={3} mt={1}>
                       <Select
                         onChange={(event) => {
                           handleChangeOrder("provinceGet", event);
@@ -930,15 +938,28 @@ const CreateOrderForm = ({ id }) => {
                       </Select>
                     </HStack>
                     {/* <Form.Item required label="Địa chỉ"> */}
+                    <Input
+                      placeholder="Nhập địa chỉ"
+                      onChange={(event) =>
+                        handleChangeOrder(
+                          "locationDetailGet",
+                          event.target.value
+                        )
+                      }
+                      w={"94%"}
+                      value={order?.locationDetailGet}
+                      isReadOn
+                      disabled={id ? true : false}
+                    />
                   </Form.Item>
 
-                  <Form.Item required label="Ngày gửi hàng">
+                  <Form.Item name="dayGet" required label="Ngày gửi hàng">
                     <DatePicker
                       onChange={(_, time) => {
                         handleChangeOrder("dayGet", time.replace(" ", "T"));
                       }}
-                      defaultValue={order?.dayGet}
                       format={FORMAT_TIME}
+                      defaultValue={dayjs()}
                       showTime
                       disabled={!!id}
                     />
@@ -977,21 +998,7 @@ const CreateOrderForm = ({ id }) => {
                     </Form.Item>
                   </HStack>
                   <Form.Item required label="Địa chỉ">
-                    <Input
-                      placeholder="Nhập địa chỉ"
-                      onChange={(event) =>
-                        handleChangeOrder(
-                          "locationDetailDelivery",
-                          event.target.value
-                        )
-                      }
-                      w={"94%"}
-                      value={order?.locationDetailDelivery}
-                      isReadOn
-                      disabled={id ? true : false}
-                      ly={id ? true : false}
-                    />
-                    <HStack mt={3} mb={1}>
+                    <HStack mt={1} mb={3}>
                       <Select
                         onChange={(event) => {
                           handleChangeOrder("provinceDelivery", event);
@@ -1088,6 +1095,20 @@ const CreateOrderForm = ({ id }) => {
                         )}
                       </Select>
                     </HStack>
+                    <Input
+                      placeholder="Nhập địa chỉ"
+                      onChange={(event) =>
+                        handleChangeOrder(
+                          "locationDetailDelivery",
+                          event.target.value
+                        )
+                      }
+                      w={"94%"}
+                      value={order?.locationDetailDelivery}
+                      isReadOn
+                      disabled={id ? true : false}
+                      ly={id ? true : false}
+                    />
                     {/* <Form.Item required label="Địa chỉ"> */}
                   </Form.Item>
                 </Form>

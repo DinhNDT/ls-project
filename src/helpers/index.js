@@ -1,9 +1,10 @@
+import dayjs from "dayjs";
 import * as XLSX from "xlsx";
+import { FORMAT_TIME } from "../components/Order/FormAdd";
 
 function formatDate(inputString) {
   if (!inputString) return;
-  var dateObj = new Date(inputString);
-  var outputString = dateObj.toISOString().slice(0, 19).replace("T", " ");
+  var outputString = dayjs(inputString).format(FORMAT_TIME);
   return outputString;
 }
 
@@ -24,7 +25,7 @@ function formatMoney(number) {
 function getDateNowIso() {
   let isoDateString = Date.now();
   let originalDate = new Date(isoDateString);
-  // originalDate.setHours(originalDate.getHours() + 7);
+  originalDate.setHours(originalDate.getHours() + 7);
 
   let newIsoDateString = originalDate.toISOString();
   return newIsoDateString;
