@@ -41,6 +41,8 @@ import { CardOrder } from "../CardOrder";
 import dayjs from "dayjs";
 import { SummaryOrder } from "../SummaryOrder";
 
+const { Option } = Select;
+
 const defaultItem = {
   itemName: "",
   insurance: false,
@@ -232,7 +234,7 @@ const CreateOrderForm = ({ id }) => {
           let companyData = getOrder.data;
           if (companyData.length) {
             let data = companyData[0];
-            console.log("data:", data);
+
             setOrder(data);
             setOrderBill({
               totalInsurance: data?.totalInsurance,
@@ -248,7 +250,7 @@ const CreateOrderForm = ({ id }) => {
               userInformation?.role === "Stocker"
             ) {
               const getCompany = await axios.get(
-                `/Company?accountId=${data?.accountId}`,
+                `/Company?accountId=${data?.company?.accountId}`,
                 {
                   headers,
                 }
@@ -467,7 +469,6 @@ const CreateOrderForm = ({ id }) => {
           ? "/company/manage-order"
           : "";
 
-      console.log("payload:", payload);
       if (id) {
         const UpdateOrder = await axios.put("/Order/update-order", payload, {
           headers,
@@ -704,7 +705,7 @@ const CreateOrderForm = ({ id }) => {
           />
           <Button
             position="fixed"
-            bottom={orderBill?.expectedDeliveryDate ? "120px" : "50px"}
+            bottom={"50px"}
             right={"50px"}
             bgColor={"#0BC5EA"}
             zIndex={"100"}
@@ -740,14 +741,14 @@ const CreateOrderForm = ({ id }) => {
                       }}
                       value={order?.companyId}
                     >
-                      <option value="">Chọn công ty</option>
+                      <Option value="">Chọn công ty</Option>
                       {company.map((company) => (
-                        <option
+                        <Option
                           key={company.companyId}
                           value={company.companyId}
                         >
                           {company.companyName}
-                        </option>
+                        </Option>
                       ))}
                     </Select>
                   ) : (
@@ -794,7 +795,7 @@ const CreateOrderForm = ({ id }) => {
                 >
                   <Input
                     placeholder="input placeholder"
-                    value={companyData?.account?.userName}
+                    value={companyData?.account?.fullName}
                   />
                 </Form.Item>
               </Flex>
@@ -816,7 +817,11 @@ const CreateOrderForm = ({ id }) => {
               style={{ width: "60%" }}
             >
               <Stack spacing={4}>
-                <Form form={form} layout="vertical">
+                <Form
+                  form={form}
+                  layout="vertical"
+                  initialValues={{ dayGet: dayjs() }}
+                >
                   <HStack>
                     <Form.Item required label="Số điện thoại">
                       <Input
@@ -835,7 +840,7 @@ const CreateOrderForm = ({ id }) => {
                           handleChangeOrder("getTo", event.target.value)
                         }
                         disabled={id ? true : false}
-                        value={companyData?.account?.userName}
+                        value={companyData?.account?.fullName}
                       />
                     </Form.Item>
                   </HStack>
@@ -857,22 +862,22 @@ const CreateOrderForm = ({ id }) => {
                                 province.full_name === order?.provinceGet
                             )
                             .map((province) => (
-                              <option key={province.id} value={province.id}>
+                              <Option key={province.id} value={province.id}>
                                 {province.full_name}
-                              </option>
+                              </Option>
                             ))
                         ) : (
                           <>
-                            <option value="">Chọn tỉnh/thành phố</option>
+                            <Option value="">Chọn tỉnh/thành phố</Option>
                             {provincesList
                               .filter((value) => value.id === "79")
                               .map((province) => (
-                                <option
+                                <Option
                                   key={province.id}
                                   value={province.full_name}
                                 >
                                   {province.full_name}
-                                </option>
+                                </Option>
                               ))}
                           </>
                         )}
@@ -892,20 +897,20 @@ const CreateOrderForm = ({ id }) => {
                                 district.full_name === order?.districtGet
                             )
                             .map((district) => (
-                              <option key={district.id} value={district.id}>
+                              <Option key={district.id} value={district.id}>
                                 {district.full_name}
-                              </option>
+                              </Option>
                             ))
                         ) : (
                           <>
-                            <option value="">Chọn quận/huyện</option>
+                            <Option value="">Chọn quận/huyện</Option>
                             {districtsList.map((district) => (
-                              <option
+                              <Option
                                 key={district.id}
                                 value={district.full_name}
                               >
                                 {district.full_name}
-                              </option>
+                              </Option>
                             ))}
                           </>
                         )}
@@ -921,17 +926,17 @@ const CreateOrderForm = ({ id }) => {
                           wardsList
                             .filter((ward) => ward.full_name === order?.wardGet)
                             .map((ward) => (
-                              <option key={ward.id} value={ward.id}>
+                              <Option key={ward.id} value={ward.id}>
                                 {ward.full_name}
-                              </option>
+                              </Option>
                             ))
                         ) : (
                           <>
-                            <option value="">Chọn xã/phường</option>
+                            <Option value="">Chọn xã/phường</Option>
                             {wardsList.map((ward) => (
-                              <option key={ward.id} value={ward.full_name}>
+                              <Option key={ward.id} value={ward.full_name}>
                                 {ward.full_name}
-                              </option>
+                              </Option>
                             ))}
                           </>
                         )}
@@ -948,7 +953,6 @@ const CreateOrderForm = ({ id }) => {
                       }
                       w={"94%"}
                       value={order?.locationDetailGet}
-                      isReadOn
                       disabled={id ? true : false}
                     />
                   </Form.Item>
@@ -959,7 +963,7 @@ const CreateOrderForm = ({ id }) => {
                         handleChangeOrder("dayGet", time.replace(" ", "T"));
                       }}
                       format={FORMAT_TIME}
-                      defaultValue={dayjs()}
+                      // defaultValue={dayjs()}
                       showTime
                       disabled={!!id}
                     />
@@ -1015,20 +1019,20 @@ const CreateOrderForm = ({ id }) => {
                                 province.full_name === order?.provinceGet
                             )
                             .map((province) => (
-                              <option key={province.id} value={province.id}>
+                              <Option key={province.id} value={province.id}>
                                 {province.full_name}
-                              </option>
+                              </Option>
                             ))
                         ) : (
                           <>
-                            <option value="">Chọn tỉnh/thành phố</option>
+                            <Option value="">Chọn tỉnh/thành phố</Option>
                             {provincesList2.map((province) => (
-                              <option
+                              <Option
                                 key={province.id}
                                 value={province.full_name}
                               >
                                 {province.full_name}
-                              </option>
+                              </Option>
                             ))}
                           </>
                         )}
@@ -1048,20 +1052,20 @@ const CreateOrderForm = ({ id }) => {
                                 district.full_name === order?.districtDelivery
                             )
                             .map((district) => (
-                              <option key={district.id} value={district.id}>
+                              <Option key={district.id} value={district.id}>
                                 {district.full_name}
-                              </option>
+                              </Option>
                             ))
                         ) : (
                           <>
-                            <option value="">Chọn quận/huyện</option>
+                            <Option value="">Chọn quận/huyện</Option>
                             {districtsList2.map((district) => (
-                              <option
+                              <Option
                                 key={district.id}
                                 value={district.full_name}
                               >
                                 {district.full_name}
-                              </option>
+                              </Option>
                             ))}
                           </>
                         )}
@@ -1079,17 +1083,17 @@ const CreateOrderForm = ({ id }) => {
                               (ward) => ward.full_name === order?.wardDelivery
                             )
                             .map((ward) => (
-                              <option key={ward.id} value={ward.id}>
+                              <Option key={ward.id} value={ward.id}>
                                 {ward.full_name}
-                              </option>
+                              </Option>
                             ))
                         ) : (
                           <>
-                            <option value="">Chọn xã/phường</option>
+                            <Option value="">Chọn xã/phường</Option>
                             {wardsList2.map((ward) => (
-                              <option key={ward.id} value={ward.full_name}>
+                              <Option key={ward.id} value={ward.full_name}>
                                 {ward.full_name}
-                              </option>
+                              </Option>
                             ))}
                           </>
                         )}
@@ -1105,9 +1109,7 @@ const CreateOrderForm = ({ id }) => {
                       }
                       w={"94%"}
                       value={order?.locationDetailDelivery}
-                      isReadOn
                       disabled={id ? true : false}
-                      ly={id ? true : false}
                     />
                     {/* <Form.Item required label="Địa chỉ"> */}
                   </Form.Item>
@@ -1166,31 +1168,6 @@ const CreateOrderForm = ({ id }) => {
                           />
                         </Form.Item>
                       </Stack>
-                      {/* <Stack w={"30%"}>
-                        <Form.Item label="Mã sản phẩm">
-                          <Input
-                            disabled={id ? true : false}
-                            // value={itemData?.itemName}
-                            // onChange={(e) =>
-                            //   handleItemChange("itemName", e.target.value)
-                            // }
-                          />
-                        </Form.Item>
-                      </Stack> */}
-                      {/* <Stack w={"50%"}>
-                        <Form.Item label="Loại Hàng">
-                          <Select placeholder="Chọn loại hàng"
-                            disabled={id ? true : false}
-                            // defaultValue="0"
-                            onChange={handleChange}
-                            options={[
-                              { value: "1", label: "Hàng hóa thông thường" },
-                              { value: "2", label: "Hàng cồng kềnh" },
-                              { value: "3", label: "Hàng dễ vỡ" },
-                            ]}
-                          />
-                        </Form.Item>
-                      </Stack> */}
                     </Stack>
                     <FormControl display="flex" alignItems="center">
                       <FormLabel

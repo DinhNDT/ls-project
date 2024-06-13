@@ -192,7 +192,6 @@ function TableComponent({ url = "" }) {
       url = `/Order/order?accountId=${userInformation?.accounId}`;
     }
     try {
-      console.log(url);
       const getOrder = await axios.get(urlQ, { headers });
       if (getOrder.status === 200) {
         let companyData = getOrder.data;

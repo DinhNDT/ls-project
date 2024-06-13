@@ -99,8 +99,6 @@ export const CardOrder = ({
                   type="number"
                 />
               </Form.Item>
-            </HStack>
-            <HStack>
               <Form.Item label="Dài(m)">
                 <Input
                   disabled={id ? true : false}
@@ -133,6 +131,13 @@ export const CardOrder = ({
               </Form.Item>
             </HStack>
           </Flex>
+          <Form.Item label="Mô tả">
+            <Input.TextArea
+              disabled={id ? true : false}
+              value={item?.description}
+              style={{ width: "calc(100% - 54px)", marginLeft: 54 }}
+            />
+          </Form.Item>
         </Form>
       )}
     </Card>

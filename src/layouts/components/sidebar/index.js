@@ -15,6 +15,7 @@ import {
   BellOutlined,
 } from "@ant-design/icons";
 import { Breadcrumb, Layout, Menu, theme } from "antd";
+
 import { GlobalContext } from "../../../provider";
 import { useNavigate } from "react-router-dom";
 import OrderPage from "../../../pages/company/order/order";
@@ -34,6 +35,7 @@ import DistanceManagementPage from "../../../pages/admin/distance-management";
 import WeightManagementPage from "../../../pages/admin/weight-management";
 import StockDetailPage from "../../../pages/admin/stock-detail";
 
+const { Item } = Breadcrumb;
 const { Header, Content, Footer, Sider } = Layout;
 
 function getItem(label, key, icon, children) {
@@ -114,6 +116,7 @@ const SideBar = () => {
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
+
   return (
     <Layout
       style={{
@@ -170,7 +173,7 @@ const SideBar = () => {
                 spacing="1px"
                 ml="2"
               >
-                <Text fontSize="sm">{userInformation?.fullName}</Text>
+                <Text fontSize="sm">{userInformation?.userName}</Text>
               </VStack>
               <BellOutlined style={{ fontSize: "17px" }} />
             </HStack>
@@ -186,8 +189,8 @@ const SideBar = () => {
               margin: "16px 0",
             }}
           >
-            <Breadcrumb.Item>User</Breadcrumb.Item>
-            <Breadcrumb.Item>Bill</Breadcrumb.Item>
+            <Item>User</Item>
+            <Item>Manage</Item>
           </Breadcrumb>
           <div
             style={{
