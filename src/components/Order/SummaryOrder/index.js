@@ -1,8 +1,8 @@
 import { Button, Flex, FormControl, FormLabel, Text } from "@chakra-ui/react";
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { formatDate, formatMoney } from "../../../helpers";
 import { FiBox, FiCheckCircle, FiRefreshCw, FiXCircle } from "react-icons/fi";
-import { Col, Row } from "antd";
+import { Col, Input, Row, Tooltip } from "antd";
 
 export const SummaryOrder = ({
   id,
@@ -12,6 +12,8 @@ export const SummaryOrder = ({
   handleUpdateOrder,
   handleSubmit,
 }) => {
+  const [value, setValue] = useState("");
+
   const totalItem = useMemo(
     () =>
       order?.items?.reduce((total, current) => {
@@ -20,6 +22,10 @@ export const SummaryOrder = ({
     [order]
   );
 
+  const onChangeInputReason = (event) => {
+    setValue(event.target.value);
+  };
+
   return (
     <Flex
       className="actionbar"
@@ -27,8 +33,19 @@ export const SummaryOrder = ({
       flexDirection={"column"}
       gap={25}
     >
-      <Row style={{ gap: 45, display: "flex", justifyContent: "center", alignItems: "center" }}>
-        <FormControl display={"flex"} alignItems={"center"} justifyContent={"center"}>
+      <Row
+        style={{
+          gap: 45,
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <FormControl
+          display={"flex"}
+          alignItems={"center"}
+          justifyContent={"center"}
+        >
           <Col span={14}>
             <FormLabel textAlign={"left"} width={"100%"} margin={"unset"}>
               Thời gian giao hàng dự kiến:
@@ -40,31 +57,16 @@ export const SummaryOrder = ({
             </Text>
           </Col>
         </FormControl>
-        <FormControl display={"flex"} alignItems={"center"} justifyContent={"center"}>
-          <Col span={14}>
-            <FormLabel textAlign={"left"} margin={"unset"}>Giá bảo hiểm đơn hàng:</FormLabel>
-          </Col>
-          <Col span={10}>
-            <Text textAlign={"left"} color={"#4096ff"}>
-              {formatMoney(Math.ceil(orderBill?.totalInsurance))} VNĐ
-            </Text>
-          </Col>
-        </FormControl>
 
-        <FormControl display={"flex"} alignItems={"center"} justifyContent={"center"}>
+        <FormControl
+          display={"flex"}
+          alignItems={"center"}
+          justifyContent={"center"}
+        >
           <Col span={14}>
-            <FormLabel textAlign={"left"} margin={"unset"}>Giá vận chuyển:</FormLabel>
-          </Col>
-          <Col span={10}>
-            <Text color={"#4096ff"} textAlign={"left"}>
-              {formatMoney(Math.ceil(orderBill?.deliveryPrice))} VNĐ
-            </Text>
-          </Col>
-        </FormControl>
-
-        <FormControl display={"flex"} alignItems={"center"} justifyContent={"center"}>
-          <Col span={14}>
-            <FormLabel textAlign={"left"} margin={"unset"}>Khoảng cách vận chuyển:</FormLabel>
+            <FormLabel textAlign={"left"} margin={"unset"}>
+              Khoảng cách vận chuyển:
+            </FormLabel>
           </Col>
           <Col span={10}>
             <Text textAlign={"left"} color={"#4096ff"}>
@@ -73,9 +75,15 @@ export const SummaryOrder = ({
           </Col>
         </FormControl>
 
-        <FormControl display={"flex"} alignItems={"center"} justifyContent={"center"}>
+        <FormControl
+          display={"flex"}
+          alignItems={"center"}
+          justifyContent={"center"}
+        >
           <Col span={14}>
-            <FormLabel textAlign={"left"} margin={"unset"}>Tổng số lượng sản phẩm:</FormLabel>
+            <FormLabel textAlign={"left"} margin={"unset"}>
+              Tổng số lượng sản phẩm:
+            </FormLabel>
           </Col>
           <Col span={10}>
             <Text textAlign={"left"} color={"#4096ff"}>
@@ -84,9 +92,15 @@ export const SummaryOrder = ({
           </Col>
         </FormControl>
 
-        <FormControl display={"flex"} alignItems={"center"} justifyContent={"center"}>
+        <FormControl
+          display={"flex"}
+          alignItems={"center"}
+          justifyContent={"center"}
+        >
           <Col span={14}>
-            <FormLabel textAlign={"left"} margin={"unset"}>Khối lượng tổng:</FormLabel>
+            <FormLabel textAlign={"left"} margin={"unset"}>
+              Khối lượng tổng:
+            </FormLabel>
           </Col>
           <Col span={10}>
             <Text textAlign={"left"} color={"#4096ff"}>
@@ -94,6 +108,59 @@ export const SummaryOrder = ({
             </Text>
           </Col>
         </FormControl>
+        <FormControl
+          display={"flex"}
+          alignItems={"center"}
+          justifyContent={"center"}
+        >
+          <Col span={14}>
+            <FormLabel textAlign={"left"} margin={"unset"}>
+              Giá bảo hiểm đơn hàng:
+            </FormLabel>
+            <FormLabel
+              textAlign={"left"}
+              margin={"unset"}
+              fontSize={"small"}
+              color={"#B2B2B2"}
+            >
+              (2% giá trị đơn hàng)
+            </FormLabel>
+          </Col>
+          <Col span={10}>
+            <Text textAlign={"left"} color={"#4096ff"}>
+              {formatMoney(Math.ceil(orderBill?.totalInsurance))} VNĐ
+            </Text>
+          </Col>
+        </FormControl>
+
+        <FormControl
+          display={"flex"}
+          alignItems={"center"}
+          justifyContent={"center"}
+        >
+          <Col span={14}>
+            <FormLabel textAlign={"left"} margin={"unset"}>
+              Giá vận chuyển:
+            </FormLabel>
+          </Col>
+          <Col span={10}>
+            <Text color={"#4096ff"} textAlign={"left"}>
+              {formatMoney(Math.ceil(orderBill?.deliveryPrice))} VNĐ
+            </Text>
+          </Col>
+        </FormControl>
+        {id && userInformation?.role === "Staff" && order.status === 2 && (
+          <FormControl
+            display={"flex"}
+            justifyContent={"center"}
+            flexDirection={"column"}
+          >
+            <FormLabel textAlign={"left"} margin={"unset"} mb="5px">
+              Lý do hủy đơn hàng (nếu có):
+            </FormLabel>
+            <Input.TextArea onChange={onChangeInputReason} />
+          </FormControl>
+        )}
       </Row>
 
       <div style={{ display: "flex", justifyContent: "flex-end" }}>
@@ -101,17 +168,20 @@ export const SummaryOrder = ({
           <>
             {order.status === 2 && (
               <Flex>
-                <Button
-                  display={"flex"}
-                  justifyContent={"center"}
-                  alignItems={"center"}
-                  mr={"8px"}
-                  colorScheme="red"
-                  onClick={() => handleUpdateOrder(4)}
-                >
-                  <FiXCircle style={{ marginRight: "5px" }} />
-                  Từ chối
-                </Button>
+                <Tooltip title={!value ? "Vui lòng nhập lý do hủy đơn" : ""}>
+                  <Button
+                    isDisabled={!value}
+                    display={"flex"}
+                    justifyContent={"center"}
+                    alignItems={"center"}
+                    mr={"8px"}
+                    colorScheme="red"
+                    onClick={() => handleUpdateOrder(4)}
+                  >
+                    <FiXCircle style={{ marginRight: "5px" }} />
+                    Từ chối
+                  </Button>
+                </Tooltip>
                 <Button
                   colorScheme="green"
                   display={"flex"}
@@ -126,7 +196,7 @@ export const SummaryOrder = ({
             )}
           </>
         ) : (userInformation?.role === "Staff" ||
-          userInformation?.role === "Company") &&
+            userInformation?.role === "Company") &&
           !id ? (
           <Flex>
             <Button

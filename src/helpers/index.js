@@ -105,26 +105,41 @@ function convertISODateToDDMMYY(isoDateString) {
 function getStatusTitle(status) {
   const statusTitles = {
     1: "Idle",
-    2: "Waiting",
-    3: "Accepted",
-    4: "Cancel",
-    5: "Delivering",
-    6: "Completed",
-    7: "Delay",
-    9: "InStock",
+    2: "Đang đợi",
+    3: "Đã duyệt",
+    4: "Từ chối",
+    5: "Vận chuyển",
+    6: "Hoàn thành",
+    7: "Trì hoãn",
+    9: "Tồn kho",
   };
 
   return statusTitles[status] || "Unknown Status";
 }
 
+function getStatusColor(status) {
+  const statusTitles = {
+    1: "magenta",
+    2: "gold",
+    3: "green",
+    4: "red",
+    5: "blue",
+    6: "green",
+    7: "purple",
+    9: "purple",
+  };
+
+  return statusTitles[status] || "lime";
+}
+
 function getStatusTrip(status) {
   const statusTitles = {
-    1: "Deleted",
+    1: "Đã xóa",
     2: "Idle",
-    3: "Delivering",
-    4: "Completed",
-    5: "Problem",
-    6: "Getting",
+    3: "Vận chuyển",
+    4: "Hoàn thành",
+    5: "Vấn đề",
+    6: "Đang nhận",
   };
 
   return statusTitles[status] || "Unknown Status";
@@ -146,6 +161,7 @@ export {
   convertOrder,
   convertISODateToDDMMYY,
   getStatusTitle,
+  getStatusColor,
   getStatusTrip,
   exportToExcel,
 };

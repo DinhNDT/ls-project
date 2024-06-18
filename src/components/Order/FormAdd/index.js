@@ -30,7 +30,6 @@ import {
   Tooltip,
   Drawer,
 } from "antd";
-import { useNavigate } from "react-router-dom";
 import { GlobalContext } from "../../../provider";
 import { convertOrder } from "../../../helpers";
 import axios from "axios";
@@ -40,6 +39,8 @@ import { OrderContext } from "../../../provider/order";
 import { CardOrder } from "../CardOrder";
 import dayjs from "dayjs";
 import { SummaryOrder } from "../SummaryOrder";
+import { TableOrder } from "../TableOrder";
+import { InputFormatPrice } from "../InputFormatPrice";
 
 const { Option } = Select;
 
@@ -56,20 +57,18 @@ const defaultItem = {
   color: "",
 };
 
-export const FORMAT_TIME = "YYYY-MM-DD HH:mm:ss";
-const FORMAT_TIME_SUBMIT = "YYYY-MM-DDTHH:mm:ss";
+export const FORMAT_TIME = "YYYY-MM-DD";
 
 const CreateOrderForm = ({ id }) => {
-  const navigate = useNavigate();
   const userContext = useContext(GlobalContext);
   const { userInformation, headers } = userContext;
   const orderContext = useContext(OrderContext);
   const { setKeySelected } = orderContext;
 
   const [order, setOrder] = useState({
-    orderDate: dayjs().format(FORMAT_TIME_SUBMIT),
+    orderDate: dayjs().format(FORMAT_TIME),
     companyId: "",
-    dayGet: dayjs().format(FORMAT_TIME_SUBMIT),
+    dayGet: dayjs().format(FORMAT_TIME),
     locationDetailGet: "",
     provinceGet: "",
     cityGet: "",
@@ -437,13 +436,16 @@ const CreateOrderForm = ({ id }) => {
       );
       if (updateOrder.status === 200) {
         toast({
-          title: "Update Order success.",
-          description: "We've received your order.",
-          status: "success",
+          title:
+            status === 4
+              ? "Đã từ chối đơn hàng"
+              : "Đơn hàng đã được chấp nhận.",
+          description: "Cập nhật đơn hàng thành công.",
+          status: status === 4 ? "warning" : "success",
           duration: 3000,
           isClosable: true,
         });
-        navigate("order/manage-order");
+        setKeySelected("1");
       }
     } catch (e) {
       console.error(e);
@@ -457,9 +459,6 @@ const CreateOrderForm = ({ id }) => {
         ...order,
         ...orderBill,
         accountId: userInformation?.accounId,
-        // dayGet: id
-        //   ? order.dayGet
-        //   : order.dayGet.format(FORMAT_TIME).replace(" ", "T"),
       };
       let userRole = userInformation?.role;
       let url =
@@ -540,6 +539,11 @@ const CreateOrderForm = ({ id }) => {
                   handleChange("unitPrice", valueString.target.value)
                 }
               />
+              {/* <FormLabel>Giá trị đơn hàng</FormLabel>
+              <InputFormatPrice
+                valueInput={selectedItem?.unitPrice}
+                handleItemChange={handleChange}
+              /> */}
             </FormControl>
 
             <FormControl isRequired>
@@ -960,11 +964,10 @@ const CreateOrderForm = ({ id }) => {
                   <Form.Item name="dayGet" required label="Ngày gửi hàng">
                     <DatePicker
                       onChange={(_, time) => {
-                        handleChangeOrder("dayGet", time.replace(" ", "T"));
+                        handleChangeOrder("dayGet", time);
                       }}
                       format={FORMAT_TIME}
                       // defaultValue={dayjs()}
-                      showTime
                       disabled={!!id}
                     />
                   </Form.Item>
@@ -1117,39 +1120,6 @@ const CreateOrderForm = ({ id }) => {
               </Stack>
             </Card>
           </Flex>
-          <Box height={"2%"} mb={10}>
-            <Tooltip
-              title={
-                !orderBill?.expectedDeliveryDate
-                  ? "Vui lòng điền các thông tin trên"
-                  : ""
-              }
-            >
-              <ButtonAntd
-                style={{ width: "25%", float: "right" }}
-                type="primary"
-                disabled={!orderBill?.expectedDeliveryDate}
-                onClick={showDrawer}
-              >
-                {id ? "Xem Đơn Hàng" : "Tạo Đơn Hàng"}
-              </ButtonAntd>
-            </Tooltip>
-          </Box>
-          <Stack>
-            {order?.items.map((item, index) => (
-              <CardOrder
-                key={index + item.itemName}
-                id={id}
-                index={index}
-                item={item}
-                order={order}
-                setItemSelected={setItemSelected}
-                setSelectedIndex={setSelectedIndex}
-                onOpen={onOpen}
-                setOrder={setOrder}
-              />
-            ))}
-          </Stack>
           {!id && (
             <Card type="inner" title="Thông tin mặt hàng">
               <Form layout="vertical">
@@ -1188,18 +1158,10 @@ const CreateOrderForm = ({ id }) => {
                     </FormControl>
                     {itemData?.insurance && (
                       <Form.Item label="Giá trị đơn hàng">
-                        <Input
-                          disabled={id ? true : false}
-                          value={itemData?.unitPrice}
-                          precision={2}
-                          min={0}
-                          type="number"
-                          onChange={(valueString) =>
-                            handleItemChange(
-                              "unitPrice",
-                              valueString.target.value
-                            )
-                          }
+                        <InputFormatPrice
+                          id={id}
+                          valueInput={itemData?.unitPrice}
+                          handleItemChange={handleItemChange}
                         />
                       </Form.Item>
                     )}
@@ -1232,7 +1194,7 @@ const CreateOrderForm = ({ id }) => {
                           }
                         />
                       </Form.Item>
-                      <Form.Item label="Dài(m)">
+                      <Form.Item label="Dài(cm)">
                         <Input
                           disabled={id ? true : false}
                           value={itemData?.length}
@@ -1244,7 +1206,7 @@ const CreateOrderForm = ({ id }) => {
                           }
                         />
                       </Form.Item>
-                      <Form.Item label="Rộng(m)">
+                      <Form.Item label="Rộng(cm)">
                         <Input
                           disabled={id ? true : false}
                           value={itemData?.width}
@@ -1256,7 +1218,7 @@ const CreateOrderForm = ({ id }) => {
                           }
                         />
                       </Form.Item>
-                      <Form.Item label="Cao(m)">
+                      <Form.Item label="Cao(cm)">
                         <Input
                           disabled={id ? true : false}
                           value={itemData?.height}
@@ -1291,10 +1253,14 @@ const CreateOrderForm = ({ id }) => {
                       />
                     </Form.Item>
                     <div
-                      style={{ display: "flex", justifyContent: "flex-end" }}
+                      style={{
+                        display: "flex",
+                        justifyContent: "flex-end",
+                        gap: "10px",
+                      }}
                     >
                       <ButtonAntd
-                        style={{ width: "25%" }}
+                        style={{ width: "250px" }}
                         type="primary"
                         onClick={() => {
                           setOrder({
@@ -1323,6 +1289,46 @@ const CreateOrderForm = ({ id }) => {
               </Form>
             </Card>
           )}
+          <Box>
+            {id ? (
+              <TableOrder order={order} />
+            ) : (
+              order?.items.map((item, index) => (
+                <CardOrder
+                  key={index + item.itemName}
+                  id={id}
+                  index={index}
+                  item={item}
+                  order={order}
+                  setItemSelected={setItemSelected}
+                  setSelectedIndex={setSelectedIndex}
+                  onOpen={onOpen}
+                  setOrder={setOrder}
+                />
+              ))
+            )}
+
+            {order?.items.length > 0 ? (
+              <Box>
+                <Tooltip
+                  title={
+                    !orderBill?.expectedDeliveryDate
+                      ? "Vui lòng điền các thông tin trên"
+                      : ""
+                  }
+                >
+                  <ButtonAntd
+                    style={{ width: "250px", float: "right", marginRight: 24 }}
+                    type="primary"
+                    disabled={!orderBill?.expectedDeliveryDate}
+                    onClick={showDrawer}
+                  >
+                    {id ? "Xem Đơn Hàng" : "Tạo Đơn Hàng"}
+                  </ButtonAntd>
+                </Tooltip>
+              </Box>
+            ) : null}
+          </Box>
         </Stack>
       </Box>
       <Drawer

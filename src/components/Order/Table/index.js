@@ -6,10 +6,23 @@ import axios from "axios";
 import { GlobalContext } from "../../../provider";
 import ModalOrder from "../ModalOrder";
 import GoongMapWithRoute from "../../Map";
-import { exportToExcel, formatDate, getStatusTitle } from "../../../helpers";
+import {
+  exportToExcel,
+  formatDate,
+  getStatusColor,
+  getStatusTitle,
+} from "../../../helpers";
 import { TbDatabaseExport } from "react-icons/tb";
 import { Space, Table, Tag, Button } from "antd";
-import { AiFillEye } from "react-icons/ai";
+import {
+  AiFillEye,
+  AiOutlineArrowUp,
+  AiOutlineCalendar,
+  AiOutlineCheck,
+  AiOutlineClockCircle,
+  AiOutlineCloseCircle,
+  AiOutlineShop,
+} from "react-icons/ai";
 import { OrderContext } from "../../../provider/order";
 import { Button as ButtonChakra } from "@chakra-ui/react";
 import { Flex } from "antd/es";
@@ -42,6 +55,21 @@ function TableComponent({ url = "" }) {
       "Trạng thái",
     ],
   ]);
+
+  function getStatusIcon(status) {
+    const statusTitles = {
+      1: "",
+      2: <AiOutlineArrowUp />,
+      3: <AiOutlineCheck />,
+      4: <AiOutlineCloseCircle />,
+      5: <AiOutlineClockCircle />,
+      6: <AiOutlineCheck />,
+      7: <AiOutlineCalendar />,
+      9: <AiOutlineShop />,
+    };
+
+    return statusTitles[status] || "";
+  }
 
   const uniqueDescriptions = {};
 
@@ -114,42 +142,48 @@ function TableComponent({ url = "" }) {
           value: 1,
         },
         {
-          text: "Waiting",
+          text: "Đang đợi",
           value: 2,
         },
         {
-          text: "Accepted",
+          text: "Đã duyệt",
           value: 3,
         },
         {
-          text: "Cancel",
+          text: "Từ chối",
           value: 4,
         },
         {
-          text: "Delivering",
+          text: "Vận chuyển",
           value: 5,
         },
         {
-          text: "Completed",
+          text: "Hoàn thành",
           value: 6,
         },
         {
-          text: "Delay",
+          text: "Trì hoãn",
           value: 7,
         },
         {
-          text: "InStock",
+          text: "Tồn kho",
           value: 9,
         },
       ],
       onFilter: (value, record) => record.status === value,
       width: "15%",
       render: (status) => {
-        let bgColor = "green";
-        let key = status;
-
         return (
-          <Tag color={bgColor} key={key}>
+          <Tag
+            icon={getStatusIcon(status)}
+            color={getStatusColor(status)}
+            key={status}
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "3px",
+            }}
+          >
             {getStatusTitle(status)}
           </Tag>
         );
@@ -160,14 +194,14 @@ function TableComponent({ url = "" }) {
       key: "action",
       render: (_, record) => (
         <Space size="middle">
-          <a
+          <button
             onClick={() => {
               setSelectedItem(record);
               setKeySelected("0");
             }}
           >
             <AiFillEye />
-          </a>
+          </button>
         </Space>
       ),
     },
