@@ -1,5 +1,6 @@
 import { Table } from "antd";
 import React from "react";
+import { formatMoney } from "../../../helpers";
 
 export const TableOrder = ({ order }) => {
   const columns = [
@@ -9,7 +10,7 @@ export const TableOrder = ({ order }) => {
       rowScope: "row",
       align: "center",
       width: "35px",
-      render: (_, __, index) => <a>{index + 1}</a>,
+      render: (_, __, index) => <span>{index + 1}</span>,
     },
     {
       title: "Tên mặt hàng",
@@ -50,6 +51,12 @@ export const TableOrder = ({ order }) => {
       title: "Màu sắc",
       dataIndex: "color",
       key: "color",
+    },
+    {
+      title: "Giá sản phẩm",
+      dataIndex: "unitPrice",
+      key: "unitPrice",
+      render: (text) => <span>{formatMoney(Math.ceil(text))} VNĐ</span>,
     },
     {
       title: "Mô tả",

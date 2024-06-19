@@ -52,7 +52,7 @@ export const SummaryOrder = ({
             </FormLabel>
           </Col>
           <Col span={10}>
-            <Text textAlign={"left"} color={"#4096ff"}>
+            <Text textAlign={"left"} color={"#4096ff"} fontWeight={500}>
               {formatDate(orderBill?.expectedDeliveryDate)}
             </Text>
           </Col>
@@ -69,7 +69,7 @@ export const SummaryOrder = ({
             </FormLabel>
           </Col>
           <Col span={10}>
-            <Text textAlign={"left"} color={"#4096ff"}>
+            <Text textAlign={"left"} color={"#4096ff"} fontWeight={500}>
               {orderBill?.distance} Km
             </Text>
           </Col>
@@ -86,7 +86,7 @@ export const SummaryOrder = ({
             </FormLabel>
           </Col>
           <Col span={10}>
-            <Text textAlign={"left"} color={"#4096ff"}>
+            <Text textAlign={"left"} color={"#4096ff"} fontWeight={500}>
               {totalItem}
             </Text>
           </Col>
@@ -103,7 +103,7 @@ export const SummaryOrder = ({
             </FormLabel>
           </Col>
           <Col span={10}>
-            <Text textAlign={"left"} color={"#4096ff"}>
+            <Text textAlign={"left"} color={"#4096ff"} fontWeight={500}>
               {orderBill?.totalWeight} Kg
             </Text>
           </Col>
@@ -127,7 +127,7 @@ export const SummaryOrder = ({
             </FormLabel>
           </Col>
           <Col span={10}>
-            <Text textAlign={"left"} color={"#4096ff"}>
+            <Text textAlign={"left"} color={"#4096ff"} fontWeight={500}>
               {formatMoney(Math.ceil(orderBill?.totalInsurance))} VNĐ
             </Text>
           </Col>
@@ -144,7 +144,7 @@ export const SummaryOrder = ({
             </FormLabel>
           </Col>
           <Col span={10}>
-            <Text color={"#4096ff"} textAlign={"left"}>
+            <Text color={"#4096ff"} textAlign={"left"} fontWeight={500}>
               {formatMoney(Math.ceil(orderBill?.deliveryPrice))} VNĐ
             </Text>
           </Col>
