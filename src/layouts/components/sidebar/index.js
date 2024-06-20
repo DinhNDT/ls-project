@@ -152,7 +152,9 @@ const SideBar = () => {
         </div>
         <Menu
           theme="dark"
+          defaultOpenKeys={["sub1"]}
           defaultSelectedKeys={["1"]}
+          selectedKeys={[keySelected === "0" ? "1" : keySelected]}
           mode="inline"
           items={items}
           onClick={handleChangeMenuItem}

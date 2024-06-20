@@ -99,7 +99,7 @@ export const CardOrder = ({
                   type="number"
                 />
               </Form.Item>
-              <Form.Item label="Dài(m)">
+              <Form.Item label="Dài(cm)">
                 <Input
                   disabled={id ? true : false}
                   value={item?.length}
@@ -108,7 +108,7 @@ export const CardOrder = ({
                   min={0}
                 />
               </Form.Item>
-              <Form.Item label="Rộng(m)">
+              <Form.Item label="Rộng(cm)">
                 <Input
                   disabled={id ? true : false}
                   value={item?.width}
@@ -117,7 +117,7 @@ export const CardOrder = ({
                   min={0}
                 />
               </Form.Item>
-              <Form.Item label="Cao(m)">
+              <Form.Item label="Cao(cm)">
                 <Input
                   disabled={id ? true : false}
                   value={item?.height}

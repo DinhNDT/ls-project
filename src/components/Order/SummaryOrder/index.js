@@ -17,7 +17,16 @@ export const SummaryOrder = ({
   const totalItem = useMemo(
     () =>
       order?.items?.reduce((total, current) => {
-        return (total += current.quantityItem);
+        return (total += Number(current.quantityItem));
+      }, 0),
+    [order]
+  );
+
+  const totalPriceAllItem = useMemo(
+    () =>
+      order?.items?.reduce((total, current) => {
+        return (total +=
+          Number(current.unitPrice) * Number(current.quantityItem));
       }, 0),
     [order]
   );
@@ -108,6 +117,24 @@ export const SummaryOrder = ({
             </Text>
           </Col>
         </FormControl>
+
+        <FormControl
+          display={"flex"}
+          alignItems={"center"}
+          justifyContent={"center"}
+        >
+          <Col span={14}>
+            <FormLabel textAlign={"left"} margin={"unset"}>
+              Tổng giá trị đơn hàng:
+            </FormLabel>
+          </Col>
+          <Col span={10}>
+            <Text textAlign={"left"} color={"#4096ff"} fontWeight={500}>
+              {formatMoney(Math.ceil(totalPriceAllItem))} VNĐ
+            </Text>
+          </Col>
+        </FormControl>
+
         <FormControl
           display={"flex"}
           alignItems={"center"}

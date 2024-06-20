@@ -26,6 +26,7 @@ import {
 import { OrderContext } from "../../../provider/order";
 import { Button as ButtonChakra } from "@chakra-ui/react";
 import { Flex } from "antd/es";
+import dayjs from "dayjs";
 
 function TableComponent({ url = "" }) {
   const [data, setData] = useState([]);
@@ -100,6 +101,7 @@ function TableComponent({ url = "" }) {
       filterSearch: true,
       onFilter: (value, record) => record.company?.companyName?.includes(value),
       width: "15%",
+      hidden: userInformation?.role === "Company" ? true : false,
     },
 
     {
@@ -126,11 +128,13 @@ function TableComponent({ url = "" }) {
       title: "Ngày đặt hàng",
       dataIndex: "orderDate",
       render: (orderDate) => <p>{formatDate(orderDate)}</p>,
+      sorter: (a, b) => dayjs(a.orderDate) - dayjs(b.orderDate),
     },
     {
       title: "Ngày lấy hàng",
       dataIndex: "dayGet",
       render: (dayGet) => <p>{formatDate(dayGet)}</p>,
+      sorter: (a, b) => dayjs(a.dayGet) - dayjs(b.dayGet),
     },
     {
       title: "Trạng thái",
@@ -223,6 +227,7 @@ function TableComponent({ url = "" }) {
         : "/Order/order?status=3";
     }
     if (userInformation?.role === "Company") {
+      urlQ = `/Order/ByCompanyId/${userInformation?.idByRole}`;
       url = `/Order/order?accountId=${userInformation?.accounId}`;
     }
     try {
@@ -350,6 +355,7 @@ function TableComponent({ url = "" }) {
           ? `/company/create-order`
           : "#";
       navigate(url);
+      setKeySelected("2");
     }
   };
 

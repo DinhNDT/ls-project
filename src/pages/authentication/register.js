@@ -21,7 +21,7 @@ import { FormUserInfo } from "../../components/Register/FormUserInfo";
 import { ArrowBackIcon, ArrowForwardIcon } from "@chakra-ui/icons";
 
 const LINK_POLICY =
-  "https://docs.google.com/document/d/1KRtwWgw9lFQap-qzTHs31p76g5SGtbsv/edit?usp=sharing&ouid=107245805655341164503&rtpof=true&sd=true";
+  "https://drive.google.com/uc?id=1KRtwWgw9lFQap-qzTHs31p76g5SGtbsv&export=download";
 
 export default function RegisterPage() {
   const [form] = Form.useForm();

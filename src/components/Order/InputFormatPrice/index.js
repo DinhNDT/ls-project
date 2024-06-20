@@ -1,8 +1,13 @@
 import { Input, Tooltip } from "antd";
 import { useState } from "react";
 
-export const InputFormatPrice = ({ id, valueInput, handleItemChange }) => {
-  const [value, setValue] = useState("");
+export const InputFormatPrice = ({
+  id,
+  valueInput,
+  handleItemChange,
+  hasTooltip = false,
+}) => {
+  const [value, setValue] = useState(valueInput ?? "");
   const formatNumber = (value) =>
     new Intl.NumberFormat("vi-VN", {
       currency: "VND",
@@ -17,13 +22,13 @@ export const InputFormatPrice = ({ id, valueInput, handleItemChange }) => {
   };
 
   // '.' at the end or only '-' in the input box.
-  const handleBlur = () => {
-    let valueTemp = value;
-    if (value.charAt(value.length - 1) === "." || value === "-") {
-      valueTemp = value.slice(0, -1);
-    }
-    setValue(valueTemp.replace(/0*(\d+)/, "$1"));
-  };
+  // const handleBlur = () => {
+  //   let valueTemp = value;
+  //   if (value.charAt(value.length - 1) === "." || value === "-") {
+  //     valueTemp = value.slice(0, -1);
+  //   }
+  //   setValue(valueTemp.replace(/0*(\d+)/, "$1"));
+  // };
 
   const title = value ? (
     <span className="numeric-input-title">
@@ -39,6 +44,7 @@ export const InputFormatPrice = ({ id, valueInput, handleItemChange }) => {
       title={title}
       placement="bottomLeft"
       overlayClassName="numeric-input"
+      overlayStyle={{ zIndex: "1999" }}
     >
       <Input
         disabled={id ? true : false}
@@ -50,7 +56,7 @@ export const InputFormatPrice = ({ id, valueInput, handleItemChange }) => {
           handleItemChange("unitPrice", valueString.target.value);
           handleChange(valueString);
         }}
-        onBlur={handleBlur}
+        // onBlur={handleBlur}
       />
     </Tooltip>
   );

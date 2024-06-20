@@ -46,7 +46,7 @@ const { Option } = Select;
 
 const defaultItem = {
   itemName: "",
-  insurance: false,
+  insurance: true,
   description: "",
   unitPrice: 0,
   quantityItem: 0,
@@ -123,6 +123,15 @@ const CreateOrderForm = ({ id }) => {
 
   const handleItemChange = (name, value) => {
     setItemData({ ...itemData, [name]: value });
+  };
+
+  const handleItemChangeNumber = (name, value) => {
+    const newNumber = parseInt(value || "0", 10);
+    if (Number.isNaN(itemData[name])) {
+      return;
+    }
+
+    setItemData({ ...itemData, [name]: newNumber });
   };
 
   const handleButtonClick = () => {
@@ -273,6 +282,17 @@ const CreateOrderForm = ({ id }) => {
     setItemSelected((prevItem) => ({
       ...prevItem,
       [name]: value,
+    }));
+  };
+
+  const handleChangeNumber = (name, value) => {
+    const newNumber = parseInt(value || "0", 10);
+    if (Number.isNaN(itemData[name])) {
+      return;
+    }
+    setItemSelected((prevItem) => ({
+      ...prevItem,
+      [name]: newNumber,
     }));
   };
 
@@ -530,7 +550,7 @@ const CreateOrderForm = ({ id }) => {
             </FormControl>
 
             <FormControl isRequired>
-              <FormLabel>Giá trị đơn hàng</FormLabel>
+              {/* <FormLabel>Giá trị đơn hàng</FormLabel>
               <Input
                 value={selectedItem?.unitPrice}
                 precision={2}
@@ -538,12 +558,12 @@ const CreateOrderForm = ({ id }) => {
                 onChange={(valueString) =>
                   handleChange("unitPrice", valueString.target.value)
                 }
-              />
-              {/* <FormLabel>Giá trị đơn hàng</FormLabel>
+              /> */}
+              <FormLabel>Giá trị đơn hàng</FormLabel>
               <InputFormatPrice
                 valueInput={selectedItem?.unitPrice}
-                handleItemChange={handleChange}
-              /> */}
+                handleItemChange={handleChangeNumber}
+              />
             </FormControl>
 
             <FormControl isRequired>
@@ -552,7 +572,7 @@ const CreateOrderForm = ({ id }) => {
                 value={selectedItem?.quantityItem}
                 min={0}
                 onChange={(valueString) =>
-                  handleChange("quantityItem", valueString.target.value)
+                  handleChangeNumber("quantityItem", valueString.target.value)
                 }
               />
             </FormControl>
@@ -564,43 +584,43 @@ const CreateOrderForm = ({ id }) => {
                 precision={2}
                 min={0}
                 onChange={(valueString) =>
-                  handleChange("unitWeight", valueString.target.value)
+                  handleChangeNumber("unitWeight", valueString.target.value)
                 }
               />
             </FormControl>
 
             <FormControl isRequired>
-              <FormLabel>Dài (m)</FormLabel>
+              <FormLabel>Dài (cm)</FormLabel>
               <Input
                 value={selectedItem?.length}
                 precision={2}
                 min={0}
                 onChange={(valueString) =>
-                  handleChange("length", valueString.target.value)
+                  handleChangeNumber("length", valueString.target.value)
                 }
               />
             </FormControl>
 
             <FormControl isRequired>
-              <FormLabel>Rộng (m)</FormLabel>
+              <FormLabel>Rộng (cm)</FormLabel>
               <Input
                 value={selectedItem?.width}
                 precision={2}
                 min={0}
                 onChange={(valueString) =>
-                  handleChange("width", valueString.target.value)
+                  handleChangeNumber("width", valueString.target.value)
                 }
               />
             </FormControl>
 
             <FormControl isRequired>
-              <FormLabel>Cao (m)</FormLabel>
+              <FormLabel>Cao (cm)</FormLabel>
               <Input
                 value={selectedItem?.height}
                 precision={2}
                 min={0}
                 onChange={(valueString) =>
-                  handleChange("height", valueString.target.value)
+                  handleChangeNumber("height", valueString.target.value)
                 }
               />
             </FormControl>
@@ -722,9 +742,15 @@ const CreateOrderForm = ({ id }) => {
           </Button>
         </>
       )}
-      <Box padding={"0 3%"} maxW={"1400px"} margin={"0 auto"}>
+      <Box
+        padding={"0 3%"}
+        maxW={"1400px"}
+        margin={"0 auto"}
+        display={"flex"}
+        justifyContent={"center"}
+      >
         {ModalItem}
-        <Stack maxW={"1200px"}>
+        <Stack width={"100%"}>
           <Card type="inner" title="Thông tin Công Ty">
             <Form layout="vertical">
               <Flex justifyContent={"space-between"}>
@@ -967,7 +993,7 @@ const CreateOrderForm = ({ id }) => {
                         handleChangeOrder("dayGet", time);
                       }}
                       format={FORMAT_TIME}
-                      // defaultValue={dayjs()}
+                      minDate={dayjs()}
                       disabled={!!id}
                     />
                   </Form.Item>
@@ -1160,8 +1186,9 @@ const CreateOrderForm = ({ id }) => {
                       <Form.Item label="Giá trị đơn hàng">
                         <InputFormatPrice
                           id={id}
+                          hasTooltip={true}
                           valueInput={itemData?.unitPrice}
-                          handleItemChange={handleItemChange}
+                          handleItemChange={handleItemChangeNumber}
                         />
                       </Form.Item>
                     )}
@@ -1173,7 +1200,7 @@ const CreateOrderForm = ({ id }) => {
                           min={0}
                           type="number"
                           onChange={(valueString) =>
-                            handleItemChange(
+                            handleItemChangeNumber(
                               "unitWeight",
                               valueString.target.value
                             )
@@ -1187,7 +1214,7 @@ const CreateOrderForm = ({ id }) => {
                           min={0}
                           type="number"
                           onChange={(valueString) =>
-                            handleItemChange(
+                            handleItemChangeNumber(
                               "quantityItem",
                               valueString.target.value
                             )
@@ -1202,7 +1229,10 @@ const CreateOrderForm = ({ id }) => {
                           type="number"
                           min={0}
                           onChange={(valueString) =>
-                            handleItemChange("length", valueString.target.value)
+                            handleItemChangeNumber(
+                              "length",
+                              valueString.target.value
+                            )
                           }
                         />
                       </Form.Item>
@@ -1214,7 +1244,10 @@ const CreateOrderForm = ({ id }) => {
                           type="number"
                           min={0}
                           onChange={(valueString) =>
-                            handleItemChange("width", valueString.target.value)
+                            handleItemChangeNumber(
+                              "width",
+                              valueString.target.value
+                            )
                           }
                         />
                       </Form.Item>
@@ -1226,7 +1259,10 @@ const CreateOrderForm = ({ id }) => {
                           type="number"
                           min={0}
                           onChange={(valueString) =>
-                            handleItemChange("height", valueString.target.value)
+                            handleItemChangeNumber(
+                              "height",
+                              valueString.target.value
+                            )
                           }
                         />
                       </Form.Item>
