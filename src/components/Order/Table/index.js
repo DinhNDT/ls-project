@@ -28,6 +28,21 @@ import { Button as ButtonChakra } from "@chakra-ui/react";
 import { Flex } from "antd/es";
 import dayjs from "dayjs";
 
+export const getStatusIcon = (status) => {
+  const statusTitles = {
+    1: "",
+    2: <AiOutlineArrowUp />,
+    3: <AiOutlineCheck />,
+    4: <AiOutlineCloseCircle />,
+    5: <AiOutlineClockCircle />,
+    6: <AiOutlineCheck />,
+    7: <AiOutlineCalendar />,
+    9: <AiOutlineShop />,
+  };
+
+  return statusTitles[status] || "";
+};
+
 function TableComponent({ url = "" }) {
   const [data, setData] = useState([]);
   const navigate = useNavigate();
@@ -56,21 +71,6 @@ function TableComponent({ url = "" }) {
       "Trạng thái",
     ],
   ]);
-
-  function getStatusIcon(status) {
-    const statusTitles = {
-      1: "",
-      2: <AiOutlineArrowUp />,
-      3: <AiOutlineCheck />,
-      4: <AiOutlineCloseCircle />,
-      5: <AiOutlineClockCircle />,
-      6: <AiOutlineCheck />,
-      7: <AiOutlineCalendar />,
-      9: <AiOutlineShop />,
-    };
-
-    return statusTitles[status] || "";
-  }
 
   const uniqueDescriptions = {};
 
@@ -101,7 +101,7 @@ function TableComponent({ url = "" }) {
       filterSearch: true,
       onFilter: (value, record) => record.company?.companyName?.includes(value),
       width: "15%",
-      hidden: userInformation?.role === "Company" ? true : false,
+      hidden: userInformation?.role === "Company",
     },
 
     {
@@ -196,12 +196,21 @@ function TableComponent({ url = "" }) {
     {
       title: "Action",
       key: "action",
+      align: "center",
       render: (_, record) => (
         <Space size="middle">
-          <button
+          {/* <button
             onClick={() => {
               setSelectedItem(record);
               setKeySelected("0");
+            }}
+          >
+            <AiFillEdit />
+          </button> */}
+          <button
+            onClick={() => {
+              setSelectedItem(record);
+              setKeySelected("0A");
             }}
           >
             <AiFillEye />

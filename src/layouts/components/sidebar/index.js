@@ -34,6 +34,7 @@ import PriceListManagementPage from "../../../pages/admin/price-list-management"
 import DistanceManagementPage from "../../../pages/admin/distance-management";
 import WeightManagementPage from "../../../pages/admin/weight-management";
 import StockDetailPage from "../../../pages/admin/stock-detail";
+import ReviewOrderPage from "../../../pages/company/order/review-order";
 
 const { Item } = Breadcrumb;
 const { Header, Content, Footer, Sider } = Layout;
@@ -154,7 +155,9 @@ const SideBar = () => {
           theme="dark"
           defaultOpenKeys={["sub1"]}
           defaultSelectedKeys={["1"]}
-          selectedKeys={[keySelected === "0" ? "1" : keySelected]}
+          selectedKeys={[
+            keySelected === "0" || keySelected === "0A" ? "1" : keySelected,
+          ]}
           mode="inline"
           items={items}
           onClick={handleChangeMenuItem}
@@ -208,6 +211,10 @@ const SideBar = () => {
                 userRole === "Staff" ||
                 userRole === "Stocker") && (
                 <CreateOrderPage id={selectedItem?.orderId} />
+              )}
+            {keySelected === "0A" &&
+              (userRole === "Company" || userRole === "Staff") && (
+                <ReviewOrderPage id={selectedItem?.orderId} />
               )}
             {keySelected === "1" &&
               (userRole === "Company" || userRole === "Staff") && <OrderPage />}

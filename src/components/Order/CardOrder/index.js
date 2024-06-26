@@ -16,7 +16,6 @@ export const CardOrder = ({
   const [isHidingDetail, setIsHidingDetail] = useState(false);
   return (
     <Card
-      key={index}
       styles={{ body: { display: isHidingDetail ? "none" : "" } }}
       style={{ marginBottom: "1%" }}
       title={

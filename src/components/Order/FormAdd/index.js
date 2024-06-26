@@ -28,7 +28,6 @@ import {
   Button as ButtonAntd,
   DatePicker,
   Tooltip,
-  Drawer,
 } from "antd";
 import { GlobalContext } from "../../../provider";
 import { convertOrder } from "../../../helpers";
@@ -38,9 +37,10 @@ import TextArea from "antd/es/input/TextArea";
 import { OrderContext } from "../../../provider/order";
 import { CardOrder } from "../CardOrder";
 import dayjs from "dayjs";
-import { SummaryOrder } from "../SummaryOrder";
 import { TableOrder } from "../TableOrder";
 import { InputFormatPrice } from "../InputFormatPrice";
+import { ReviewOrder } from "../ReviewOrder";
+import { AiOutlineArrowRight } from "react-icons/ai";
 
 const { Option } = Select;
 
@@ -57,7 +57,8 @@ const defaultItem = {
   color: "",
 };
 
-export const FORMAT_TIME = "YYYY-MM-DD";
+export const FORMAT_TIME = "DD/MM/YYYY";
+export const FORMAT_TIME_SUBMIT = "YYYY-MM-DD";
 
 const CreateOrderForm = ({ id }) => {
   const userContext = useContext(GlobalContext);
@@ -66,9 +67,9 @@ const CreateOrderForm = ({ id }) => {
   const { setKeySelected } = orderContext;
 
   const [order, setOrder] = useState({
-    orderDate: dayjs().format(FORMAT_TIME),
+    orderDate: dayjs().format(FORMAT_TIME_SUBMIT),
     companyId: "",
-    dayGet: dayjs().format(FORMAT_TIME),
+    dayGet: dayjs().format(FORMAT_TIME_SUBMIT),
     locationDetailGet: "",
     provinceGet: "",
     cityGet: "",
@@ -89,14 +90,14 @@ const CreateOrderForm = ({ id }) => {
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast({ position: "top" });
-  const [isOpenDrawer, setOpenDrawer] = useState(false);
+  const [nextToReview, setPrevToReview] = useState(false);
 
-  const showDrawer = () => {
-    setOpenDrawer(true);
+  const onNextToReviewOrder = () => {
+    setPrevToReview(true);
   };
 
-  const onCloseDrawer = () => {
-    setOpenDrawer(false);
+  const onBackOrder = () => {
+    setPrevToReview(false);
   };
 
   const [selectedItem, setItemSelected] = useState(defaultItem);
@@ -119,14 +120,14 @@ const CreateOrderForm = ({ id }) => {
 
   const fileInputRef = useRef(null);
 
-  const [companyData, setCompanyData] = useState({});
+  const [companyData, setCompanyData] = useState(null);
 
   const handleItemChange = (name, value) => {
     setItemData({ ...itemData, [name]: value });
   };
 
   const handleItemChangeNumber = (name, value) => {
-    const newNumber = parseInt(value || "0", 10);
+    const newNumber = parseFloat(value || "0", 10);
     if (Number.isNaN(itemData[name])) {
       return;
     }
@@ -191,10 +192,12 @@ const CreateOrderForm = ({ id }) => {
   };
 
   const handleTransferAddress = (companyData) => {
-    let address = companyData[0]?.companyLocation?.split(",").at(0).trim();
-    let ward = companyData[0]?.companyLocation?.split(",").at(1).trim();
-    let district = companyData[0]?.companyLocation?.split(",").at(2).trim();
-    let province = companyData[0]?.companyLocation?.split(",").at(3).trim();
+    if (!companyData) return;
+
+    let address = companyData[0]?.companyLocation?.split(",").at(0)?.trim();
+    let ward = companyData[0]?.companyLocation?.split(",").at(1)?.trim();
+    let district = companyData[0]?.companyLocation?.split(",").at(2)?.trim();
+    let province = companyData[0]?.companyLocation?.split(",").at(3)?.trim();
     handleChangeOrder("provinceGet", province);
     handleChangeOrder("cityGet", province);
     handleChangeOrder("districtGet", district);
@@ -286,10 +289,12 @@ const CreateOrderForm = ({ id }) => {
   };
 
   const handleChangeNumber = (name, value) => {
-    const newNumber = parseInt(value || "0", 10);
-    if (Number.isNaN(itemData[name])) {
+    const newNumber = parseFloat(value || "0", 10);
+
+    if (Number.isNaN(selectedItem[name])) {
       return;
     }
+
     setItemSelected((prevItem) => ({
       ...prevItem,
       [name]: newNumber,
@@ -302,6 +307,7 @@ const CreateOrderForm = ({ id }) => {
       [name]: value,
     }));
   };
+
   const handleGetCompanyInformation = async (id) => {
     try {
       const getCompany = await axios.get(`/Company?companyId=${id}`, {
@@ -328,35 +334,19 @@ const CreateOrderForm = ({ id }) => {
     onClose();
   };
 
-  const handleProvinceChange = (provinceName) => {
-    const provinceIndex = provincesList.find(
-      (province) => province.full_name === provinceName
-    );
-    const provinceId = provinceIndex?.id;
+  const handleProvinceChange = (provinceId) => {
     apiGetPublicDistrict(provinceId);
   };
 
-  const handleProvinceChange2 = (provinceName) => {
-    const provinceIndex = provincesList2.find(
-      (province) => province.full_name === provinceName
-    );
-    const provinceId = provinceIndex?.id;
+  const handleProvinceChange2 = (provinceId) => {
     apiGetPublicDistrict2(provinceId);
   };
 
-  const handleDistrictChange = (districtName) => {
-    const districtIndex = districtsList.find(
-      (district) => district.full_name === districtName
-    );
-    const districtId = districtIndex?.id;
+  const handleDistrictChange = (districtId) => {
     apiGetPublicWard(districtId);
   };
 
-  const handleDistrictChange2 = (districtName) => {
-    const districtIndex = districtsList2.find(
-      (district) => district.full_name === districtName
-    );
-    const districtId = districtIndex?.id;
+  const handleDistrictChange2 = (districtId) => {
     apiGetPublicWard2(districtId);
   };
 
@@ -428,6 +418,7 @@ const CreateOrderForm = ({ id }) => {
       console.log(error.message);
     }
   };
+
   const handleCreateResponse = async () => {
     if (!id) {
       try {
@@ -448,30 +439,6 @@ const CreateOrderForm = ({ id }) => {
     }
   };
 
-  const handleUpdateOrder = async (status) => {
-    try {
-      const updateOrder = await axios.put(
-        `/Order/api/UpdateOrder?orderId=${order?.orderId}&status=${status}`,
-        { headers }
-      );
-      if (updateOrder.status === 200) {
-        toast({
-          title:
-            status === 4
-              ? "Đã từ chối đơn hàng"
-              : "Đơn hàng đã được chấp nhận.",
-          description: "Cập nhật đơn hàng thành công.",
-          status: status === 4 ? "warning" : "success",
-          duration: 3000,
-          isClosable: true,
-        });
-        setKeySelected("1");
-      }
-    } catch (e) {
-      console.error(e);
-    }
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -480,13 +447,6 @@ const CreateOrderForm = ({ id }) => {
         ...orderBill,
         accountId: userInformation?.accounId,
       };
-      let userRole = userInformation?.role;
-      let url =
-        userRole === "Staff"
-          ? "/staff/manage-order"
-          : userRole === "Company"
-          ? "/company/manage-order"
-          : "";
 
       if (id) {
         const UpdateOrder = await axios.put("/Order/update-order", payload, {
@@ -541,25 +501,10 @@ const CreateOrderForm = ({ id }) => {
               />
             </FormControl>
 
-            <FormControl display="flex" alignItems="center">
-              <FormLabel mb="0">Bảo hiểm</FormLabel>
-              <Switch
-                isChecked={selectedItem?.insurance}
-                onChange={(e) => handleChange("insurance", e.target.checked)}
-              />
-            </FormControl>
-
             <FormControl isRequired>
-              {/* <FormLabel>Giá trị đơn hàng</FormLabel>
-              <Input
-                value={selectedItem?.unitPrice}
-                precision={2}
-                min={0}
-                onChange={(valueString) =>
-                  handleChange("unitPrice", valueString.target.value)
-                }
-              /> */}
-              <FormLabel>Giá trị đơn hàng</FormLabel>
+              <FormLabel>
+                Giá trị đơn hàng (Bảo hiểm 2% giá trị đơn hàng)
+              </FormLabel>
               <InputFormatPrice
                 valueInput={selectedItem?.unitPrice}
                 handleItemChange={handleChangeNumber}
@@ -571,6 +516,7 @@ const CreateOrderForm = ({ id }) => {
               <Input
                 value={selectedItem?.quantityItem}
                 min={0}
+                type="number"
                 onChange={(valueString) =>
                   handleChangeNumber("quantityItem", valueString.target.value)
                 }
@@ -583,6 +529,7 @@ const CreateOrderForm = ({ id }) => {
                 value={selectedItem?.unitWeight}
                 precision={2}
                 min={0}
+                type="number"
                 onChange={(valueString) =>
                   handleChangeNumber("unitWeight", valueString.target.value)
                 }
@@ -595,6 +542,7 @@ const CreateOrderForm = ({ id }) => {
                 value={selectedItem?.length}
                 precision={2}
                 min={0}
+                type="number"
                 onChange={(valueString) =>
                   handleChangeNumber("length", valueString.target.value)
                 }
@@ -607,6 +555,7 @@ const CreateOrderForm = ({ id }) => {
                 value={selectedItem?.width}
                 precision={2}
                 min={0}
+                type="number"
                 onChange={(valueString) =>
                   handleChangeNumber("width", valueString.target.value)
                 }
@@ -619,6 +568,7 @@ const CreateOrderForm = ({ id }) => {
                 value={selectedItem?.height}
                 precision={2}
                 min={0}
+                type="number"
                 onChange={(valueString) =>
                   handleChangeNumber("height", valueString.target.value)
                 }
@@ -655,6 +605,7 @@ const CreateOrderForm = ({ id }) => {
       </ModalContent>
     </Modal>
   );
+
   useEffect(() => {
     if (headers) {
       handleFetchData();
@@ -672,42 +623,6 @@ const CreateOrderForm = ({ id }) => {
     }
   }, [id, order]);
 
-  useEffect(() => {
-    if (id) {
-      const provinceId = provincesList.find(
-        (item) => item.full_name === order?.provinceGet
-      );
-      if (provinceId?.id) apiGetPublicDistrict(provinceId?.id);
-    }
-  }, [provincesList, order, id]);
-
-  useEffect(() => {
-    if (id) {
-      const provinceId = provincesList2.find(
-        (item) => item.full_name === order?.provinceDelivery
-      );
-      if (provinceId?.id) apiGetPublicDistrict2(provinceId?.id);
-    }
-  }, [provincesList2, order, id]);
-
-  useEffect(() => {
-    if (id) {
-      const districtId = districtsList.find(
-        (item) => item.full_name === order?.districtGet
-      );
-      if (districtId?.id) apiGetPublicWard(districtId?.id);
-    }
-  }, [districtsList, order, id]);
-
-  useEffect(() => {
-    if (id) {
-      const districtId = districtsList2.find(
-        (item) => item.full_name === order?.districtDelivery
-      );
-      if (districtId?.id) apiGetPublicWard2(districtId?.id);
-    }
-  }, [districtsList2, order, id]);
-
   const [form] = Form.useForm();
 
   useEffect(() => {
@@ -719,7 +634,7 @@ const CreateOrderForm = ({ id }) => {
 
   return (
     <>
-      {!id && (
+      {!id && !nextToReview && (
         <>
           <input
             type="file"
@@ -742,320 +657,155 @@ const CreateOrderForm = ({ id }) => {
           </Button>
         </>
       )}
-      <Box
-        padding={"0 3%"}
-        maxW={"1400px"}
-        margin={"0 auto"}
-        display={"flex"}
-        justifyContent={"center"}
-      >
-        {ModalItem}
-        <Stack width={"100%"}>
-          <Card type="inner" title="Thông tin Công Ty">
-            <Form layout="vertical">
-              <Flex justifyContent={"space-between"}>
-                <Form.Item
-                  required
-                  label="Tên công ty"
-                  style={{
-                    width: "19%",
-                    marginBottom: "10px",
-                    padding: "0 0 3px",
-                  }}
-                >
-                  {userInformation?.role === "Staff" && !id ? (
-                    <Select
-                      onChange={(event) => {
-                        handleChangeOrder("companyId", event);
-                        handleGetCompanyInformation(event);
-                      }}
-                      value={order?.companyId}
-                    >
-                      <Option value="">Chọn công ty</Option>
-                      {company.map((company) => (
-                        <Option
-                          key={company.companyId}
-                          value={company.companyId}
-                        >
-                          {company.companyName}
-                        </Option>
-                      ))}
-                    </Select>
-                  ) : (
+
+      {!nextToReview ? (
+        <Box
+          padding={"0 3%"}
+          maxW={"1400px"}
+          margin={"0 auto"}
+          display={"flex"}
+          justifyContent={"center"}
+        >
+          {ModalItem}
+          <Stack width={"100%"}>
+            <Card type="inner" title="Thông tin Công Ty">
+              <Form layout="vertical">
+                <Flex justifyContent={"space-between"}>
+                  <Form.Item
+                    required
+                    label="Tên công ty"
+                    style={{
+                      width: "19%",
+                      marginBottom: "10px",
+                      padding: "0 0 3px",
+                    }}
+                  >
+                    {userInformation?.role === "Staff" && !id ? (
+                      <Select
+                        onChange={(event) => {
+                          handleChangeOrder("companyId", event);
+                          handleGetCompanyInformation(event);
+                        }}
+                        value={order?.companyId}
+                      >
+                        <Option value="">Chọn công ty</Option>
+                        {company.map((company) => (
+                          <Option
+                            key={company.companyId}
+                            value={company.companyId}
+                          >
+                            {company.companyName}
+                          </Option>
+                        ))}
+                      </Select>
+                    ) : (
+                      <Input
+                        placeholder="input placeholder"
+                        value={companyData?.companyName}
+                      />
+                    )}
+                  </Form.Item>{" "}
+                  <Form.Item
+                    required
+                    label="Mã số thuế"
+                    style={{ width: "19%", marginBottom: "10px" }}
+                  >
                     <Input
                       placeholder="input placeholder"
-                      value={companyData?.companyName}
+                      value={companyData?.account?.citizenId}
                     />
-                  )}
-                </Form.Item>{" "}
-                <Form.Item
-                  required
-                  label="Mã số thuế"
-                  style={{ width: "19%", marginBottom: "10px" }}
-                >
-                  <Input
+                  </Form.Item>{" "}
+                  <Form.Item
+                    required
+                    label="Số điện thoại"
+                    style={{ width: "19%", marginBottom: "10px" }}
+                  >
+                    <Input
+                      placeholder="input placeholder"
+                      value={companyData?.account?.phone}
+                    />
+                  </Form.Item>{" "}
+                  <Form.Item
+                    required
+                    label="Email"
+                    style={{ width: "19%", marginBottom: "10px" }}
+                  >
+                    <Input
+                      placeholder="input placeholder"
+                      value={companyData?.account?.email}
+                    />
+                  </Form.Item>{" "}
+                  <Form.Item
+                    required
+                    label="Người đại diện"
+                    style={{ width: "19%", marginBottom: "10px" }}
+                  >
+                    <Input
+                      placeholder="input placeholder"
+                      value={companyData?.account?.fullName}
+                    />
+                  </Form.Item>
+                </Flex>
+                <Form.Item required label="Địa chỉ">
+                  <TextArea
                     placeholder="input placeholder"
-                    value={companyData?.account?.citizenId}
-                  />
-                </Form.Item>{" "}
-                <Form.Item
-                  required
-                  label="Số điện thoại"
-                  style={{ width: "19%", marginBottom: "10px" }}
-                >
-                  <Input
-                    placeholder="input placeholder"
-                    value={companyData?.account?.phone}
-                  />
-                </Form.Item>{" "}
-                <Form.Item
-                  required
-                  label="Email"
-                  style={{ width: "19%", marginBottom: "10px" }}
-                >
-                  <Input
-                    placeholder="input placeholder"
-                    value={companyData?.account?.email}
-                  />
-                </Form.Item>{" "}
-                <Form.Item
-                  required
-                  label="Người đại diện"
-                  style={{ width: "19%", marginBottom: "10px" }}
-                >
-                  <Input
-                    placeholder="input placeholder"
-                    value={companyData?.account?.fullName}
+                    rows={1}
+                    value={companyData?.companyLocation}
+                    disabled
                   />
                 </Form.Item>
-              </Flex>
-              <Form.Item required label="Địa chỉ">
-                <TextArea
-                  placeholder="input placeholder"
-                  rows={1}
-                  value={companyData?.companyLocation}
-                  disabled
-                />
-              </Form.Item>
-            </Form>
-          </Card>
-          <Box height={"2%"}></Box>
-          <Flex justifyContent={"space-between"} mb={"2px"}>
-            <Card
-              title="Thông tin gửi hàng"
-              type="inner"
-              style={{ width: "60%" }}
-            >
-              <Stack spacing={4}>
-                <Form
-                  form={form}
-                  layout="vertical"
-                  initialValues={{ dayGet: dayjs() }}
-                >
-                  <HStack>
-                    <Form.Item required label="Số điện thoại">
-                      <Input
-                        placeholder="Nhập số điện thoại"
-                        onChange={(event) =>
-                          handleChangeOrder("getPhone", event.target.value)
-                        }
-                        value={companyData?.account?.phone}
-                        disabled={id ? true : false}
-                      />
-                    </Form.Item>
-                    <Form.Item required label="Họ tên">
-                      <Input
-                        placeholder="Nhập họ tên"
-                        onChange={(event) =>
-                          handleChangeOrder("getTo", event.target.value)
-                        }
-                        disabled={id ? true : false}
-                        value={companyData?.account?.fullName}
-                      />
-                    </Form.Item>
-                  </HStack>
-                  <Form.Item required label="Địa chỉ">
-                    <HStack mb={3} mt={1}>
-                      <Select
-                        onChange={(event) => {
-                          handleChangeOrder("provinceGet", event);
-                          handleChangeOrder("cityGet", event);
-                          handleProvinceChange(event);
-                        }}
-                        value={order?.provinceGet}
-                        style={{ width: "100%" }}
-                      >
-                        {id ? (
-                          provincesList
-                            .filter(
-                              (province) =>
-                                province.full_name === order?.provinceGet
-                            )
-                            .map((province) => (
-                              <Option key={province.id} value={province.id}>
-                                {province.full_name}
-                              </Option>
-                            ))
-                        ) : (
-                          <>
-                            <Option value="">Chọn tỉnh/thành phố</Option>
-                            {provincesList
-                              .filter((value) => value.id === "79")
-                              .map((province) => (
-                                <Option
-                                  key={province.id}
-                                  value={province.full_name}
-                                >
-                                  {province.full_name}
-                                </Option>
-                              ))}
-                          </>
-                        )}
-                      </Select>
-                      <Select
-                        onChange={(event) => {
-                          handleChangeOrder("districtGet", event);
-                          handleDistrictChange(event);
-                        }}
-                        value={order?.districtGet}
-                        style={{ width: "100%" }}
-                      >
-                        {id ? (
-                          districtsList
-                            .filter(
-                              (district) =>
-                                district.full_name === order?.districtGet
-                            )
-                            .map((district) => (
-                              <Option key={district.id} value={district.id}>
-                                {district.full_name}
-                              </Option>
-                            ))
-                        ) : (
-                          <>
-                            <Option value="">Chọn quận/huyện</Option>
-                            {districtsList.map((district) => (
-                              <Option
-                                key={district.id}
-                                value={district.full_name}
-                              >
-                                {district.full_name}
-                              </Option>
-                            ))}
-                          </>
-                        )}
-                      </Select>
-                      <Select
-                        onChange={(event) =>
-                          handleChangeOrder("wardGet", event)
-                        }
-                        value={order?.wardGet}
-                        style={{ width: "100%" }}
-                      >
-                        {id ? (
-                          wardsList
-                            .filter((ward) => ward.full_name === order?.wardGet)
-                            .map((ward) => (
-                              <Option key={ward.id} value={ward.id}>
-                                {ward.full_name}
-                              </Option>
-                            ))
-                        ) : (
-                          <>
-                            <Option value="">Chọn xã/phường</Option>
-                            {wardsList.map((ward) => (
-                              <Option key={ward.id} value={ward.full_name}>
-                                {ward.full_name}
-                              </Option>
-                            ))}
-                          </>
-                        )}
-                      </Select>
-                    </HStack>
-                    {/* <Form.Item required label="Địa chỉ"> */}
-                    <Input
-                      placeholder="Nhập địa chỉ"
-                      onChange={(event) =>
-                        handleChangeOrder(
-                          "locationDetailGet",
-                          event.target.value
-                        )
-                      }
-                      w={"94%"}
-                      value={order?.locationDetailGet}
-                      disabled={id ? true : false}
-                    />
-                  </Form.Item>
-
-                  <Form.Item name="dayGet" required label="Ngày gửi hàng">
-                    <DatePicker
-                      onChange={(_, time) => {
-                        handleChangeOrder("dayGet", time);
-                      }}
-                      format={FORMAT_TIME}
-                      minDate={dayjs()}
-                      disabled={!!id}
-                    />
-                  </Form.Item>
-                </Form>
-              </Stack>
+              </Form>
             </Card>
-            <Box w={"3%"}></Box>
-            <Card
-              title="Thông tin nhận hàng"
-              type="inner"
-              style={{ width: "60%" }}
-            >
-              <Stack spacing={4}>
-                <Form layout="vertical">
-                  <HStack>
-                    <Form.Item required label="Số điện thoại">
-                      <Input
-                        placeholder="Nhập số điện thoại"
-                        onChange={(event) =>
-                          handleChangeOrder("deliveryPhone", event.target.value)
-                        }
-                        value={order?.deliveryPhone}
-                        disabled={id ? true : false}
-                      />
-                    </Form.Item>
-                    <Form.Item required label="Họ tên">
-                      <Input
-                        placeholder="Nhập họ tên"
-                        onChange={(event) =>
-                          handleChangeOrder("deliveryTo", event.target.value)
-                        }
-                        disabled={id ? true : false}
-                        value={order?.deliveryTo}
-                      />
-                    </Form.Item>
-                  </HStack>
-                  <Form.Item required label="Địa chỉ">
-                    <HStack mt={1} mb={3}>
-                      <Select
-                        onChange={(event) => {
-                          handleChangeOrder("provinceDelivery", event);
-                          handleChangeOrder("cityDelivery", event);
-                          handleProvinceChange2(event);
-                        }}
-                        value={order?.provinceDelivery}
-                        style={{ width: "100%" }}
-                      >
-                        {id ? (
-                          provincesList2
-                            .filter(
-                              (province) =>
-                                province.full_name === order?.provinceGet
-                            )
+            <Box height={"2%"}></Box>
+            <Flex justifyContent={"space-between"} mb={"2px"}>
+              <Card
+                title="Thông tin gửi hàng"
+                type="inner"
+                style={{ width: "60%" }}
+              >
+                <Stack spacing={4}>
+                  <Form
+                    form={form}
+                    layout="vertical"
+                    initialValues={{ dayGet: dayjs() }}
+                  >
+                    <HStack>
+                      <Form.Item required label="Số điện thoại">
+                        <Input
+                          placeholder="Nhập số điện thoại"
+                          onChange={(event) =>
+                            handleChangeOrder("getPhone", event.target.value)
+                          }
+                          value={companyData?.account?.phone}
+                          disabled={id ? true : false}
+                        />
+                      </Form.Item>
+                      <Form.Item required label="Họ tên">
+                        <Input
+                          placeholder="Nhập họ tên"
+                          onChange={(event) =>
+                            handleChangeOrder("getTo", event.target.value)
+                          }
+                          disabled={id ? true : false}
+                          value={companyData?.account?.fullName}
+                        />
+                      </Form.Item>
+                    </HStack>
+                    <Form.Item required label="Địa chỉ">
+                      <HStack mb={3} mt={1}>
+                        <Select
+                          onChange={(event, option) => {
+                            handleChangeOrder("provinceGet", event);
+                            handleChangeOrder("cityGet", event);
+                            handleProvinceChange(option.key);
+                          }}
+                          value={order?.provinceGet}
+                          style={{ width: "100%" }}
+                        >
+                          <Option value="">Chọn tỉnh/thành phố</Option>
+                          {provincesList
+                            .filter((value) => value.id === "79")
                             .map((province) => (
-                              <Option key={province.id} value={province.id}>
-                                {province.full_name}
-                              </Option>
-                            ))
-                        ) : (
-                          <>
-                            <Option value="">Chọn tỉnh/thành phố</Option>
-                            {provincesList2.map((province) => (
                               <Option
                                 key={province.id}
                                 value={province.full_name}
@@ -1063,127 +813,196 @@ const CreateOrderForm = ({ id }) => {
                                 {province.full_name}
                               </Option>
                             ))}
-                          </>
-                        )}
-                      </Select>
-                      <Select
-                        onChange={(event) => {
-                          handleChangeOrder("districtDelivery", event);
-                          handleDistrictChange2(event);
-                        }}
-                        value={order?.districtDelivery}
-                        style={{ width: "100%" }}
-                      >
-                        {id ? (
-                          districtsList2
-                            .filter(
-                              (district) =>
-                                district.full_name === order?.districtDelivery
-                            )
-                            .map((district) => (
-                              <Option key={district.id} value={district.id}>
-                                {district.full_name}
-                              </Option>
-                            ))
-                        ) : (
-                          <>
-                            <Option value="">Chọn quận/huyện</Option>
-                            {districtsList2.map((district) => (
-                              <Option
-                                key={district.id}
-                                value={district.full_name}
-                              >
-                                {district.full_name}
-                              </Option>
-                            ))}
-                          </>
-                        )}
-                      </Select>
-                      <Select
+                        </Select>
+                        <Select
+                          onChange={(event, option) => {
+                            handleChangeOrder("districtGet", event);
+                            handleDistrictChange(option.key);
+                          }}
+                          value={order?.districtGet}
+                          style={{ width: "100%" }}
+                        >
+                          <Option value="">Chọn quận/huyện</Option>
+                          {districtsList.map((district) => (
+                            <Option
+                              key={district.id}
+                              value={district.full_name}
+                            >
+                              {district.full_name}
+                            </Option>
+                          ))}
+                        </Select>
+                        <Select
+                          onChange={(event) =>
+                            handleChangeOrder("wardGet", event)
+                          }
+                          value={order?.wardGet}
+                          style={{ width: "100%" }}
+                        >
+                          <Option value="">Chọn xã/phường</Option>
+                          {wardsList.map((ward) => (
+                            <Option key={ward.id} value={ward.full_name}>
+                              {ward.full_name}
+                            </Option>
+                          ))}
+                        </Select>
+                      </HStack>
+                      {/* <Form.Item required label="Địa chỉ"> */}
+                      <Input
+                        placeholder="Nhập địa chỉ"
                         onChange={(event) =>
-                          handleChangeOrder("wardDelivery", event)
+                          handleChangeOrder(
+                            "locationDetailGet",
+                            event.target.value
+                          )
                         }
-                        value={order?.wardDelivery}
-                        style={{ width: "100%" }}
-                      >
-                        {id ? (
-                          wardsList2
-                            .filter(
-                              (ward) => ward.full_name === order?.wardDelivery
-                            )
-                            .map((ward) => (
-                              <Option key={ward.id} value={ward.id}>
-                                {ward.full_name}
-                              </Option>
-                            ))
-                        ) : (
-                          <>
-                            <Option value="">Chọn xã/phường</Option>
-                            {wardsList2.map((ward) => (
-                              <Option key={ward.id} value={ward.full_name}>
-                                {ward.full_name}
-                              </Option>
-                            ))}
-                          </>
-                        )}
-                      </Select>
-                    </HStack>
-                    <Input
-                      placeholder="Nhập địa chỉ"
-                      onChange={(event) =>
-                        handleChangeOrder(
-                          "locationDetailDelivery",
-                          event.target.value
-                        )
-                      }
-                      w={"94%"}
-                      value={order?.locationDetailDelivery}
-                      disabled={id ? true : false}
-                    />
-                    {/* <Form.Item required label="Địa chỉ"> */}
-                  </Form.Item>
-                </Form>
-              </Stack>
-            </Card>
-          </Flex>
-          {!id && (
-            <Card type="inner" title="Thông tin mặt hàng">
-              <Form layout="vertical">
-                <Flex justifyContent={"space-between"}>
-                  <Stack w={"100%"}>
-                    <Stack direction="row">
-                      <Stack w={"50%"}>
-                        <Form.Item label="Tên mặt hàng">
-                          <Input
-                            placeholder="Nhập tên mặt hàng"
-                            disabled={id ? true : false}
-                            value={itemData?.itemName}
-                            onChange={(e) =>
-                              handleItemChange("itemName", e.target.value)
-                            }
-                          />
-                        </Form.Item>
-                      </Stack>
-                    </Stack>
-                    <FormControl display="flex" alignItems="center">
-                      <FormLabel
-                        mb="0"
-                        color={"rgba(0, 0, 0, 0.88)"}
-                        fontSize={"14px"}
-                        fontWeight={"400"}
-                      >
-                        Bảo hiểm (2% giá trị sản phẩm):
-                      </FormLabel>
-                      <Switch
-                        isChecked={itemData?.insurance}
-                        onChange={(e) =>
-                          handleItemChange("insurance", e.target.checked)
-                        }
+                        w={"94%"}
+                        value={order?.locationDetailGet}
                         disabled={id ? true : false}
                       />
-                    </FormControl>
-                    {itemData?.insurance && (
-                      <Form.Item label="Giá trị đơn hàng">
+                    </Form.Item>
+
+                    <Form.Item name="dayGet" required label="Ngày gửi hàng">
+                      <DatePicker
+                        onChange={(date) => {
+                          handleChangeOrder(
+                            "dayGet",
+                            dayjs(date).format(FORMAT_TIME_SUBMIT)
+                          );
+                        }}
+                        format={FORMAT_TIME}
+                        minDate={dayjs()}
+                        disabled={!!id}
+                      />
+                    </Form.Item>
+                  </Form>
+                </Stack>
+              </Card>
+              <Box w={"3%"}></Box>
+              <Card
+                title="Thông tin nhận hàng"
+                type="inner"
+                style={{ width: "60%" }}
+              >
+                <Stack spacing={4}>
+                  <Form layout="vertical">
+                    <HStack>
+                      <Form.Item required label="Số điện thoại">
+                        <Input
+                          placeholder="Nhập số điện thoại"
+                          onChange={(event) =>
+                            handleChangeOrder(
+                              "deliveryPhone",
+                              event.target.value
+                            )
+                          }
+                          value={order?.deliveryPhone}
+                          disabled={id ? true : false}
+                        />
+                      </Form.Item>
+                      <Form.Item required label="Họ tên">
+                        <Input
+                          placeholder="Nhập họ tên"
+                          onChange={(event) =>
+                            handleChangeOrder("deliveryTo", event.target.value)
+                          }
+                          disabled={id ? true : false}
+                          value={order?.deliveryTo}
+                        />
+                      </Form.Item>
+                    </HStack>
+                    <Form.Item required label="Địa chỉ">
+                      <HStack mt={1} mb={3}>
+                        <Select
+                          onChange={(event, option) => {
+                            handleChangeOrder("provinceDelivery", event);
+                            handleChangeOrder("cityDelivery", event);
+                            handleProvinceChange2(option.key);
+                          }}
+                          value={order?.provinceDelivery}
+                          style={{ width: "100%" }}
+                        >
+                          <Option value="">Chọn tỉnh/thành phố</Option>
+                          {provincesList2.map((province) => (
+                            <Option
+                              key={province.id}
+                              value={province.full_name}
+                            >
+                              {province.full_name}
+                            </Option>
+                          ))}
+                        </Select>
+                        <Select
+                          onChange={(event, option) => {
+                            handleChangeOrder("districtDelivery", event);
+                            handleDistrictChange2(option.key);
+                          }}
+                          value={order?.districtDelivery}
+                          style={{ width: "100%" }}
+                        >
+                          <Option value="">Chọn quận/huyện</Option>
+                          {districtsList2.map((district) => (
+                            <Option
+                              key={district.id}
+                              value={district.full_name}
+                            >
+                              {district.full_name}
+                            </Option>
+                          ))}
+                        </Select>
+                        <Select
+                          onChange={(event) =>
+                            handleChangeOrder("wardDelivery", event)
+                          }
+                          value={order?.wardDelivery}
+                          style={{ width: "100%" }}
+                        >
+                          <Option value="">Chọn xã/phường</Option>
+                          {wardsList2.map((ward) => (
+                            <Option key={ward.id} value={ward.full_name}>
+                              {ward.full_name}
+                            </Option>
+                          ))}
+                        </Select>
+                      </HStack>
+                      <Input
+                        placeholder="Nhập địa chỉ"
+                        onChange={(event) =>
+                          handleChangeOrder(
+                            "locationDetailDelivery",
+                            event.target.value
+                          )
+                        }
+                        w={"94%"}
+                        value={order?.locationDetailDelivery}
+                        disabled={id ? true : false}
+                      />
+                      {/* <Form.Item required label="Địa chỉ"> */}
+                    </Form.Item>
+                  </Form>
+                </Stack>
+              </Card>
+            </Flex>
+            {!id && (
+              <Card type="inner" title="Thông tin mặt hàng">
+                <Form layout="vertical">
+                  <Flex justifyContent={"space-between"}>
+                    <Stack w={"100%"}>
+                      <Stack direction="row">
+                        <Stack w={"50%"}>
+                          <Form.Item label="Tên mặt hàng">
+                            <Input
+                              placeholder="Nhập tên mặt hàng"
+                              disabled={id ? true : false}
+                              value={itemData?.itemName}
+                              onChange={(e) =>
+                                handleItemChange("itemName", e.target.value)
+                              }
+                            />
+                          </Form.Item>
+                        </Stack>
+                      </Stack>
+                      <Form.Item label="Giá trị đơn hàng (Bảo hiểm 2% giá trị đơn hàng)">
                         <InputFormatPrice
                           id={id}
                           hasTooltip={true}
@@ -1191,197 +1010,219 @@ const CreateOrderForm = ({ id }) => {
                           handleItemChange={handleItemChangeNumber}
                         />
                       </Form.Item>
-                    )}
-                    <HStack>
-                      <Form.Item label="Khối lượng(kg)">
-                        <Input
+                      <HStack>
+                        <Form.Item label="Khối lượng(kg)">
+                          <Input
+                            disabled={id ? true : false}
+                            value={itemData?.unitWeight}
+                            min={0}
+                            type="number"
+                            onChange={(valueString) =>
+                              handleItemChangeNumber(
+                                "unitWeight",
+                                valueString.target.value
+                              )
+                            }
+                          />
+                        </Form.Item>
+                        <Form.Item label="Số lượng">
+                          <Input
+                            disabled={id ? true : false}
+                            value={itemData?.quantityItem}
+                            min={0}
+                            type="number"
+                            onChange={(valueString) =>
+                              handleItemChangeNumber(
+                                "quantityItem",
+                                valueString.target.value
+                              )
+                            }
+                          />
+                        </Form.Item>
+                        <Form.Item label="Dài(cm)">
+                          <Input
+                            disabled={id ? true : false}
+                            value={itemData?.length}
+                            precision={2}
+                            type="number"
+                            min={0}
+                            onChange={(valueString) =>
+                              handleItemChangeNumber(
+                                "length",
+                                valueString.target.value
+                              )
+                            }
+                          />
+                        </Form.Item>
+                        <Form.Item label="Rộng(cm)">
+                          <Input
+                            disabled={id ? true : false}
+                            value={itemData?.width}
+                            precision={2}
+                            type="number"
+                            min={0}
+                            onChange={(valueString) =>
+                              handleItemChangeNumber(
+                                "width",
+                                valueString.target.value
+                              )
+                            }
+                          />
+                        </Form.Item>
+                        <Form.Item label="Cao(cm)">
+                          <Input
+                            disabled={id ? true : false}
+                            value={itemData?.height}
+                            precision={2}
+                            type="number"
+                            min={0}
+                            onChange={(valueString) =>
+                              handleItemChangeNumber(
+                                "height",
+                                valueString.target.value
+                              )
+                            }
+                          />
+                        </Form.Item>
+                        <Form.Item label="Màu sắc">
+                          <Input
+                            placeholder="Nhập màu sắc"
+                            disabled={id ? true : false}
+                            value={itemData?.color}
+                            onChange={(e) =>
+                              handleItemChange("color", e.target.value)
+                            }
+                          />
+                        </Form.Item>
+                      </HStack>
+                      <Form.Item label="Mô tả">
+                        <TextArea
+                          placeholder="Nhập nội dung"
+                          rows={5}
                           disabled={id ? true : false}
-                          value={itemData?.unitWeight}
-                          min={0}
-                          type="number"
-                          onChange={(valueString) =>
-                            handleItemChangeNumber(
-                              "unitWeight",
-                              valueString.target.value
-                            )
-                          }
-                        />
-                      </Form.Item>
-                      <Form.Item label="Số lượng">
-                        <Input
-                          disabled={id ? true : false}
-                          value={itemData?.quantityItem}
-                          min={0}
-                          type="number"
-                          onChange={(valueString) =>
-                            handleItemChangeNumber(
-                              "quantityItem",
-                              valueString.target.value
-                            )
-                          }
-                        />
-                      </Form.Item>
-                      <Form.Item label="Dài(cm)">
-                        <Input
-                          disabled={id ? true : false}
-                          value={itemData?.length}
-                          precision={2}
-                          type="number"
-                          min={0}
-                          onChange={(valueString) =>
-                            handleItemChangeNumber(
-                              "length",
-                              valueString.target.value
-                            )
-                          }
-                        />
-                      </Form.Item>
-                      <Form.Item label="Rộng(cm)">
-                        <Input
-                          disabled={id ? true : false}
-                          value={itemData?.width}
-                          precision={2}
-                          type="number"
-                          min={0}
-                          onChange={(valueString) =>
-                            handleItemChangeNumber(
-                              "width",
-                              valueString.target.value
-                            )
-                          }
-                        />
-                      </Form.Item>
-                      <Form.Item label="Cao(cm)">
-                        <Input
-                          disabled={id ? true : false}
-                          value={itemData?.height}
-                          precision={2}
-                          type="number"
-                          min={0}
-                          onChange={(valueString) =>
-                            handleItemChangeNumber(
-                              "height",
-                              valueString.target.value
-                            )
-                          }
-                        />
-                      </Form.Item>
-                      <Form.Item label="Màu sắc">
-                        <Input
-                          placeholder="Nhập màu sắc"
-                          disabled={id ? true : false}
-                          value={itemData?.color}
+                          value={itemData?.description}
                           onChange={(e) =>
-                            handleItemChange("color", e.target.value)
+                            handleItemChange("description", e.target.value)
                           }
                         />
                       </Form.Item>
-                    </HStack>
-                    <Form.Item label="Mô tả">
-                      <TextArea
-                        placeholder="Nhập nội dung"
-                        rows={5}
-                        disabled={id ? true : false}
-                        value={itemData?.description}
-                        onChange={(e) =>
-                          handleItemChange("description", e.target.value)
-                        }
-                      />
-                    </Form.Item>
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "flex-end",
-                        gap: "10px",
-                      }}
-                    >
-                      <ButtonAntd
-                        style={{ width: "250px" }}
-                        type="primary"
-                        onClick={() => {
-                          setOrder({
-                            ...order,
-                            items: [
-                              ...order?.items,
-                              {
-                                ...itemData,
-                                height: parseFloat(itemData?.height),
-                                length: parseFloat(itemData?.length),
-                                quantityItem: parseInt(itemData?.quantityItem),
-                                unitPrice: parseFloat(itemData?.unitPrice),
-                                unitWeight: parseFloat(itemData?.unitWeight),
-                                width: parseFloat(itemData?.width),
-                              },
-                            ],
-                          });
-                          setItemData(defaultItem);
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "flex-end",
+                          gap: "10px",
                         }}
                       >
-                        Thêm mặt hàng
-                      </ButtonAntd>
-                    </div>
-                  </Stack>
-                </Flex>
-              </Form>
-            </Card>
-          )}
-          <Box>
-            {id ? (
-              <TableOrder order={order} />
-            ) : (
-              order?.items.map((item, index) => (
-                <CardOrder
-                  key={index + item.itemName}
-                  id={id}
-                  index={index}
-                  item={item}
-                  order={order}
-                  setItemSelected={setItemSelected}
-                  setSelectedIndex={setSelectedIndex}
-                  onOpen={onOpen}
-                  setOrder={setOrder}
-                />
-              ))
+                        <ButtonAntd
+                          style={{ width: "250px" }}
+                          type="primary"
+                          onClick={() => {
+                            setOrder({
+                              ...order,
+                              items: [
+                                ...order?.items,
+                                {
+                                  ...itemData,
+                                  height: parseFloat(itemData?.height),
+                                  length: parseFloat(itemData?.length),
+                                  quantityItem: parseInt(
+                                    itemData?.quantityItem
+                                  ),
+                                  unitPrice: parseFloat(itemData?.unitPrice),
+                                  unitWeight: parseFloat(itemData?.unitWeight),
+                                  width: parseFloat(itemData?.width),
+                                },
+                              ],
+                            });
+                            setItemData(defaultItem);
+                          }}
+                        >
+                          Thêm mặt hàng
+                        </ButtonAntd>
+                      </div>
+                    </Stack>
+                  </Flex>
+                </Form>
+              </Card>
             )}
+            <Box>
+              {id ? (
+                <TableOrder order={order} />
+              ) : (
+                order?.items.map((item, index) => (
+                  <CardOrder
+                    key={index + item.itemName}
+                    id={id}
+                    index={index}
+                    item={item}
+                    order={order}
+                    setItemSelected={setItemSelected}
+                    setSelectedIndex={setSelectedIndex}
+                    onOpen={onOpen}
+                    setOrder={setOrder}
+                  />
+                ))
+              )}
 
-            {order?.items.length > 0 ? (
-              <Box>
-                <Tooltip
-                  title={
-                    !orderBill?.expectedDeliveryDate
-                      ? "Vui lòng điền các thông tin trên"
-                      : ""
-                  }
-                >
-                  <ButtonAntd
-                    style={{ width: "250px", float: "right", marginRight: 24 }}
-                    type="primary"
-                    disabled={!orderBill?.expectedDeliveryDate}
-                    onClick={showDrawer}
+              {order?.items.length > 0 ? (
+                <Box>
+                  <Tooltip
+                    title={
+                      !orderBill?.expectedDeliveryDate
+                        ? "Vui lòng điền các thông tin trên"
+                        : ""
+                    }
                   >
-                    {id ? "Xem Đơn Hàng" : "Tạo Đơn Hàng"}
-                  </ButtonAntd>
-                </Tooltip>
-              </Box>
-            ) : null}
-          </Box>
-        </Stack>
-      </Box>
-      <Drawer
-        title="Tóm tắt đơn hàng"
-        onClose={onCloseDrawer}
-        open={isOpenDrawer}
-        width={550}
-      >
-        <SummaryOrder
-          id={id}
+                    {id ? (
+                      <Button
+                        bg={"#1677ff"}
+                        color={"white"}
+                        _hover={{
+                          bg: "blue.300",
+                        }}
+                        marginRight="24px"
+                        w="250px"
+                        float="right"
+                        size="sm"
+                        fontWeight="400"
+                        // onClick={onNextToReviewOrder}
+                      >
+                        Xác Nhận Sửa Đơn Hàng
+                      </Button>
+                    ) : (
+                      <Button
+                        bg={"#1677ff"}
+                        color={"white"}
+                        _hover={{
+                          bg: "blue.300",
+                        }}
+                        marginRight="24px"
+                        w="250px"
+                        float="right"
+                        size="sm"
+                        fontWeight="400"
+                        isDisabled={!orderBill?.expectedDeliveryDate}
+                        onClick={onNextToReviewOrder}
+                        rightIcon={<AiOutlineArrowRight />}
+                      >
+                        Tiến Hành Tạo Đơn
+                      </Button>
+                    )}
+                  </Tooltip>
+                </Box>
+              ) : null}
+            </Box>
+          </Stack>
+        </Box>
+      ) : (
+        <ReviewOrder
+          orderProps={order}
+          companyDataProps={companyData}
           orderBill={orderBill}
-          userInformation={userInformation}
-          order={order}
-          handleUpdateOrder={handleUpdateOrder}
+          onBackOrder={onBackOrder}
           handleSubmit={handleSubmit}
         />
-      </Drawer>
+      )}
     </>
   );
 };
