@@ -194,6 +194,13 @@ function TableComponent({ url = "" }) {
       },
     },
     {
+      title: "Trạng thái thanh toán",
+      dataIndex: "paymentStatus",
+      render: () => <Tag color="magenta">Chưa Thanh Toán</Tag>,
+      width: 200,
+      align: "center",
+    },
+    {
       title: "Action",
       key: "action",
       align: "center",

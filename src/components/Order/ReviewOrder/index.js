@@ -16,6 +16,7 @@ import { getStatusIcon } from "../Table";
 import { TableOrder } from "../TableOrder";
 import { FiBox, FiCheckCircle, FiXCircle, FiArrowLeft } from "react-icons/fi";
 import { OrderContext } from "../../../provider/order";
+import { PaymentOrder } from "../PaymentOrder";
 
 const DEFAULT_ORDER = {
   orderDate: "",
@@ -332,6 +333,10 @@ export const ReviewOrder = ({
             </Button>
           </Box>
         </div>
+      ) : null}
+
+      {userInformation?.role === "Company" && order.status === 3 ? (
+        <PaymentOrder order={order} orderReview={orderReview} />
       ) : null}
     </>
   );
