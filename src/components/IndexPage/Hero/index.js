@@ -12,6 +12,7 @@ import {
   InputRightElement,
 } from "@chakra-ui/react";
 import { Form, Input } from "antd";
+import imgHomePage from "../../../assets/img/delivery-man.png";
 
 export default function CallToActionWithVideo() {
   return (
@@ -63,7 +64,7 @@ export default function CallToActionWithVideo() {
                   <Input placeholder="Nhập họ tên" />
                 </Form.Item>
                 <Form.Item label="Số Điện Thoại:">
-                  <Input placeholder="Nhập số điện thoại"/>
+                  <Input placeholder="Nhập số điện thoại" />
                 </Form.Item>
                 <Form.Item label="Email:">
                   <Input placeholder="Nhập email" />
@@ -91,11 +92,9 @@ export default function CallToActionWithVideo() {
               alt={"Hero Image"}
               fit={"cover"}
               align={"center"}
-              w={"100%"}
-              h={"100%"}
-              src={
-                "https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&auto=format&fit=crop&w=800&q=80"
-              }
+              w={"90%"}
+              h={"90%"}
+              src={imgHomePage}
             />
           </Box>
         </Flex>

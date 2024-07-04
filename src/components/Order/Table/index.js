@@ -10,11 +10,14 @@ import {
   exportToExcel,
   formatDate,
   getStatusColor,
+  getStatusColorPayment,
   getStatusTitle,
+  getStatusTitlePayment,
 } from "../../../helpers";
 import { TbDatabaseExport } from "react-icons/tb";
 import { Space, Table, Tag, Button } from "antd";
 import {
+  AiFillEdit,
   AiFillEye,
   AiOutlineArrowUp,
   AiOutlineCalendar,
@@ -142,7 +145,7 @@ function TableComponent({ url = "" }) {
       key: "status",
       filters: [
         {
-          text: "Idle",
+          text: "Hàng đã về kho",
           value: 1,
         },
         {
@@ -196,7 +199,26 @@ function TableComponent({ url = "" }) {
     {
       title: "Trạng thái thanh toán",
       dataIndex: "paymentStatus",
-      render: () => <Tag color="magenta">Chưa Thanh Toán</Tag>,
+      render: (status) => (
+        <Tag color={getStatusColorPayment(status)}>
+          {getStatusTitlePayment(status)}
+        </Tag>
+      ),
+      filters: [
+        {
+          text: "Chưa thanh toán",
+          value: 0,
+        },
+        {
+          text: "Đã thanh toán",
+          value: 1,
+        },
+        {
+          text: "Thanh toán thất bại",
+          value: 2,
+        },
+      ],
+      onFilter: (value, record) => record.paymentStatus === value,
       width: 200,
       align: "center",
     },
@@ -206,14 +228,17 @@ function TableComponent({ url = "" }) {
       align: "center",
       render: (_, record) => (
         <Space size="middle">
-          {/* <button
-            onClick={() => {
-              setSelectedItem(record);
-              setKeySelected("0");
-            }}
-          >
-            <AiFillEdit />
-          </button> */}
+          {record.status === 2 && (
+            <button
+              onClick={() => {
+                setSelectedItem(record);
+                setKeySelected("0");
+              }}
+            >
+              <AiFillEdit />
+            </button>
+          )}
+
           <button
             onClick={() => {
               setSelectedItem(record);
@@ -376,7 +401,9 @@ function TableComponent({ url = "" }) {
   };
 
   useEffect(() => {
-    if (headers?.Authorization) handleFetchData();
+    if (headers?.Authorization) {
+      handleFetchData();
+    }
   }, [headers, url]);
 
   useEffect(() => {

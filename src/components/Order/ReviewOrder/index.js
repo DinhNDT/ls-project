@@ -265,6 +265,7 @@ export const ReviewOrder = ({
           </Box>
         </Box>
       </Box>
+
       <TableOrder order={orderReview} orderBill={orderBill} id={id} />
 
       {id && userInformation?.role === "Staff" && order.status === 2 && (
@@ -320,6 +321,8 @@ export const ReviewOrder = ({
           </Button>
           <Box>
             <Button
+              bg={"#2b6cb0"}
+              color={"white"}
               colorScheme="blue"
               display={"flex"}
               justifyContent={"center"}
@@ -335,8 +338,13 @@ export const ReviewOrder = ({
         </div>
       ) : null}
 
-      {userInformation?.role === "Company" && order.status === 3 ? (
-        <PaymentOrder order={order} orderReview={orderReview} />
+      {userInformation?.role === "Company" &&
+      (order.status === 3 || order.status === 4) ? (
+        <PaymentOrder
+          order={order}
+          orderReview={orderReview}
+          paymentStatus={order.paymentStatus}
+        />
       ) : null}
     </>
   );

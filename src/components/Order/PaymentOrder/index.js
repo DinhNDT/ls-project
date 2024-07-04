@@ -6,6 +6,9 @@ import { usePayOS } from "payos-checkout";
 import { Flex, Modal } from "antd";
 import { AiFillNotification } from "react-icons/ai";
 import { OrderContext } from "../../../provider/order";
+import dayjs from "dayjs";
+import { FORMAT_TIME_SUBMIT } from "../FormAdd";
+import { GlobalContext } from "../../../provider";
 
 const PayOS_Client_ID = "d7e80324-10cc-4712-bc94-3b2da33b7ae1";
 const PayOS_Api_Key = "e77c1e4a-3053-4dab-b7ca-f978ee24fc69";
@@ -20,13 +23,17 @@ const CODE_STATUS = {
   InvalidParam: "02",
 };
 
-const OrderIdTest = 826;
+const PAYMENT_STATUS = {
+  Unpaid: 0,
+  Paid: 1,
+  PaymentFailed: 2,
+};
 
-export const PaymentOrder = ({ order, orderReview }) => {
+export const PaymentOrder = ({ order, orderReview, paymentStatus }) => {
   const summaryOrder = {
     orderCode: order.orderId,
     amount: order?.deliveryPrice,
-    description: "Test thanh toan",
+    description: "Thanh Toan Van Chuyen",
     buyerName: orderReview?.deliveryTo,
     buyerPhone: orderReview?.deliveryPhone,
     buyerAddress: `${orderReview?.locationDetailDelivery}, ${orderReview?.wardDelivery}, ${orderReview?.districtDelivery}, ${orderReview?.provinceDelivery}`,
@@ -41,7 +48,9 @@ export const PaymentOrder = ({ order, orderReview }) => {
     returnUrl: Return_URL,
   };
   const orderContext = useContext(OrderContext);
-  const { setKeySelected } = orderContext;
+  const { setKeySelected, setSelectedItem } = orderContext;
+  const userContext = useContext(GlobalContext);
+  const { headers } = userContext;
   const toast = useToast({ position: "top" });
   const [responsePayOs, setResponsePayOs] = useState({
     code: "",
@@ -56,26 +65,80 @@ export const PaymentOrder = ({ order, orderReview }) => {
     ELEMENT_ID: "root", // required
     CHECKOUT_URL: responsePayOs.checkoutURL, // required
     onSuccess: () => {
-      toast({
-        title: "Thanh toán đơn hàng thành công!",
-        status: "success",
-        duration: 3000,
-        isClosable: true,
-      });
-      setKeySelected("1");
+      apiUpdatePaymentSuccess();
     },
     onCancel: () => {
       cancelPaymentLink(order.orderId, "Đã hủy thanh toán đơn hàng.");
-      setKeySelected("1");
     },
     onExit: () => {
       cancelPaymentLink(
         order.orderId,
         "Thanh toán đơn hàng bị hủy do bạn đóng popup."
       );
-      setKeySelected("1");
     },
   });
+
+  const apiUpdatePaymentSuccess = async () => {
+    try {
+      const updatePayment = await axios.put(
+        `/Payments/update/${order.orderId}`,
+        {
+          companyId: order.companyId,
+          companyName: order.company.companyName,
+          amountPaid: order?.deliveryPrice,
+          paymentDate: dayjs().format(FORMAT_TIME_SUBMIT),
+        },
+        {
+          headers,
+        }
+      );
+
+      if (updatePayment.status === 200) {
+        toast({
+          title: "Thanh toán đơn hàng thành công!",
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
+        setKeySelected("1");
+      }
+    } catch (error) {
+      toast({
+        title: "Lỗi hệ thống!.",
+        description: error,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  };
+
+  const apiUpdatePaymentFailed = async (title) => {
+    const updatePayment = await axios.put(
+      `/Payments/update/${order.orderId}/StatusPayment`,
+      {
+        companyId: order.companyId,
+        companyName: order.company.companyName,
+        amountPaid: order?.deliveryPrice,
+        paymentDate: dayjs().format(FORMAT_TIME_SUBMIT),
+      },
+      {
+        headers,
+      }
+    );
+
+    if (updatePayment.status === 200) {
+      toast({
+        title: title,
+        description: `Đơn hàng ${order.orderId} thanh toán thất bại.`,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      setKeySelected("1");
+      // setLoading(false);
+    }
+  };
 
   const apiCancelPaymentLink = async (id, title) => {
     try {
@@ -93,16 +156,16 @@ export const PaymentOrder = ({ order, orderReview }) => {
         }
       );
       if (dataPaymentLink.status === 200) {
-        toast({
-          title: title,
-          description: `Đơn hàng ${id} chưa được thanh toán.`,
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        });
+        apiUpdatePaymentFailed(title);
       }
     } catch (error) {
-      console.log(error);
+      toast({
+        title: "Lỗi hệ thống!.",
+        description: error,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
     }
   };
 
@@ -128,12 +191,18 @@ export const PaymentOrder = ({ order, orderReview }) => {
         });
         if (res.code === "231" && res.desc === "Đơn thanh toán đã tồn tại") {
           setShowModalConfirm(true);
+          setLoading(false);
         }
-        setLoading(false);
       }
     } catch (error) {
       setLoading(false);
-      console.log(error);
+      toast({
+        title: "Lỗi hệ thống!.",
+        description: error,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
     }
   };
 
@@ -163,11 +232,42 @@ export const PaymentOrder = ({ order, orderReview }) => {
 
   const handleOk = () => {
     setShowModalConfirm(false);
-    // createPaymentLink();
+    setSelectedItem({ ...order, ...orderReview });
+    setKeySelected("2A");
   };
 
   const handleCancel = () => {
     setShowModalConfirm(false);
+  };
+
+  const handleOutSideBrowser = () => {
+    Promise.all([
+      axios.put(
+        `/Payments/update/${order.orderId}/StatusPayment`,
+        {
+          companyId: order.companyId,
+          companyName: order.company.companyName,
+          amountPaid: order?.deliveryPrice,
+          paymentDate: dayjs().format(FORMAT_TIME_SUBMIT),
+        },
+        {
+          headers,
+        }
+      ),
+      axios.post(
+        `https://api-merchant.payos.vn/v2/payment-requests/${order.orderId}/cancel`,
+        {
+          cancellationReason: "Đơn hàng bị hủy",
+        },
+        {
+          "Content-Type": "application/json",
+          headers: {
+            "x-client-id": PayOS_Client_ID,
+            "x-api-key": PayOS_Api_Key,
+          },
+        }
+      ),
+    ]);
   };
 
   useEffect(() => {
@@ -181,19 +281,7 @@ export const PaymentOrder = ({ order, orderReview }) => {
 
   useEffect(() => {
     const handleLoad = () => {
-      axios.post(
-        `https://api-merchant.payos.vn/v2/payment-requests/${order.orderId}/cancel`,
-        {
-          cancellationReason: "Đơn hàng bị hủy",
-        },
-        {
-          "Content-Type": "application/json",
-          headers: {
-            "x-client-id": PayOS_Client_ID,
-            "x-api-key": PayOS_Api_Key,
-          },
-        }
-      );
+      handleOutSideBrowser();
     };
 
     window.addEventListener("beforeunload", handleLoad);
@@ -212,7 +300,9 @@ export const PaymentOrder = ({ order, orderReview }) => {
           onClick={() => createPaymentLink()}
           isLoading={loading}
         >
-          Tiến Hành Thanh Toán
+          {paymentStatus === PAYMENT_STATUS.PaymentFailed
+            ? "Thanh Toán Lại"
+            : "Tiến Hành Thanh Toán"}
         </Button>
       </Box>
       <Modal
@@ -221,6 +311,7 @@ export const PaymentOrder = ({ order, orderReview }) => {
             <AiFillNotification color="#faad14" fontSize={26} /> Thông báo !
           </Flex>
         }
+        centered
         open={showModalConfirm}
         onOk={handleOk}
         onCancel={handleCancel}
@@ -231,9 +322,10 @@ export const PaymentOrder = ({ order, orderReview }) => {
         </Text> */}
         <Text align={"center"} fontWeight={500} fontSize={17} p={5}>
           Đơn hàng nãy đã bị{" "}
-          <span style={{ color: "#4096ff" }}>Hủy Thanh Toán</span> trước đó, bạn
-          có muốn thực hiện{" "}
-          <span style={{ color: "#4096ff" }}>Thanh Toán Lại</span> không?
+          <span style={{ color: "#4096ff" }}>Thánh Toán Thất Bại</span> trước
+          đó, bạn có muốn{" "}
+          <span style={{ color: "#4096ff" }}>Tạo Lại Đơn Hàng</span> và thực
+          hiện <span style={{ color: "#4096ff" }}>Thanh Toán Lại</span> không?
         </Text>
       </Modal>
     </>

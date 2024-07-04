@@ -1,13 +1,8 @@
 import { Input, Tooltip } from "antd";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-export const InputFormatPrice = ({
-  id,
-  valueInput,
-  handleItemChange,
-  hasTooltip = false,
-}) => {
-  const [value, setValue] = useState(valueInput ?? "");
+export const InputFormatPrice = ({ id, valueInput, handleItemChange }) => {
+  const [value, setValue] = useState(valueInput ?? 0);
   const formatNumber = (value) =>
     new Intl.NumberFormat("vi-VN", {
       currency: "VND",
@@ -38,6 +33,12 @@ export const InputFormatPrice = ({
     "Nhập số tiền"
   );
 
+  useEffect(() => {
+    if (valueInput === 0) {
+      setValue(0);
+    }
+  }, [valueInput]);
+
   return (
     <Tooltip
       trigger={["focus"]}
@@ -47,7 +48,6 @@ export const InputFormatPrice = ({
       overlayStyle={{ zIndex: "1999" }}
     >
       <Input
-        disabled={id ? true : false}
         value={valueInput}
         precision={2}
         min={0}

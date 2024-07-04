@@ -1,50 +1,17 @@
-import * as XLSX from "xlsx";
-import React, { useContext, useEffect, useRef, useState } from "react";
-import {
-  Box,
-  Button,
-  FormControl,
-  FormLabel,
-  VStack,
-  HStack,
-  useToast,
-  Flex,
-  Stack,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,
-  useDisclosure,
-  Switch,
-} from "@chakra-ui/react";
-import {
-  Card,
-  Form,
-  Input,
-  Select,
-  Button as ButtonAntd,
-  DatePicker,
-  Tooltip,
-} from "antd";
+import React, { useContext, useEffect, useState } from "react";
+import { Box, useToast, Stack, useDisclosure } from "@chakra-ui/react";
 import { GlobalContext } from "../../../provider";
 import { convertOrder } from "../../../helpers";
 import axios from "axios";
-import { TbFileImport } from "react-icons/tb";
-import TextArea from "antd/es/input/TextArea";
 import { OrderContext } from "../../../provider/order";
-import { CardOrder } from "../CardOrder";
 import dayjs from "dayjs";
-import { TableOrder } from "../TableOrder";
-import { InputFormatPrice } from "../InputFormatPrice";
 import { ReviewOrder } from "../ReviewOrder";
-import { AiOutlineArrowRight } from "react-icons/ai";
+import { FormInfo } from "./FormInfo";
+import { ButtonUploadFile } from "./ButtonUploadFile";
+import { ModalUpdateOrderProduct } from "./ModalUpdateOrderProduct";
+import { OrderProduct } from "./OrderProduct";
 
-const { Option } = Select;
-
-const defaultItem = {
+export const defaultItem = {
   itemName: "",
   insurance: true,
   description: "",
@@ -64,7 +31,7 @@ const CreateOrderForm = ({ id }) => {
   const userContext = useContext(GlobalContext);
   const { userInformation, headers } = userContext;
   const orderContext = useContext(OrderContext);
-  const { setKeySelected } = orderContext;
+  const { setKeySelected, keySelected } = orderContext;
 
   const [order, setOrder] = useState({
     orderDate: dayjs().format(FORMAT_TIME_SUBMIT),
@@ -103,22 +70,11 @@ const CreateOrderForm = ({ id }) => {
   const [selectedItem, setItemSelected] = useState(defaultItem);
   const [selectedIndex, setSelectedIndex] = useState(null);
 
-  const [provincesList, setProvincesList] = useState([]);
-  const [districtsList, setDistrictsList] = useState([]);
-
-  const [provincesList2, setProvincesList2] = useState([]);
-  const [districtsList2, setDistrictsList2] = useState([]);
-
-  const [wardsList, setWardsList] = useState([]);
-  const [wardsList2, setWardsList2] = useState([]);
-
   const [company, setCompany] = useState([]);
 
   const [orderBill, setOrderBill] = useState({});
 
   const [itemData, setItemData] = useState(defaultItem || {});
-
-  const fileInputRef = useRef(null);
 
   const [companyData, setCompanyData] = useState(null);
 
@@ -133,10 +89,6 @@ const CreateOrderForm = ({ id }) => {
     }
 
     setItemData({ ...itemData, [name]: newNumber });
-  };
-
-  const handleButtonClick = () => {
-    fileInputRef.current.click();
   };
 
   function checkCompletion(obj) {
@@ -165,31 +117,6 @@ const CreateOrderForm = ({ id }) => {
     }
     return true;
   }
-
-  const handleFileUpload = (e) => {
-    const file = e.target.files[0];
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const workbook = XLSX.read(e.target.result, { type: "binary" });
-      const sheetName = workbook.SheetNames[0];
-      const sheet = workbook.Sheets[sheetName];
-      const parsedData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
-      const convertedData = parsedData.slice(1).map((row) => ({
-        itemName: row[0],
-        insurance: row[1],
-        description: row[2],
-        unitPrice: row[3],
-        quantityItem: row[4],
-        unitWeight: row[5],
-        length: row[6],
-        width: row[7],
-        height: row[8],
-        color: row[9],
-      }));
-      setOrder({ ...order, items: [...order?.items, ...convertedData] });
-    };
-    reader.readAsBinaryString(file);
-  };
 
   const handleTransferAddress = (companyData) => {
     if (!companyData) return;
@@ -323,100 +250,44 @@ const CreateOrderForm = ({ id }) => {
     }
   };
 
-  const handleUpdateItem = () => {
+  const handleUpdateItem = async () => {
+    const {
+      itemId,
+      deleted,
+      itemInsurance,
+      itemValue,
+      itemWeight,
+      key,
+      ...rest
+    } = selectedItem;
+
     const updatedItems = [...order.items];
     updatedItems[selectedIndex] = selectedItem; // Update the item at the selected index
     setOrder({
       ...order,
       items: updatedItems,
     });
+
+    if (keySelected === "0" && id) {
+      try {
+        await axios.put(
+          `/Order/update-item/${selectedItem.itemId}`,
+          { ...rest, orderId: order.orderId },
+          { headers }
+        );
+      } catch (error) {
+        toast({
+          title: "Lỗi hệ thống!.",
+          description: error,
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+      }
+    }
+
     setItemSelected(defaultItem);
     onClose();
-  };
-
-  const handleProvinceChange = (provinceId) => {
-    apiGetPublicDistrict(provinceId);
-  };
-
-  const handleProvinceChange2 = (provinceId) => {
-    apiGetPublicDistrict2(provinceId);
-  };
-
-  const handleDistrictChange = (districtId) => {
-    apiGetPublicWard(districtId);
-  };
-
-  const handleDistrictChange2 = (districtId) => {
-    apiGetPublicWard2(districtId);
-  };
-
-  const apiGetPublicProvinces = async () => {
-    try {
-      const response = await axios.get(
-        "https://esgoo.net/api-tinhthanh/1/0.htm"
-      );
-      setProvincesList(response.data.data);
-    } catch (error) {
-      console.log(error.message);
-    }
-  };
-
-  const apiGetPublicProvinces2 = async () => {
-    try {
-      const response = await axios.get(
-        "https://esgoo.net/api-tinhthanh/1/0.htm"
-      );
-
-      setProvincesList2(response.data.data);
-    } catch (error) {
-      console.log(error.message);
-    }
-  };
-
-  const apiGetPublicDistrict = async (provinceId) => {
-    try {
-      const response = await axios.get(
-        `https://esgoo.net/api-tinhthanh/2/${provinceId}.htm`
-      );
-      setDistrictsList(response.data.data);
-    } catch (error) {
-      console.log(error.message);
-    }
-  };
-
-  const apiGetPublicDistrict2 = async (provinceId) => {
-    try {
-      const response = await axios.get(
-        `https://esgoo.net/api-tinhthanh/2/${provinceId}.htm`
-      );
-      setDistrictsList2(response.data.data);
-    } catch (error) {
-      console.log(error.message);
-    }
-  };
-
-  const apiGetPublicWard = async (districtId) => {
-    try {
-      const response = await axios.get(
-        `https://esgoo.net/api-tinhthanh/3/${districtId}.htm`
-      );
-
-      setWardsList(response.data.data);
-    } catch (error) {
-      console.log(error.message);
-    }
-  };
-
-  const apiGetPublicWard2 = async (districtId) => {
-    try {
-      const response = await axios.get(
-        `https://esgoo.net/api-tinhthanh/3/${districtId}.htm`
-      );
-
-      setWardsList2(response.data.data);
-    } catch (error) {
-      console.log(error.message);
-    }
   };
 
   const handleCreateResponse = async () => {
@@ -442,19 +313,49 @@ const CreateOrderForm = ({ id }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      let payload = {
-        ...order,
-        ...orderBill,
-        accountId: userInformation?.accounId,
-      };
+      const {
+        account,
+        items,
+        company,
+        companyId,
+        deliveryPrice,
+        distance,
+        duration,
+        lattitudeDelivery,
+        lattitudeGet,
+        longtitudeDelivery,
+        longtitudeGet,
+        listPriceId,
+        orderDate,
+        orderId,
+        quantity,
+        trackingNumber,
+        totalInsurance,
+        totalValue,
+        totalWeight,
+        ...rest
+      } = order;
 
-      if (id) {
-        const UpdateOrder = await axios.put("/Order/update-order", payload, {
-          headers,
-        });
+      const { expectedDeliveryDate } = orderBill;
+
+      if (id && keySelected === "0") {
+        let payloadPut = {
+          ...rest,
+          dayUpdate: dayjs().format(FORMAT_TIME_SUBMIT),
+          expectedDeliveryDate,
+          accountId: userInformation?.accounId,
+          status: true,
+        };
+        const UpdateOrder = await axios.put(
+          `/Order/update-order/${orderId}`,
+          payloadPut,
+          {
+            headers,
+          }
+        );
         if (UpdateOrder.status === 200) {
           toast({
-            title: "Gửi thông tin đơn hàng thành công!.",
+            title: "Cập nhật đơn hàng thành công!.",
             status: "success",
             isClosable: true,
           });
@@ -464,7 +365,12 @@ const CreateOrderForm = ({ id }) => {
           console.log("Can't update order");
         }
       } else {
-        const AddCompany = await axios.post("/Order", payload, { headers });
+        let payloadPost = {
+          ...order,
+          ...orderBill,
+          accountId: userInformation?.accounId,
+        };
+        const AddCompany = await axios.post("/Order", payloadPost, { headers });
         if (AddCompany.status === 200) {
           toast({
             title: "Đã gửi thông tin đơn hàng!",
@@ -472,147 +378,22 @@ const CreateOrderForm = ({ id }) => {
             isClosable: true,
           });
           setKeySelected("1");
-        } else {
-          toast({
-            title: "Không thể tạo đơn!",
-            status: "error",
-            isClosable: true,
-          });
         }
       }
     } catch (err) {
-      console.log(err);
+      toast({
+        title: "Không thể tạo đơn!",
+        description: err,
+        status: "error",
+        isClosable: true,
+      });
     }
   };
-
-  const ModalItem = (
-    <Modal isOpen={isOpen} onClose={onClose}>
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>Cập nhật mặt hàng</ModalHeader>
-        <ModalCloseButton />
-        <ModalBody>
-          <VStack spacing={4}>
-            <FormControl isRequired>
-              <FormLabel>Tên mặt hàng</FormLabel>
-              <Input
-                value={selectedItem?.itemName}
-                onChange={(e) => handleChange("itemName", e.target.value)}
-              />
-            </FormControl>
-
-            <FormControl isRequired>
-              <FormLabel>
-                Giá trị đơn hàng (Bảo hiểm 2% giá trị đơn hàng)
-              </FormLabel>
-              <InputFormatPrice
-                valueInput={selectedItem?.unitPrice}
-                handleItemChange={handleChangeNumber}
-              />
-            </FormControl>
-
-            <FormControl isRequired>
-              <FormLabel>Số lượng</FormLabel>
-              <Input
-                value={selectedItem?.quantityItem}
-                min={0}
-                type="number"
-                onChange={(valueString) =>
-                  handleChangeNumber("quantityItem", valueString.target.value)
-                }
-              />
-            </FormControl>
-
-            <FormControl isRequired>
-              <FormLabel>Khối lượng (kg)</FormLabel>
-              <Input
-                value={selectedItem?.unitWeight}
-                precision={2}
-                min={0}
-                type="number"
-                onChange={(valueString) =>
-                  handleChangeNumber("unitWeight", valueString.target.value)
-                }
-              />
-            </FormControl>
-
-            <FormControl isRequired>
-              <FormLabel>Dài (cm)</FormLabel>
-              <Input
-                value={selectedItem?.length}
-                precision={2}
-                min={0}
-                type="number"
-                onChange={(valueString) =>
-                  handleChangeNumber("length", valueString.target.value)
-                }
-              />
-            </FormControl>
-
-            <FormControl isRequired>
-              <FormLabel>Rộng (cm)</FormLabel>
-              <Input
-                value={selectedItem?.width}
-                precision={2}
-                min={0}
-                type="number"
-                onChange={(valueString) =>
-                  handleChangeNumber("width", valueString.target.value)
-                }
-              />
-            </FormControl>
-
-            <FormControl isRequired>
-              <FormLabel>Cao (cm)</FormLabel>
-              <Input
-                value={selectedItem?.height}
-                precision={2}
-                min={0}
-                type="number"
-                onChange={(valueString) =>
-                  handleChangeNumber("height", valueString.target.value)
-                }
-              />
-            </FormControl>
-
-            <FormControl isRequired>
-              <FormLabel>Màu sắc</FormLabel>
-              <Input
-                value={selectedItem?.color}
-                onChange={(e) => handleChange("color", e.target.value)}
-              />
-            </FormControl>
-
-            <FormControl isRequired>
-              <FormLabel>Mô tả</FormLabel>
-              <TextArea
-                value={selectedItem?.description}
-                cols={6}
-                onChange={(e) => handleChange("description", e.target.value)}
-              />
-            </FormControl>
-          </VStack>
-        </ModalBody>
-
-        <ModalFooter>
-          <Button variant="ghost" mr={3} onClick={onClose}>
-            Close
-          </Button>
-          <Button colorScheme="blue" onClick={handleUpdateItem}>
-            Sửa
-          </Button>
-        </ModalFooter>
-      </ModalContent>
-    </Modal>
-  );
 
   useEffect(() => {
     if (headers) {
       handleFetchData();
     }
-    apiGetPublicProvinces();
-    apiGetPublicDistrict("79");
-    apiGetPublicProvinces2();
   }, [headers]);
 
   useEffect(() => {
@@ -623,39 +404,10 @@ const CreateOrderForm = ({ id }) => {
     }
   }, [id, order]);
 
-  const [form] = Form.useForm();
-
-  useEffect(() => {
-    if (id) {
-      if (!order.dayGet) return;
-      form.setFieldValue("dayGet", dayjs(order?.dayGet, FORMAT_TIME));
-    }
-  }, [id, order]);
-
   return (
     <>
       {!id && !nextToReview && (
-        <>
-          <input
-            type="file"
-            ref={fileInputRef}
-            style={{ display: "none" }}
-            onChange={handleFileUpload}
-          />
-          <Button
-            position="fixed"
-            bottom={"50px"}
-            right={"50px"}
-            bgColor={"#0BC5EA"}
-            zIndex={"100"}
-            borderRadius={"50%"}
-            w={"50px"}
-            h={"50px"}
-            onClick={handleButtonClick}
-          >
-            <TbFileImport style={{ fontSize: "24px" }} />
-          </Button>
-        </>
+        <ButtonUploadFile setOrder={setOrder} order={order} />
       )}
 
       {!nextToReview ? (
@@ -666,552 +418,40 @@ const CreateOrderForm = ({ id }) => {
           display={"flex"}
           justifyContent={"center"}
         >
-          {ModalItem}
+          <ModalUpdateOrderProduct
+            isOpen={isOpen}
+            onClose={onClose}
+            selectedItem={selectedItem}
+            handleChange={handleChange}
+            handleChangeNumber={handleChangeNumber}
+            handleUpdateItem={handleUpdateItem}
+          />
           <Stack width={"100%"}>
-            <Card type="inner" title="Thông tin Công Ty">
-              <Form layout="vertical">
-                <Flex justifyContent={"space-between"}>
-                  <Form.Item
-                    required
-                    label="Tên công ty"
-                    style={{
-                      width: "19%",
-                      marginBottom: "10px",
-                      padding: "0 0 3px",
-                    }}
-                  >
-                    {userInformation?.role === "Staff" && !id ? (
-                      <Select
-                        onChange={(event) => {
-                          handleChangeOrder("companyId", event);
-                          handleGetCompanyInformation(event);
-                        }}
-                        value={order?.companyId}
-                      >
-                        <Option value="">Chọn công ty</Option>
-                        {company.map((company) => (
-                          <Option
-                            key={company.companyId}
-                            value={company.companyId}
-                          >
-                            {company.companyName}
-                          </Option>
-                        ))}
-                      </Select>
-                    ) : (
-                      <Input
-                        placeholder="input placeholder"
-                        value={companyData?.companyName}
-                      />
-                    )}
-                  </Form.Item>{" "}
-                  <Form.Item
-                    required
-                    label="Mã số thuế"
-                    style={{ width: "19%", marginBottom: "10px" }}
-                  >
-                    <Input
-                      placeholder="input placeholder"
-                      value={companyData?.account?.citizenId}
-                    />
-                  </Form.Item>{" "}
-                  <Form.Item
-                    required
-                    label="Số điện thoại"
-                    style={{ width: "19%", marginBottom: "10px" }}
-                  >
-                    <Input
-                      placeholder="input placeholder"
-                      value={companyData?.account?.phone}
-                    />
-                  </Form.Item>{" "}
-                  <Form.Item
-                    required
-                    label="Email"
-                    style={{ width: "19%", marginBottom: "10px" }}
-                  >
-                    <Input
-                      placeholder="input placeholder"
-                      value={companyData?.account?.email}
-                    />
-                  </Form.Item>{" "}
-                  <Form.Item
-                    required
-                    label="Người đại diện"
-                    style={{ width: "19%", marginBottom: "10px" }}
-                  >
-                    <Input
-                      placeholder="input placeholder"
-                      value={companyData?.account?.fullName}
-                    />
-                  </Form.Item>
-                </Flex>
-                <Form.Item required label="Địa chỉ">
-                  <TextArea
-                    placeholder="input placeholder"
-                    rows={1}
-                    value={companyData?.companyLocation}
-                    disabled
-                  />
-                </Form.Item>
-              </Form>
-            </Card>
-            <Box height={"2%"}></Box>
-            <Flex justifyContent={"space-between"} mb={"2px"}>
-              <Card
-                title="Thông tin gửi hàng"
-                type="inner"
-                style={{ width: "60%" }}
-              >
-                <Stack spacing={4}>
-                  <Form
-                    form={form}
-                    layout="vertical"
-                    initialValues={{ dayGet: dayjs() }}
-                  >
-                    <HStack>
-                      <Form.Item required label="Số điện thoại">
-                        <Input
-                          placeholder="Nhập số điện thoại"
-                          onChange={(event) =>
-                            handleChangeOrder("getPhone", event.target.value)
-                          }
-                          value={companyData?.account?.phone}
-                          disabled={id ? true : false}
-                        />
-                      </Form.Item>
-                      <Form.Item required label="Họ tên">
-                        <Input
-                          placeholder="Nhập họ tên"
-                          onChange={(event) =>
-                            handleChangeOrder("getTo", event.target.value)
-                          }
-                          disabled={id ? true : false}
-                          value={companyData?.account?.fullName}
-                        />
-                      </Form.Item>
-                    </HStack>
-                    <Form.Item required label="Địa chỉ">
-                      <HStack mb={3} mt={1}>
-                        <Select
-                          onChange={(event, option) => {
-                            handleChangeOrder("provinceGet", event);
-                            handleChangeOrder("cityGet", event);
-                            handleProvinceChange(option.key);
-                          }}
-                          value={order?.provinceGet}
-                          style={{ width: "100%" }}
-                        >
-                          <Option value="">Chọn tỉnh/thành phố</Option>
-                          {provincesList
-                            .filter((value) => value.id === "79")
-                            .map((province) => (
-                              <Option
-                                key={province.id}
-                                value={province.full_name}
-                              >
-                                {province.full_name}
-                              </Option>
-                            ))}
-                        </Select>
-                        <Select
-                          onChange={(event, option) => {
-                            handleChangeOrder("districtGet", event);
-                            handleDistrictChange(option.key);
-                          }}
-                          value={order?.districtGet}
-                          style={{ width: "100%" }}
-                        >
-                          <Option value="">Chọn quận/huyện</Option>
-                          {districtsList.map((district) => (
-                            <Option
-                              key={district.id}
-                              value={district.full_name}
-                            >
-                              {district.full_name}
-                            </Option>
-                          ))}
-                        </Select>
-                        <Select
-                          onChange={(event) =>
-                            handleChangeOrder("wardGet", event)
-                          }
-                          value={order?.wardGet}
-                          style={{ width: "100%" }}
-                        >
-                          <Option value="">Chọn xã/phường</Option>
-                          {wardsList.map((ward) => (
-                            <Option key={ward.id} value={ward.full_name}>
-                              {ward.full_name}
-                            </Option>
-                          ))}
-                        </Select>
-                      </HStack>
-                      {/* <Form.Item required label="Địa chỉ"> */}
-                      <Input
-                        placeholder="Nhập địa chỉ"
-                        onChange={(event) =>
-                          handleChangeOrder(
-                            "locationDetailGet",
-                            event.target.value
-                          )
-                        }
-                        w={"94%"}
-                        value={order?.locationDetailGet}
-                        disabled={id ? true : false}
-                      />
-                    </Form.Item>
+            <FormInfo
+              id={id}
+              company={company}
+              companyData={companyData}
+              userInformation={userInformation}
+              order={order}
+              handleChangeOrder={handleChangeOrder}
+              handleGetCompanyInformation={handleGetCompanyInformation}
+            />
 
-                    <Form.Item name="dayGet" required label="Ngày gửi hàng">
-                      <DatePicker
-                        onChange={(date) => {
-                          handleChangeOrder(
-                            "dayGet",
-                            dayjs(date).format(FORMAT_TIME_SUBMIT)
-                          );
-                        }}
-                        format={FORMAT_TIME}
-                        minDate={dayjs()}
-                        disabled={!!id}
-                      />
-                    </Form.Item>
-                  </Form>
-                </Stack>
-              </Card>
-              <Box w={"3%"}></Box>
-              <Card
-                title="Thông tin nhận hàng"
-                type="inner"
-                style={{ width: "60%" }}
-              >
-                <Stack spacing={4}>
-                  <Form layout="vertical">
-                    <HStack>
-                      <Form.Item required label="Số điện thoại">
-                        <Input
-                          placeholder="Nhập số điện thoại"
-                          onChange={(event) =>
-                            handleChangeOrder(
-                              "deliveryPhone",
-                              event.target.value
-                            )
-                          }
-                          value={order?.deliveryPhone}
-                          disabled={id ? true : false}
-                        />
-                      </Form.Item>
-                      <Form.Item required label="Họ tên">
-                        <Input
-                          placeholder="Nhập họ tên"
-                          onChange={(event) =>
-                            handleChangeOrder("deliveryTo", event.target.value)
-                          }
-                          disabled={id ? true : false}
-                          value={order?.deliveryTo}
-                        />
-                      </Form.Item>
-                    </HStack>
-                    <Form.Item required label="Địa chỉ">
-                      <HStack mt={1} mb={3}>
-                        <Select
-                          onChange={(event, option) => {
-                            handleChangeOrder("provinceDelivery", event);
-                            handleChangeOrder("cityDelivery", event);
-                            handleProvinceChange2(option.key);
-                          }}
-                          value={order?.provinceDelivery}
-                          style={{ width: "100%" }}
-                        >
-                          <Option value="">Chọn tỉnh/thành phố</Option>
-                          {provincesList2.map((province) => (
-                            <Option
-                              key={province.id}
-                              value={province.full_name}
-                            >
-                              {province.full_name}
-                            </Option>
-                          ))}
-                        </Select>
-                        <Select
-                          onChange={(event, option) => {
-                            handleChangeOrder("districtDelivery", event);
-                            handleDistrictChange2(option.key);
-                          }}
-                          value={order?.districtDelivery}
-                          style={{ width: "100%" }}
-                        >
-                          <Option value="">Chọn quận/huyện</Option>
-                          {districtsList2.map((district) => (
-                            <Option
-                              key={district.id}
-                              value={district.full_name}
-                            >
-                              {district.full_name}
-                            </Option>
-                          ))}
-                        </Select>
-                        <Select
-                          onChange={(event) =>
-                            handleChangeOrder("wardDelivery", event)
-                          }
-                          value={order?.wardDelivery}
-                          style={{ width: "100%" }}
-                        >
-                          <Option value="">Chọn xã/phường</Option>
-                          {wardsList2.map((ward) => (
-                            <Option key={ward.id} value={ward.full_name}>
-                              {ward.full_name}
-                            </Option>
-                          ))}
-                        </Select>
-                      </HStack>
-                      <Input
-                        placeholder="Nhập địa chỉ"
-                        onChange={(event) =>
-                          handleChangeOrder(
-                            "locationDetailDelivery",
-                            event.target.value
-                          )
-                        }
-                        w={"94%"}
-                        value={order?.locationDetailDelivery}
-                        disabled={id ? true : false}
-                      />
-                      {/* <Form.Item required label="Địa chỉ"> */}
-                    </Form.Item>
-                  </Form>
-                </Stack>
-              </Card>
-            </Flex>
-            {!id && (
-              <Card type="inner" title="Thông tin mặt hàng">
-                <Form layout="vertical">
-                  <Flex justifyContent={"space-between"}>
-                    <Stack w={"100%"}>
-                      <Stack direction="row">
-                        <Stack w={"50%"}>
-                          <Form.Item label="Tên mặt hàng">
-                            <Input
-                              placeholder="Nhập tên mặt hàng"
-                              disabled={id ? true : false}
-                              value={itemData?.itemName}
-                              onChange={(e) =>
-                                handleItemChange("itemName", e.target.value)
-                              }
-                            />
-                          </Form.Item>
-                        </Stack>
-                      </Stack>
-                      <Form.Item label="Giá trị đơn hàng (Bảo hiểm 2% giá trị đơn hàng)">
-                        <InputFormatPrice
-                          id={id}
-                          hasTooltip={true}
-                          valueInput={itemData?.unitPrice}
-                          handleItemChange={handleItemChangeNumber}
-                        />
-                      </Form.Item>
-                      <HStack>
-                        <Form.Item label="Khối lượng(kg)">
-                          <Input
-                            disabled={id ? true : false}
-                            value={itemData?.unitWeight}
-                            min={0}
-                            type="number"
-                            onChange={(valueString) =>
-                              handleItemChangeNumber(
-                                "unitWeight",
-                                valueString.target.value
-                              )
-                            }
-                          />
-                        </Form.Item>
-                        <Form.Item label="Số lượng">
-                          <Input
-                            disabled={id ? true : false}
-                            value={itemData?.quantityItem}
-                            min={0}
-                            type="number"
-                            onChange={(valueString) =>
-                              handleItemChangeNumber(
-                                "quantityItem",
-                                valueString.target.value
-                              )
-                            }
-                          />
-                        </Form.Item>
-                        <Form.Item label="Dài(cm)">
-                          <Input
-                            disabled={id ? true : false}
-                            value={itemData?.length}
-                            precision={2}
-                            type="number"
-                            min={0}
-                            onChange={(valueString) =>
-                              handleItemChangeNumber(
-                                "length",
-                                valueString.target.value
-                              )
-                            }
-                          />
-                        </Form.Item>
-                        <Form.Item label="Rộng(cm)">
-                          <Input
-                            disabled={id ? true : false}
-                            value={itemData?.width}
-                            precision={2}
-                            type="number"
-                            min={0}
-                            onChange={(valueString) =>
-                              handleItemChangeNumber(
-                                "width",
-                                valueString.target.value
-                              )
-                            }
-                          />
-                        </Form.Item>
-                        <Form.Item label="Cao(cm)">
-                          <Input
-                            disabled={id ? true : false}
-                            value={itemData?.height}
-                            precision={2}
-                            type="number"
-                            min={0}
-                            onChange={(valueString) =>
-                              handleItemChangeNumber(
-                                "height",
-                                valueString.target.value
-                              )
-                            }
-                          />
-                        </Form.Item>
-                        <Form.Item label="Màu sắc">
-                          <Input
-                            placeholder="Nhập màu sắc"
-                            disabled={id ? true : false}
-                            value={itemData?.color}
-                            onChange={(e) =>
-                              handleItemChange("color", e.target.value)
-                            }
-                          />
-                        </Form.Item>
-                      </HStack>
-                      <Form.Item label="Mô tả">
-                        <TextArea
-                          placeholder="Nhập nội dung"
-                          rows={5}
-                          disabled={id ? true : false}
-                          value={itemData?.description}
-                          onChange={(e) =>
-                            handleItemChange("description", e.target.value)
-                          }
-                        />
-                      </Form.Item>
-                      <div
-                        style={{
-                          display: "flex",
-                          justifyContent: "flex-end",
-                          gap: "10px",
-                        }}
-                      >
-                        <ButtonAntd
-                          style={{ width: "250px" }}
-                          type="primary"
-                          onClick={() => {
-                            setOrder({
-                              ...order,
-                              items: [
-                                ...order?.items,
-                                {
-                                  ...itemData,
-                                  height: parseFloat(itemData?.height),
-                                  length: parseFloat(itemData?.length),
-                                  quantityItem: parseInt(
-                                    itemData?.quantityItem
-                                  ),
-                                  unitPrice: parseFloat(itemData?.unitPrice),
-                                  unitWeight: parseFloat(itemData?.unitWeight),
-                                  width: parseFloat(itemData?.width),
-                                },
-                              ],
-                            });
-                            setItemData(defaultItem);
-                          }}
-                        >
-                          Thêm mặt hàng
-                        </ButtonAntd>
-                      </div>
-                    </Stack>
-                  </Flex>
-                </Form>
-              </Card>
-            )}
-            <Box>
-              {id ? (
-                <TableOrder order={order} />
-              ) : (
-                order?.items.map((item, index) => (
-                  <CardOrder
-                    key={index + item.itemName}
-                    id={id}
-                    index={index}
-                    item={item}
-                    order={order}
-                    setItemSelected={setItemSelected}
-                    setSelectedIndex={setSelectedIndex}
-                    onOpen={onOpen}
-                    setOrder={setOrder}
-                  />
-                ))
-              )}
-
-              {order?.items.length > 0 ? (
-                <Box>
-                  <Tooltip
-                    title={
-                      !orderBill?.expectedDeliveryDate
-                        ? "Vui lòng điền các thông tin trên"
-                        : ""
-                    }
-                  >
-                    {id ? (
-                      <Button
-                        bg={"#1677ff"}
-                        color={"white"}
-                        _hover={{
-                          bg: "blue.300",
-                        }}
-                        marginRight="24px"
-                        w="250px"
-                        float="right"
-                        size="sm"
-                        fontWeight="400"
-                        // onClick={onNextToReviewOrder}
-                      >
-                        Xác Nhận Sửa Đơn Hàng
-                      </Button>
-                    ) : (
-                      <Button
-                        bg={"#1677ff"}
-                        color={"white"}
-                        _hover={{
-                          bg: "blue.300",
-                        }}
-                        marginRight="24px"
-                        w="250px"
-                        float="right"
-                        size="sm"
-                        fontWeight="400"
-                        isDisabled={!orderBill?.expectedDeliveryDate}
-                        onClick={onNextToReviewOrder}
-                        rightIcon={<AiOutlineArrowRight />}
-                      >
-                        Tiến Hành Tạo Đơn
-                      </Button>
-                    )}
-                  </Tooltip>
-                </Box>
-              ) : null}
-            </Box>
+            <OrderProduct
+              id={id}
+              itemData={itemData}
+              order={order}
+              setOrder={setOrder}
+              setItemSelected={setItemSelected}
+              setSelectedIndex={setSelectedIndex}
+              handleSubmit={handleSubmit}
+              onOpen={onOpen}
+              orderBill={orderBill}
+              onNextToReviewOrder={onNextToReviewOrder}
+              setItemData={setItemData}
+              handleItemChange={handleItemChange}
+              handleItemChangeNumber={handleItemChangeNumber}
+            />
           </Stack>
         </Box>
       ) : (

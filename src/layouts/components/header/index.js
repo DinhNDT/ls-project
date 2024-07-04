@@ -19,15 +19,16 @@ import {
   Tab,
   TabIndicator,
 } from "@chakra-ui/react";
+import logo from "../../../assets/img/delivery-truck.png";
 // eslint-disable-next-line
-import { FiMenu, FiBell, FiChevronDown } from "react-icons/fi";
+import { FiMenu, FiChevronDown } from "react-icons/fi";
 import { Link, useNavigate } from "react-router-dom";
 import { GlobalContext } from "../../../provider";
 import { useContext } from "react";
 
 const MobileNav = ({ onOpen, notHaveSidebar, ...rest }) => {
   const userContext = useContext(GlobalContext);
-  const { isLogin, userInformation } = userContext;
+  const { userInformation } = userContext;
   const flexBG = useColorModeValue("white", "gray.900");
   const flexBB = useColorModeValue("gray.200", "gray.700");
   const navigate = useNavigate();
@@ -37,7 +38,6 @@ const MobileNav = ({ onOpen, notHaveSidebar, ...rest }) => {
       ml={{ base: 0, md: notHaveSidebar ? 0 : 60 }}
       px={{ base: 4, md: 4 }}
       height="20"
-      p={{ md: 12, base: 4 }}
       alignItems="center"
       borderBottomWidth="1px"
       borderBottomColor={flexBB}
@@ -45,18 +45,21 @@ const MobileNav = ({ onOpen, notHaveSidebar, ...rest }) => {
       bg={flexBG}
       {...rest}
     >
-      <Flex alignItems="center" gap={45}>
+      <Flex alignItems="center" gap={35}>
         {notHaveSidebar && (
-          <Text
-            display={{ base: "none", md: "flex" }}
-            fontSize="2xl"
-            fontFamily="monospace"
-            fontWeight="bold"
-            style={{ cursor: "pointer" }}
-            onClick={() => navigate("/")}
-          >
-            Logistic
-          </Text>
+          <Flex alignItems="center" gap={2}>
+            <img src={logo} alt="" width={40} height={40} />
+            <Text
+              display={{ base: "none", md: "flex" }}
+              fontSize="x-large"
+              fontFamily="monospace"
+              fontWeight="bold"
+              style={{ cursor: "pointer" }}
+              onClick={() => navigate("/")}
+            >
+              Logistics For Household
+            </Text>
+          </Flex>
         )}
         {!notHaveSidebar && (
           <IconButton
@@ -79,7 +82,7 @@ const MobileNav = ({ onOpen, notHaveSidebar, ...rest }) => {
         </Text>
         <Tabs position="relative" variant="unstyled">
           <TabList onChange={(value) => console.log(value)}>
-            <Tab height={91} onClick={() => navigate("/")}>
+            <Tab height={75} onClick={() => navigate("/")}>
               Trang chủ
             </Tab>
             <Tab>Cước vận chuyển</Tab>

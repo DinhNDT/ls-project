@@ -43,6 +43,7 @@ const TableSummaryRow = ({
 
 export const TableOrder = ({ order, orderBill, id }) => {
   const orderTable = id ? order : orderBill;
+
   const [modal, setModal] = useState({ isOpen: false, type: 1 });
 
   const showModal = (type = 1) => {
@@ -154,19 +155,6 @@ export const TableOrder = ({ order, orderBill, id }) => {
         summary={() => (
           <Table.Summary fixed>
             <TableSummaryRow
-              title={
-                <Flex align={"center"} gap={1}>
-                  Tổng khối lượng
-                  <AiOutlineQuestionCircle
-                    style={{ cursor: "pointer" }}
-                    onClick={() => showModal(2)}
-                  />{" "}
-                  :
-                </Flex>
-              }
-              content={<>{orderTable?.totalWeight} Kg</>}
-            />
-            <TableSummaryRow
               title={"Khoảng cách vận chuyển:"}
               content={<>{orderTable?.distance} Km</>}
             />
@@ -185,11 +173,28 @@ export const TableOrder = ({ order, orderBill, id }) => {
                 <>{formatMoney(Math.ceil(orderTable?.totalInsurance))} VNĐ</>
               }
             />
-
             <TableSummaryRow
               title={
                 <Flex align={"center"} gap={1}>
-                  Giá Vận Chuyển
+                  Tổng khối lượng
+                  <AiOutlineQuestionCircle
+                    style={{ cursor: "pointer" }}
+                    onClick={() => showModal(2)}
+                  />{" "}
+                  :
+                </Flex>
+              }
+              content={<>{orderTable?.totalWeight} Kg</>}
+            />
+            <TableSummaryRow
+              title={"Đơn giá:"}
+              description={"(VNĐ/Kg)"}
+              content={<>{formatMoney(Math.ceil(orderTable?.price))} VNĐ</>}
+            />
+            <TableSummaryRow
+              title={
+                <Flex align={"center"} gap={1}>
+                  Cước Vận Chuyển
                   <AiOutlineQuestionCircle
                     fontSize={13}
                     style={{ cursor: "pointer" }}
@@ -198,7 +203,7 @@ export const TableOrder = ({ order, orderBill, id }) => {
                   :
                 </Flex>
               }
-              description={"(Tổng khối lượng x Khoảng cách + Giá bảo hiểm)"}
+              description={"(Tổng khối lượng x Đơn giá + Giá bảo hiểm)"}
               isHighLight
               content={
                 <Text color={"#4096ff"} fontWeight={500} fontSize={"medium"}>

@@ -11,17 +11,20 @@ import {
   Link,
   useToast,
   Fade,
+  Container,
 } from "@chakra-ui/react";
 import { Checkbox, Form } from "antd";
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FormCompanyInfo } from "../../components/Register/FormCompanyInfo";
 import { FormUserInfo } from "../../components/Register/FormUserInfo";
 import { ArrowBackIcon, ArrowForwardIcon } from "@chakra-ui/icons";
+import imgRegister from "../../assets/img/resume.png";
+import Aos from "aos";
 
 const LINK_POLICY =
-  "https://drive.google.com/uc?id=1KRtwWgw9lFQap-qzTHs31p76g5SGtbsv&export=download";
+  "https://drive.google.com/uc?id=1T_8qwLfZq7vr4xJsbvHzU4caPiWJM8qB&export=download";
 
 export default function RegisterPage() {
   const [form] = Form.useForm();
@@ -75,133 +78,150 @@ export default function RegisterPage() {
     apiPostCreateCompany(formSubmit);
   };
 
+  useEffect(() => {
+    Aos.init({ duration: 1000 });
+  }, []);
+
   return (
-    <Flex
-      align={"center"}
-      justify={"center"}
-      bg={useColorModeValue("gray.50", "gray.800")}
-      borderRadius={10}
-      boxShadow={"lg"}
-      width={700}
-    >
-      <Stack spacing={4} padding={25} paddingTop={5} width={"100%"}>
-        <Box
-          display={"flex"}
-          justifyContent={"space-between"}
-          alignItems={"center"}
+    <Container maxW={"7xl"} data-aos="fade-up">
+      <Box
+        display={"flex"}
+        alignItems={"center"}
+        justifyContent={"space-between"}
+      >
+        <img src={imgRegister} alt="" width={"30%"} height={"30%"} />
+        <Flex
+          align={"center"}
+          justify={"center"}
+          bg={useColorModeValue("gray.50", "gray.800")}
+          borderRadius={10}
+          boxShadow={"lg"}
+          width={700}
         >
-          <Box>
-            <Heading textAlign={"left"} size={"lg"}>
-              Đăng kí ngay{" "}
-              <Text
-                as={"span"}
-                bgColor={"#F56565"}
-                bgClip="text"
-                fontSize={"35px"}
-              >
-                !
-              </Text>
-            </Heading>
-            <Text mt={2} color={"GrayText"}>
-              Vui lòng nhập thông tin{" "}
-              {!isSwitchForm ? (
-                <span style={{ color: "#F56565", fontWeight: 500 }}>
-                  Doanh Nghiệp
-                </span>
-              ) : (
-                <span style={{ color: "#F56565", fontWeight: 500 }}>
-                  Người Đại Diện Doanh Nghiệp
-                </span>
-              )}
-            </Text>
-          </Box>
-          {isSwitchForm && (
-            <Button
-              leftIcon={<ArrowBackIcon />}
-              size="md"
-              variant={"link"}
-              onClick={() => setIsSwitchForm(false)}
+          <Stack spacing={4} padding={25} paddingTop={5} width={"100%"}>
+            <Box
+              display={"flex"}
+              justifyContent={"space-between"}
+              alignItems={"center"}
             >
-              Quay lại
-            </Button>
-          )}
-        </Box>
-        <Box rounded={"lg"}>
-          <Form
-            form={form}
-            size="middle"
-            name="register"
-            onFinish={onFinish}
-            autoComplete="off"
-            layout="vertical"
-            scrollToFirstError
-          >
-            <Stack position={"relative"}>
-              <Fade
-                in={isSwitchForm}
-                style={{
-                  position: "absolute",
-                  width: "100%",
-                  height: "100%",
-                  zIndex: isSwitchForm ? "5" : "1",
-                }}
+              <Box>
+                <Heading textAlign={"left"} size={"lg"}>
+                  Đăng kí ngay{" "}
+                  <Text
+                    as={"span"}
+                    bgColor={"#F56565"}
+                    bgClip="text"
+                    fontSize={"35px"}
+                  >
+                    !
+                  </Text>
+                </Heading>
+                <Text mt={2} color={"GrayText"}>
+                  Vui lòng nhập thông tin{" "}
+                  {!isSwitchForm ? (
+                    <span style={{ color: "#F56565", fontWeight: 500 }}>
+                      Doanh Nghiệp
+                    </span>
+                  ) : (
+                    <span style={{ color: "#F56565", fontWeight: 500 }}>
+                      Người Đại Diện Doanh Nghiệp
+                    </span>
+                  )}
+                </Text>
+              </Box>
+              {isSwitchForm && (
+                <Button
+                  leftIcon={<ArrowBackIcon />}
+                  size="md"
+                  variant={"link"}
+                  onClick={() => setIsSwitchForm(false)}
+                >
+                  Quay lại
+                </Button>
+              )}
+            </Box>
+            <Box rounded={"lg"}>
+              <Form
+                form={form}
+                size="middle"
+                name="register"
+                onFinish={onFinish}
+                autoComplete="off"
+                layout="vertical"
+                scrollToFirstError
               >
-                <Box>
-                  <FormUserInfo />
-                  <Box>
-                    <Stack spacing={10} pt={2}>
+                <Stack position={"relative"}>
+                  <Fade
+                    in={isSwitchForm}
+                    style={{
+                      position: "absolute",
+                      width: "100%",
+                      height: "100%",
+                      zIndex: isSwitchForm ? "5" : "1",
+                    }}
+                  >
+                    <Box>
+                      <FormUserInfo />
+                      <Box>
+                        <Stack spacing={10} pt={2}>
+                          <Button
+                            isDisabled={!isReadPolicy}
+                            size="lg"
+                            bg={"#F56565"}
+                            color={"white"}
+                            _hover={{
+                              bg: "pink.300",
+                            }}
+                            onClick={() => form.submit()}
+                          >
+                            Đăng kí
+                          </Button>
+                        </Stack>
+                        <Checkbox
+                          onChange={(e) => setIsReadPolicy(e.target.checked)}
+                        >
+                          Tôi đã đọc và đồng ý với{" "}
+                          <Link
+                            color={"blue.400"}
+                            href={LINK_POLICY}
+                            isExternal
+                          >
+                            điều khoản
+                          </Link>{" "}
+                          của người dùng{" "}
+                        </Checkbox>
+                      </Box>
+                    </Box>
+                  </Fade>
+                  <Fade
+                    in={!isSwitchForm}
+                    style={{
+                      zIndex: !isSwitchForm ? "5" : "1",
+                    }}
+                  >
+                    <Box>
+                      <FormCompanyInfo />
                       <Button
-                        isDisabled={!isReadPolicy}
-                        size="lg"
+                        float={"right"}
+                        size="md"
                         bg={"#F56565"}
                         color={"white"}
                         _hover={{
                           bg: "pink.300",
                         }}
-                        onClick={() => form.submit()}
+                        onClick={() => setIsSwitchForm(true)}
+                        rightIcon={<ArrowForwardIcon />}
                       >
-                        Đăng kí
+                        Tiếp theo
                       </Button>
-                    </Stack>
-                    <Checkbox
-                      onChange={(e) => setIsReadPolicy(e.target.checked)}
-                    >
-                      Tôi đã đọc và đồng ý với{" "}
-                      <Link color={"blue.400"} href={LINK_POLICY} isExternal>
-                        điều khoản
-                      </Link>{" "}
-                      của người dùng{" "}
-                    </Checkbox>
-                  </Box>
-                </Box>
-              </Fade>
-              <Fade
-                in={!isSwitchForm}
-                style={{
-                  zIndex: !isSwitchForm ? "5" : "1",
-                }}
-              >
-                <Box>
-                  <FormCompanyInfo />
-                  <Button
-                    float={"right"}
-                    size="md"
-                    bg={"#F56565"}
-                    color={"white"}
-                    _hover={{
-                      bg: "pink.300",
-                    }}
-                    onClick={() => setIsSwitchForm(true)}
-                    rightIcon={<ArrowForwardIcon />}
-                  >
-                    Tiếp theo
-                  </Button>
-                </Box>
-              </Fade>
-            </Stack>
-          </Form>
-        </Box>
-      </Stack>
-    </Flex>
+                    </Box>
+                  </Fade>
+                </Stack>
+              </Form>
+            </Box>
+          </Stack>
+        </Flex>
+      </Box>
+    </Container>
   );
 }

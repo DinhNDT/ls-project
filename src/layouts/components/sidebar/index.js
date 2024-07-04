@@ -9,12 +9,9 @@ import {
   FiShoppingCart,
 } from "react-icons/fi";
 import React, { useContext, useEffect, useState } from "react";
-import {
-  DesktopOutlined,
-  LogoutOutlined,
-  BellOutlined,
-} from "@ant-design/icons";
+import { LogoutOutlined, BellOutlined } from "@ant-design/icons";
 import { Breadcrumb, Layout, Menu, theme } from "antd";
+import logo from "../../../assets/img/application.png";
 
 import { GlobalContext } from "../../../provider";
 import { useNavigate } from "react-router-dom";
@@ -130,25 +127,18 @@ const SideBar = () => {
         onCollapse={(value) => setCollapsed(value)}
       >
         <div className="demo-logo-vertical" style={{ padding: "30px" }}>
-          <div className="logoDiv">
-            <h1
-              style={{
-                color: "rgba(255, 255, 255, 0.65)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontSize: "1.6rem",
-              }}
+          <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
+            <img src={logo} alt="" width={40} height={40} />
+            {!collapsed ? <Text
+              display={{ base: "none", md: "flex" }}
+              fontSize="large"
+              fontFamily="monospace"
+              style={{ cursor: "pointer" }}
+              onClick={() => navigate("/")}
+              color={"whitesmoke"}
             >
-              <DesktopOutlined
-                className="icon"
-                style={{
-                  color: "rgba(255, 255, 255, 0.65)",
-                  marginRight: "10px",
-                }}
-              />
-              LOGISTIC
-            </h1>
+              Logistics
+            </Text> : null}
           </div>
         </div>
         <Menu
@@ -156,7 +146,11 @@ const SideBar = () => {
           defaultOpenKeys={["sub1"]}
           defaultSelectedKeys={["1"]}
           selectedKeys={[
-            keySelected === "0" || keySelected === "0A" ? "1" : keySelected,
+            keySelected === "0" || keySelected === "0A"
+              ? "1"
+              : keySelected === "2A"
+                ? "2"
+                : keySelected,
           ]}
           mode="inline"
           items={items}
@@ -218,10 +212,16 @@ const SideBar = () => {
               )}
             {keySelected === "1" &&
               (userRole === "Company" || userRole === "Staff") && <OrderPage />}
-            {keySelected === "2" &&
-              (userRole === "Company" || userRole === "Staff") && (
-                <CreateOrderPage />
-              )}
+
+            {keySelected === "2" && userRole === "Company" && (
+              <CreateOrderPage />
+            )}
+            {keySelected === "2A" && userRole === "Company" && (
+              <CreateOrderPage id={selectedItem?.orderId} />
+            )}
+
+            {keySelected === "2" && userRole === "Staff" && <CreateOrderPage />}
+
             {keySelected === "3" &&
               (userRole === "Company" || userRole === "Staff") && (
                 <PriceListOrderPage />

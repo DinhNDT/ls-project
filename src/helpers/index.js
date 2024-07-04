@@ -104,7 +104,7 @@ function convertISODateToDDMMYY(isoDateString) {
 
 function getStatusTitle(status) {
   const statusTitles = {
-    1: "Idle",
+    1: "Hàng đã về kho",
     2: "Đang đợi",
     3: "Đã duyệt",
     4: "Từ chối",
@@ -117,9 +117,19 @@ function getStatusTitle(status) {
   return statusTitles[status] || "Unknown Status";
 }
 
+function getStatusTitlePayment(status) {
+  const statusTitles = {
+    0: "Chưa thanh toán",
+    1: "Đã thanh toán",
+    2: "Thanh toán thất bại",
+  };
+
+  return statusTitles[status] || "Unknown Status";
+}
+
 function getStatusColor(status) {
   const statusTitles = {
-    1: "magenta",
+    1: "cyan",
     2: "gold",
     3: "green",
     4: "red",
@@ -127,6 +137,15 @@ function getStatusColor(status) {
     6: "green",
     7: "purple",
     9: "purple",
+  };
+
+  return statusTitles[status] || "lime";
+}
+function getStatusColorPayment(status) {
+  const statusTitles = {
+    0: "geekblue",
+    1: "lime",
+    2: "volcano",
   };
 
   return statusTitles[status] || "lime";
@@ -160,6 +179,8 @@ export {
   getDateNowIso,
   convertOrder,
   convertISODateToDDMMYY,
+  getStatusTitlePayment,
+  getStatusColorPayment,
   getStatusTitle,
   getStatusColor,
   getStatusTrip,
