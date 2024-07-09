@@ -3,7 +3,6 @@ import MapGL from "@goongmaps/goong-map-react";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import {
-  Button,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -48,7 +47,7 @@ const GoongMapWithRoute = ({
             },
           });
         } catch (error) {
-          console.error("Error fetching directions:", error);
+          // console.error("Error fetching directions:", error);
         }
       };
 

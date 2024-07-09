@@ -105,7 +105,7 @@ export const PaymentOrder = ({ order, orderReview, paymentStatus }) => {
     } catch (error) {
       toast({
         title: "Lỗi hệ thống!.",
-        description: error,
+        description: `${error.message}`,
         status: "error",
         duration: 3000,
         isClosable: true,
@@ -161,7 +161,7 @@ export const PaymentOrder = ({ order, orderReview, paymentStatus }) => {
     } catch (error) {
       toast({
         title: "Lỗi hệ thống!.",
-        description: error,
+        description: `${error.message}`,
         status: "error",
         duration: 3000,
         isClosable: true,
@@ -198,7 +198,7 @@ export const PaymentOrder = ({ order, orderReview, paymentStatus }) => {
       setLoading(false);
       toast({
         title: "Lỗi hệ thống!.",
-        description: error,
+        description: `${error.message}`,
         status: "error",
         duration: 3000,
         isClosable: true,

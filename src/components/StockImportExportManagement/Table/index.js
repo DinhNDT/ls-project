@@ -9,6 +9,7 @@ import {
   ModalCloseButton,
   Button as ButtonChakra,
   Flex,
+  useToast,
 } from "@chakra-ui/react";
 
 import FormUpdate from "../FormUpdate";
@@ -16,10 +17,16 @@ import { TbDatabaseExport } from "react-icons/tb";
 import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { GlobalContext } from "../../../provider";
-import { exportToExcel, formatDate, getStatusTrip } from "../../../helpers";
+import {
+  exportToExcel,
+  formatDate,
+  getStatusTrip,
+  getStatusTripColor,
+} from "../../../helpers";
 import { Tag, Table, Button } from "antd/es";
 
 function TableComponent({ url }) {
+  const toast = useToast({ position: "top" });
   const userContext = useContext(GlobalContext);
   const { headers, userInformation } = userContext;
   const defaultPrices = {
@@ -82,14 +89,23 @@ function TableComponent({ url }) {
       const updatePrice = await axios.post(urlZ, locationInStock, { headers });
 
       if (updatePrice.status === 200) {
-        alert("Cập nhật thành công");
         setReload(true);
         setOpenModalUpdate(false);
         setSelectedRows(null);
         setLocationInStock(defaultPrices);
+        toast({
+          title: "Cập nhật thành công !",
+          status: "success",
+          isClosable: true,
+        });
       }
     } catch (err) {
-      alert(err);
+      toast({
+        title: "Lỗi hệ thống!",
+        description: `${err.message}`,
+        status: "error",
+        isClosable: true,
+      });
     }
   };
 
@@ -200,40 +216,39 @@ function TableComponent({ url }) {
       title: "Trạng thái",
       dataIndex: "status",
       key: "status",
-      filters: [
-        {
-          text: "Deleted",
-          value: 1,
-        },
-        {
-          text: "Idle",
-          value: 2,
-        },
-        {
-          text: "Delivering",
-          value: 3,
-        },
-        {
-          text: "Completed",
-          value: 4,
-        },
-        {
-          text: "Problem",
-          value: 5,
-        },
-        {
-          text: "Getting",
-          value: 6,
-        },
-      ],
-      onFilter: (value, record) => record.status === value,
+      // filters: [
+      //   {
+      //     text: "Đã xóa",
+      //     value: 1,
+      //   },
+      //   {
+      //     text: "Hàng đã về kho",
+      //     value: 2,
+      //   },
+      //   {
+      //     text: "Vận chuyển",
+      //     value: 3,
+      //   },
+      //   {
+      //     text: "Hoàn thành",
+      //     value: 4,
+      //   },
+      //   {
+      //     text: "Vấn đề",
+      //     value: 5,
+      //   },
+      //   {
+      //     text: "Getting",
+      //     value: 6,
+      //   },
+      // ],
+      // onFilter: (value, record) => record.status === value,
       width: "15%",
       render: (status) => {
-        let bgColor = status ? "green" : "volcano";
         let key = status;
         let text = getStatusTrip(status);
         return (
-          <Tag color={bgColor} key={key}>
+          <Tag color={getStatusTripColor(status)} key={key}>
             {text}
           </Tag>
         );
@@ -278,7 +293,7 @@ function TableComponent({ url }) {
               }
             }}
           >
-            {url.includes("/stock-export") ? "Xuất kho" : "Nhập kho"}
+            {url.includes("stock-export") ? "Xuất kho" : "Nhập kho"}
           </Button>
         )}
       </Flex>

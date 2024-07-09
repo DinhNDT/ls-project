@@ -154,11 +154,24 @@ function getStatusColorPayment(status) {
 function getStatusTrip(status) {
   const statusTitles = {
     1: "Đã xóa",
-    2: "Idle",
+    2: "Hàng đã về kho",
     3: "Vận chuyển",
     4: "Hoàn thành",
     5: "Vấn đề",
     6: "Đang nhận",
+  };
+
+  return statusTitles[status] || "Unknown Status";
+}
+
+function getStatusTripColor(status) {
+  const statusTitles = {
+    1: "red",
+    2: "geekblue",
+    3: "blue",
+    4: "green",
+    5: "volcano",
+    6: "purple",
   };
 
   return statusTitles[status] || "Unknown Status";
@@ -179,6 +192,7 @@ export {
   getDateNowIso,
   convertOrder,
   convertISODateToDDMMYY,
+  getStatusTripColor,
   getStatusTitlePayment,
   getStatusColorPayment,
   getStatusTitle,

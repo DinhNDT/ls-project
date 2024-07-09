@@ -75,6 +75,8 @@ function TableComponent({ url = "" }) {
     ],
   ]);
 
+  const isRoleStocker = userInformation?.role === "Stocker";
+
   const uniqueDescriptions = {};
 
   const columns = [
@@ -143,40 +145,42 @@ function TableComponent({ url = "" }) {
       title: "Trạng thái",
       dataIndex: "status",
       key: "status",
-      filters: [
-        {
-          text: "Hàng đã về kho",
-          value: 1,
-        },
-        {
-          text: "Đang đợi",
-          value: 2,
-        },
-        {
-          text: "Đã duyệt",
-          value: 3,
-        },
-        {
-          text: "Từ chối",
-          value: 4,
-        },
-        {
-          text: "Vận chuyển",
-          value: 5,
-        },
-        {
-          text: "Hoàn thành",
-          value: 6,
-        },
-        {
-          text: "Trì hoãn",
-          value: 7,
-        },
-        {
-          text: "Tồn kho",
-          value: 9,
-        },
-      ],
+      filters: isRoleStocker
+        ? null
+        : [
+            {
+              text: "Hàng đã về kho",
+              value: 1,
+            },
+            {
+              text: "Đang đợi",
+              value: 2,
+            },
+            {
+              text: "Đã duyệt",
+              value: 3,
+            },
+            {
+              text: "Từ chối",
+              value: 4,
+            },
+            {
+              text: "Vận chuyển",
+              value: 5,
+            },
+            {
+              text: "Hoàn thành",
+              value: 6,
+            },
+            {
+              text: "Trì hoãn",
+              value: 7,
+            },
+            {
+              text: "Tồn kho",
+              value: 9,
+            },
+          ],
       onFilter: (value, record) => record.status === value,
       width: "15%",
       render: (status) => {
@@ -204,20 +208,22 @@ function TableComponent({ url = "" }) {
           {getStatusTitlePayment(status)}
         </Tag>
       ),
-      filters: [
-        {
-          text: "Chưa thanh toán",
-          value: 0,
-        },
-        {
-          text: "Đã thanh toán",
-          value: 1,
-        },
-        {
-          text: "Thanh toán thất bại",
-          value: 2,
-        },
-      ],
+      filters: isRoleStocker
+        ? null
+        : [
+            {
+              text: "Chưa thanh toán",
+              value: 0,
+            },
+            {
+              text: "Đã thanh toán",
+              value: 1,
+            },
+            {
+              text: "Thanh toán thất bại",
+              value: 2,
+            },
+          ],
       onFilter: (value, record) => record.paymentStatus === value,
       width: 200,
       align: "center",
@@ -260,12 +266,13 @@ function TableComponent({ url = "" }) {
       name: record.name,
     }),
   };
+
   const handleFetchData = async () => {
     let urlQ = "/Order/order";
-    if (userInformation?.role === "Stocker") {
+    if (isRoleStocker) {
       urlQ = url.includes("order-delivery")
         ? "/Order/orderDueToday"
-        : "/Order/order?status=3";
+        : "/Order/order?paymentStatus=1&status=3";
     }
     if (userInformation?.role === "Company") {
       urlQ = `/Order/ByCompanyId/${userInformation?.idByRole}`;
@@ -276,6 +283,7 @@ function TableComponent({ url = "" }) {
       if (getOrder.status === 200) {
         let companyData = getOrder.data;
         setData(companyData);
+
         setCoordinates(
           companyData.map((item) => {
             return {
@@ -286,7 +294,7 @@ function TableComponent({ url = "" }) {
             };
           })
         );
-        if (userInformation?.role === "Stocker") {
+        if (isRoleStocker) {
           let companyIdData = companyData?.map((item) => item?.orderId);
           const getOrderByProvince = await axios.post(
             "/Order/orderDueTodayByProvinceDelivery",
@@ -300,7 +308,7 @@ function TableComponent({ url = "" }) {
             setTemporarySelectedIds(orderData);
           }
         }
-        const exportData = companyData.map((item, _) => {
+        const exportData = companyData?.map((item, _) => {
           const { orderId, orderDate, dayGet, status, company, deliveryTo } =
             item;
           return [
@@ -386,7 +394,7 @@ function TableComponent({ url = "" }) {
     }
   };
   const handleAdd = () => {
-    if (userInformation?.role === "Stocker") {
+    if (isRoleStocker) {
       onOpen();
     } else {
       const url =
@@ -448,7 +456,7 @@ function TableComponent({ url = "" }) {
       >
         <TbDatabaseExport style={{ fontSize: "24px" }} />
       </ButtonChakra>
-      {userInformation?.role === "Stocker" && (
+      {isRoleStocker && (
         <GoongMapWithRoute
           isOpen={openMap}
           onClose={() => setOpenMap(false)}
@@ -467,18 +475,16 @@ function TableComponent({ url = "" }) {
         style={{ marginBottom: "1%", flexDirection: "row-reverse" }}
         gap={"10px"}
       >
-        {userInformation?.role === "Stocker" &&
-        url.includes("order-delivery") ? (
+        {isRoleStocker && url.includes("order-delivery") ? (
           <Button type="primary" onClick={handleAdd}>
             Tạo chuyến xe theo các tỉnh
           </Button>
-        ) : userInformation?.role === "Stocker" &&
-          url.includes("order-get") ? null : (
+        ) : isRoleStocker && url.includes("order-get") ? null : (
           <Button type="primary" onClick={handleAdd}>
             <IoMdAdd />
           </Button>
         )}
-        {userInformation?.role === "Stocker" && (
+        {isRoleStocker && (
           <>
             {selectedRows.length ? (
               <Button type="primary" onClick={handleAddDataHandMade}>

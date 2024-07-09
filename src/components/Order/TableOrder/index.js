@@ -106,8 +106,8 @@ export const TableOrder = ({ order, orderBill, id }) => {
     },
     {
       title: "Khối lượng(kg)",
-      dataIndex: "height",
-      key: "height",
+      dataIndex: "unitWeight",
+      key: "unitWeight",
       width: "130px",
       align: "center",
     },

@@ -87,8 +87,8 @@ const SideBar = () => {
     } else if (userInformation?.role === "Stocker") {
       setItems([
         getItem("Đơn hàng hôm nay", "sub2", <FiFileText />, [
-          getItem("Cần Giao", "1"),
-          getItem("Cần Lấy", "2"),
+          getItem("Đơn Hàng Cần Giao", "1"),
+          getItem("Đơn Hàng Cần Lấy", "2"),
         ]),
         getItem("Chuyến xe", "sub3", <FiTruck />, [getItem("Lịch sử", "3")]),
         getItem("Kho", "sub4", <FiShoppingCart />, [
@@ -115,6 +115,19 @@ const SideBar = () => {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
 
+  const renderSelectedKey = {
+    0: "1",
+    "0A": "1",
+    "2A": "2",
+    8: "2",
+  };
+
+  const handleSelectedKey = (key) => {
+    if (renderSelectedKey[key]) return renderSelectedKey[key];
+
+    return key;
+  };
+
   return (
     <Layout
       style={{
@@ -129,29 +142,25 @@ const SideBar = () => {
         <div className="demo-logo-vertical" style={{ padding: "30px" }}>
           <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
             <img src={logo} alt="" width={40} height={40} />
-            {!collapsed ? <Text
-              display={{ base: "none", md: "flex" }}
-              fontSize="large"
-              fontFamily="monospace"
-              style={{ cursor: "pointer" }}
-              onClick={() => navigate("/")}
-              color={"whitesmoke"}
-            >
-              Logistics
-            </Text> : null}
+            {!collapsed ? (
+              <Text
+                display={{ base: "none", md: "flex" }}
+                fontSize="large"
+                fontFamily="monospace"
+                style={{ cursor: "pointer" }}
+                onClick={() => navigate("/")}
+                color={"whitesmoke"}
+              >
+                Logistics
+              </Text>
+            ) : null}
           </div>
         </div>
         <Menu
           theme="dark"
-          defaultOpenKeys={["sub1"]}
+          defaultOpenKeys={[userRole === "Stocker" ? "sub2" : "sub1"]}
           defaultSelectedKeys={["1"]}
-          selectedKeys={[
-            keySelected === "0" || keySelected === "0A"
-              ? "1"
-              : keySelected === "2A"
-                ? "2"
-                : keySelected,
-          ]}
+          selectedKeys={[handleSelectedKey(keySelected)]}
           mode="inline"
           items={items}
           onClick={handleChangeMenuItem}
@@ -227,6 +236,9 @@ const SideBar = () => {
                 <PriceListOrderPage />
               )}
             {/* stocker */}
+            {keySelected === "0A" && userRole === "Stocker" && (
+              <ReviewOrderPage id={selectedItem?.orderId} />
+            )}
             {keySelected === "1" && userRole === "Stocker" && (
               <OrderPage url="/stocker/order-delivery" />
             )}

@@ -47,7 +47,7 @@ export default function RegisterPage() {
     } catch (error) {
       toast({
         title: "Đăng ký thất bại",
-        description: error.message,
+        description: `${error.message}`,
         status: "error",
         isClosable: true,
       });

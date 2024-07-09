@@ -29,7 +29,7 @@ export default function LoginPage() {
   const logginRef = useRef(null);
 
   const loginContext = useContext(GlobalContext);
-  const { setUserInformation } = loginContext;
+  const { setUserInformation, setIsLogin } = loginContext;
 
   const handleKeyPress = (event) => {
     if (event.key === "Enter") {
@@ -52,6 +52,7 @@ export default function LoginPage() {
       if (requestLoginFunction.status === 200) {
         const userDecode = requestLoginFunction.data;
         setUserInformation(userDecode);
+        setIsLogin(true);
         toast({
           title: "Đăng nhập thành công",
           status: "success",

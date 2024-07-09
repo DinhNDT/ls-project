@@ -22,21 +22,34 @@ import CreateTripDeliveryPage from "../pages/stocker/order/create-trip-delivery"
 import PriceListOrderPage from "../pages/price-list-order";
 import StockPage from "../pages/stocker/stock/import-export";
 import StockerStockDetailPage from "../pages/stocker/stock/detail";
+import { RoutePrivate } from "./route-private";
 
 const routes = [
   {
     path: "/",
-    components: <IndexPage />,
+    components: (
+      <RoutePrivate>
+        <IndexPage />
+      </RoutePrivate>
+    ),
     role: "guest",
   },
   {
     path: "/sign-in",
-    components: <LoginPage />,
+    components: (
+      <RoutePrivate>
+        <LoginPage />
+      </RoutePrivate>
+    ),
     role: "guest",
   },
   {
     path: "/sign-up",
-    components: <RegisterPage />,
+    components: (
+      <RoutePrivate>
+        <RegisterPage />
+      </RoutePrivate>
+    ),
     role: "guest",
   },
   {

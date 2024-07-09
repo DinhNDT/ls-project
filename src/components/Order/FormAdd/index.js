@@ -278,7 +278,7 @@ const CreateOrderForm = ({ id }) => {
       } catch (error) {
         toast({
           title: "Lỗi hệ thống!.",
-          description: error,
+          description: `${error.message}`,
           status: "error",
           duration: 3000,
           isClosable: true,
@@ -383,7 +383,7 @@ const CreateOrderForm = ({ id }) => {
     } catch (err) {
       toast({
         title: "Không thể tạo đơn!",
-        description: err,
+        description: `${err.message}`,
         status: "error",
         isClosable: true,
       });

@@ -14,6 +14,7 @@ root.render(
     <ChakraProvider>
       <React.StrictMode>
         <App />
+        <div id="Popup-PayOs"></div>
       </React.StrictMode>
     </ChakraProvider>
   </GlobalProvider>
