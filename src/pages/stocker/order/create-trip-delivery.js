@@ -393,8 +393,8 @@ function CreateTripDeliveryPage({ state, urlTrip }) {
                             Biển số:{" "}
                             <Tag color="#3d3d3d">{item?.licensePlate}</Tag>,
                             Trọng lượng:{" "}
-                            <Tag color="geekblue">{item?.type} Tấn</Tag>, Số
-                            khối(m3): <Tag color="cyan">{item?.capacity}</Tag>
+                            <Tag color="geekblue">{item?.type} Kg</Tag>, Số
+                            khối(cm3): <Tag color="cyan">{item?.capacity}</Tag>
                           </Option>
                         ))}
                       </Select>
