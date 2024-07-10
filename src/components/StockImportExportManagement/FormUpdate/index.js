@@ -1,13 +1,13 @@
 import { FormControl, FormLabel, Stack, Select } from "@chakra-ui/react";
-import { useState } from "react";
 
 function FormUpdate({ locationInStock, setLocationInStock, readOnly }) {
-  const [stock, setStock] = useState([
-    { stockId: 1, stockName: "Kho A" },
-    { stockId: 2, stockName: "Kho B" },
-    { stockId: 3, stockName: "Kho C" },
-    { stockId: 4, stockName: "Kho D" },
-  ]);
+  const stock = [
+    { stockId: 1, stockName: "Khu A" },
+    { stockId: 2, stockName: "Khu B" },
+    { stockId: 3, stockName: "Khu C" },
+    { stockId: 4, stockName: "Khu D" },
+  ];
+
   const handleChangeInput = (name, value) => {
     setLocationInStock({ ...locationInStock, [name]: value });
   };
@@ -22,7 +22,7 @@ function FormUpdate({ locationInStock, setLocationInStock, readOnly }) {
             handleChangeInput("locationInStock", e.target.value);
           }}
         >
-          <option>Chọn kho</option>
+          <option>Chọn khu</option>
           {stock?.map((item, index) => (
             <option key={index} value={item?.stockName}>
               {item?.stockName}

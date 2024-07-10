@@ -54,7 +54,7 @@ function TableComponent({ url = "" }) {
   const [reload, setReload] = useState(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const orderContext = useContext(OrderContext);
-  const { setKeySelected, setSelectedItem, setState, setUrlTrip } =
+  const { setKeySelected, setSelectedItem, setState, setUrlTrip, keySelected } =
     orderContext;
   const [order, setOrder] = useState([]);
   const [temporarySelectedIds, setTemporarySelectedIds] = useState([]);
@@ -248,7 +248,12 @@ function TableComponent({ url = "" }) {
           <button
             onClick={() => {
               setSelectedItem(record);
-              setKeySelected("0A");
+              if (isRoleStocker) {
+                setKeySelected("0AS");
+                setUrlTrip(keySelected);
+              } else {
+                setKeySelected("0A");
+              }
             }}
           >
             <AiFillEye />

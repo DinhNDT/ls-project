@@ -137,11 +137,7 @@ function TableComponent({ url }) {
           />
         </ModalBody>
         <ModalFooter>
-          <Button
-            colorScheme="blue"
-            mr={3}
-            onClick={() => setOpenModalUpdate(false)}
-          >
+          <Button mr={3} onClick={() => setOpenModalUpdate(false)}>
             Đóng
           </Button>
           <Box w="10px"></Box>

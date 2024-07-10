@@ -15,6 +15,8 @@ export const FormInfo = ({
   handleChangeOrder,
   handleGetCompanyInformation,
 }) => {
+  const isRoleCompany = userInformation?.role === "Company";
+
   const [form] = Form.useForm();
 
   const [provincesList, setProvincesList] = useState([]);
@@ -154,7 +156,10 @@ export const FormInfo = ({
                   ))}
                 </Select>
               ) : (
-                <Input disabled={!!id} value={companyData?.companyName} />
+                <Input
+                  disabled={isRoleCompany ? true : !!id}
+                  value={companyData?.companyName}
+                />
               )}
             </Form.Item>{" "}
             <Form.Item
@@ -163,7 +168,7 @@ export const FormInfo = ({
               style={{ width: "19%", marginBottom: "10px" }}
             >
               <Input
-                disabled={!!id}
+                disabled={isRoleCompany ? true : !!id}
                 placeholder="Nhập mã số thuế"
                 value={companyData?.account?.citizenId}
               />
@@ -174,7 +179,7 @@ export const FormInfo = ({
               style={{ width: "19%", marginBottom: "10px" }}
             >
               <Input
-                disabled={!!id}
+                disabled={isRoleCompany ? true : !!id}
                 placeholder="Nhập số điện thoại"
                 value={companyData?.account?.phone}
               />
@@ -185,7 +190,7 @@ export const FormInfo = ({
               style={{ width: "19%", marginBottom: "10px" }}
             >
               <Input
-                disabled={!!id}
+                disabled={isRoleCompany ? true : !!id}
                 placeholder="Nhập email"
                 value={companyData?.account?.email}
               />
@@ -196,7 +201,7 @@ export const FormInfo = ({
               style={{ width: "19%", marginBottom: "10px" }}
             >
               <Input
-                disabled={!!id}
+                disabled={isRoleCompany ? true : !!id}
                 placeholder="Nhập người đại diện"
                 value={companyData?.account?.fullName}
               />
@@ -204,7 +209,7 @@ export const FormInfo = ({
           </Flex>
           <Form.Item required label="Địa chỉ">
             <Input.TextArea
-              disabled={!!id}
+              disabled={isRoleCompany ? true : !!id}
               placeholder="Nhập địa chỉ"
               rows={1}
               value={companyData?.companyLocation}
@@ -229,7 +234,7 @@ export const FormInfo = ({
                       handleChangeOrder("getPhone", event.target.value)
                     }
                     value={companyData?.account?.phone}
-                    disabled={!!id}
+                    disabled={isRoleCompany ? true : !!id}
                   />
                 </Form.Item>
                 <Form.Item required label="Họ tên">
@@ -239,7 +244,7 @@ export const FormInfo = ({
                       handleChangeOrder("getTo", event.target.value)
                     }
                     value={companyData?.account?.fullName}
-                    disabled={!!id}
+                    disabled={isRoleCompany ? true : !!id}
                   />
                 </Form.Item>
               </HStack>

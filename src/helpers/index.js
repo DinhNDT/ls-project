@@ -167,7 +167,7 @@ function getStatusTrip(status) {
 function getStatusTripColor(status) {
   const statusTitles = {
     1: "red",
-    2: "geekblue",
+    2: "magenta",
     3: "blue",
     4: "green",
     5: "volcano",

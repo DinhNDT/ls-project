@@ -1,6 +1,4 @@
-import { FormControl, FormLabel, Stack } from "@chakra-ui/react";
-import { Select } from "antd";
-const { Option } = Select;
+import { FormControl, FormLabel, Stack, Select } from "@chakra-ui/react";
 
 function FormUpdate({ locationInStock, setLocationInStock, readOnly }) {
   const stock = [
@@ -20,15 +18,15 @@ function FormUpdate({ locationInStock, setLocationInStock, readOnly }) {
         <FormLabel>Vị trí trong kho</FormLabel>
         <Select
           value={locationInStock?.locationInStock}
-          onChange={(value) => {
-            handleChangeInput("locationInStock", value);
+          onChange={(e) => {
+            handleChangeInput("locationInStock", e.target.value);
           }}
         >
-          <Option>Chọn kho</Option>
+          <option>Chọn khu</option>
           {stock?.map((item, index) => (
-            <Option key={index} value={item?.stockName}>
+            <option key={index} value={item?.stockName}>
               {item?.stockName}
-            </Option>
+            </option>
           ))}
         </Select>
       </FormControl>

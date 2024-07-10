@@ -10,7 +10,13 @@ import {
   Text,
   useToast,
 } from "@chakra-ui/react";
-import { formatDate, getStatusColor, getStatusTitle } from "../../../helpers";
+import {
+  formatDate,
+  getStatusColor,
+  getStatusColorPayment,
+  getStatusTitle,
+  getStatusTitlePayment,
+} from "../../../helpers";
 import { Input, Tag, Tooltip } from "antd";
 import { getStatusIcon } from "../Table";
 import { TableOrder } from "../TableOrder";
@@ -226,9 +232,6 @@ export const ReviewOrder = ({
             <Title title={"Tên Công Ty:"}>
               {companyDataReview?.companyName}
             </Title>
-            {/* <Title title={"Người Đại Diện:"}>
-              {companyDataReview?.account?.fullName}
-            </Title> */}
             <Title title={"Email:"}>{companyDataReview?.account?.email}</Title>
             <Title title={"Số Điện Thoại:"}>
               {companyDataReview?.account?.phone}
@@ -259,6 +262,22 @@ export const ReviewOrder = ({
                   orderReview?.expectedDeliveryDate
               )}
             </Title>
+            {id ? (
+              <Title title={"Trạng Thái Thanh Toán:"}>
+                <Tag
+                  color={getStatusColorPayment(orderReview?.paymentStatus)}
+                  key={orderReview?.paymentStatus}
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "3px",
+                    marginRight: "unset",
+                  }}
+                >
+                  {getStatusTitlePayment(orderReview?.paymentStatus)}
+                </Tag>
+              </Title>
+            ) : null}
             <Title
               title={"Địa Chỉ:"}
             >{`${orderReview?.locationDetailDelivery}, ${orderReview?.wardDelivery}, ${orderReview?.districtDelivery}, ${orderReview?.provinceDelivery}`}</Title>

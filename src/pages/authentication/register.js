@@ -124,7 +124,7 @@ export default function RegisterPage() {
                     </span>
                   ) : (
                     <span style={{ color: "#F56565", fontWeight: 500 }}>
-                      Người Đại Diện Doanh Nghiệp
+                      Đại Diện Doanh Nghiệp
                     </span>
                   )}
                 </Text>

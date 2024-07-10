@@ -149,7 +149,12 @@ function TableComponent() {
   }, [reload]);
   return (
     <>
-      <Table dataSource={data} columns={columns} pageSize="6" />
+      <Table
+        dataSource={data}
+        columns={columns}
+        pageSize="6"
+        rowKey="stockDetailId"
+      />
     </>
   );
 }

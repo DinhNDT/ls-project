@@ -2,7 +2,11 @@ import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { GlobalContext } from "../../../provider";
 import { Table, Tag } from "antd";
-import { formatDate } from "../../../helpers";
+import {
+  formatDate,
+  getStatusTrip,
+  getStatusTripColor,
+} from "../../../helpers";
 
 function TableComponent() {
   const userContext = useContext(GlobalContext);
@@ -92,38 +96,36 @@ function TableComponent() {
       key: "status",
       filters: [
         {
-          text: "Idle",
+          text: "Hàng đã về kho",
           value: 2,
         },
         {
-          text: "Delivery",
+          text: "Vận Chuyển",
           value: 3,
         },
         {
-          text: "Complete",
+          text: "Hoàn Thành",
           value: 4,
         },
         {
-          text: "Deleted",
+          text: "Đã Xóa",
           value: 5,
         },
       ],
       onFilter: (value, record) => record.status === value,
       width: "15%",
       render: (status) => {
-        let bgColor = "green";
-        let key = status;
-        let text =
-          status === 2
-            ? "Idle"
-            : status === 3
-            ? "Delivery"
-            : status === 4
-            ? "Complete"
-            : "Deleted";
         return (
-          <Tag color={bgColor} key={key}>
-            {text}
+          <Tag
+            color={getStatusTripColor(status)}
+            key={status}
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "3px",
+            }}
+          >
+            {getStatusTrip(status)}
           </Tag>
         );
       },
@@ -145,7 +147,7 @@ function TableComponent() {
       onFilter: (value, record) => record.type === value,
       width: "15%",
       render: (type) => {
-        let bgColor = "volcano";
+        let bgColor = type === 1 ? "cyan" : "gold";
         let key = type;
         let text = type === 1 ? "Lấy hàng" : "Giao hàng";
         return (
@@ -161,9 +163,11 @@ function TableComponent() {
     handleFetchData();
   }, []);
 
+  console.log("data", data);
+
   return (
     <>
-      <Table dataSource={data} columns={columns} pageSize="6" />
+      <Table dataSource={data} columns={columns} pageSize="6" rowKey="tripId" />
     </>
   );
 }

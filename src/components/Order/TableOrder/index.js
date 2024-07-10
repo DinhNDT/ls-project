@@ -13,29 +13,34 @@ const TableSummaryRow = ({
 }) => {
   return (
     <Table.Summary.Row
-      style={{ backgroundColor: isHighLight ? "#fafafa" : "" }}
+      style={{
+        backgroundColor: isHighLight ? "#fafafa" : "",
+      }}
     >
-      <Table.Summary.Cell index={0} colSpan={7}>
-        <FormLabel
-          textAlign={"left"}
-          margin={"unset"}
-          fontSize={isHighLight ? "medium" : "small"}
-        >
-          {title}
-        </FormLabel>
-        {description && (
-          <FormLabel
-            textAlign={"left"}
-            margin={"unset"}
-            fontSize={"smaller"}
-            color={"#B2B2B2"}
-          >
-            {description}
-          </FormLabel>
-        )}
-      </Table.Summary.Cell>
+      <Table.Summary.Cell index={0} colSpan={7}></Table.Summary.Cell>
       <Table.Summary.Cell index={1} colSpan={3} align="center">
-        {content}
+        <Flex justifyContent={"space-between"}>
+          <Box>
+            <FormLabel
+              textAlign={"center"}
+              margin={"unset"}
+              fontSize={isHighLight ? "medium" : "small"}
+            >
+              {title}
+            </FormLabel>
+            {description && (
+              <FormLabel
+                // textAlign={"center"}
+                margin={"unset"}
+                fontSize={"smaller"}
+                color={"#B2B2B2"}
+              >
+                {description}
+              </FormLabel>
+            )}
+          </Box>
+          <Box>{content}</Box>
+        </Flex>
       </Table.Summary.Cell>
     </Table.Summary.Row>
   );
@@ -124,6 +129,7 @@ export const TableOrder = ({ order, orderBill, id }) => {
       key: "unitPrice",
       render: (text) => <span>{formatMoney(Math.ceil(text))} VNĐ</span>,
       width: "15%",
+      align: "center",
     },
   ];
 
@@ -155,19 +161,19 @@ export const TableOrder = ({ order, orderBill, id }) => {
         summary={() => (
           <Table.Summary fixed>
             <TableSummaryRow
-              title={"Khoảng cách vận chuyển:"}
+              title={"Khoảng cách vận chuyển (1):"}
               content={<>{orderTable?.distance} Km</>}
             />
             <TableSummaryRow
-              title={"Tổng số lượng sản phẩm:"}
+              title={"Tổng số lượng sản phẩm (2):"}
               content={totalItem}
             />
             <TableSummaryRow
-              title={"Tổng giá trị đơn hàng:"}
+              title={"Tổng giá trị đơn hàng (3):"}
               content={<>{formatMoney(Math.ceil(totalPriceAllItem))} VNĐ</>}
             />
             <TableSummaryRow
-              title={"Giá bảo hiểm đơn hàng:"}
+              title={"Giá bảo hiểm đơn hàng (4):"}
               description={"(2% giá trị đơn hàng)"}
               content={
                 <>{formatMoney(Math.ceil(orderTable?.totalInsurance))} VNĐ</>
@@ -175,8 +181,8 @@ export const TableOrder = ({ order, orderBill, id }) => {
             />
             <TableSummaryRow
               title={
-                <Flex align={"center"} gap={1}>
-                  Tổng khối lượng
+                <Flex gap={1} align={"center"}>
+                  Tổng khối lượng (5)
                   <AiOutlineQuestionCircle
                     style={{ cursor: "pointer" }}
                     onClick={() => showModal(2)}
@@ -187,7 +193,7 @@ export const TableOrder = ({ order, orderBill, id }) => {
               content={<>{orderTable?.totalWeight} Kg</>}
             />
             <TableSummaryRow
-              title={"Đơn giá:"}
+              title={"Đơn giá (6):"}
               description={"(VNĐ/Kg)"}
               content={<>{formatMoney(Math.ceil(orderTable?.price))} VNĐ</>}
             />
@@ -203,7 +209,7 @@ export const TableOrder = ({ order, orderBill, id }) => {
                   :
                 </Flex>
               }
-              description={"(Tổng khối lượng x Đơn giá + Giá bảo hiểm)"}
+              description={"(5) x (6) + (4)"}
               isHighLight
               content={
                 <Text color={"#4096ff"} fontWeight={500} fontSize={"medium"}>

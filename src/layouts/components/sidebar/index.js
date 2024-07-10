@@ -32,6 +32,7 @@ import DistanceManagementPage from "../../../pages/admin/distance-management";
 import WeightManagementPage from "../../../pages/admin/weight-management";
 import StockDetailPage from "../../../pages/admin/stock-detail";
 import ReviewOrderPage from "../../../pages/company/order/review-order";
+import { PaymentHistory } from "../../../pages/company/payment-history";
 
 const { Item } = Breadcrumb;
 const { Header, Content, Footer, Sider } = Layout;
@@ -81,6 +82,7 @@ const SideBar = () => {
           getItem("Quản lí đơn hàng", "1"),
           getItem("Tạo đơn hàng", "2"),
           getItem("Bảng giá dịch vụ", "3"),
+          getItem("Lịch sử thanh toán", "4A"),
         ]),
         getItem("Đăng xuất", "4", <LogoutOutlined />),
       ]);
@@ -118,10 +120,10 @@ const SideBar = () => {
   const renderSelectedKey = {
     0: "1",
     "0A": "1",
+    "0AS": urlTrip,
     "2A": "2",
-    8: "2",
+    8: urlTrip?.includes("get") ? "2" : "1",
   };
-
   const handleSelectedKey = (key) => {
     if (renderSelectedKey[key]) return renderSelectedKey[key];
 
@@ -235,8 +237,17 @@ const SideBar = () => {
               (userRole === "Company" || userRole === "Staff") && (
                 <PriceListOrderPage />
               )}
+
+            {keySelected === "4A" &&
+              (userRole === "Company" || userRole === "Staff") && (
+                <PaymentHistory
+                  idByRole={userInformation?.idByRole}
+                  userRole={userRole}
+                />
+              )}
+
             {/* stocker */}
-            {keySelected === "0A" && userRole === "Stocker" && (
+            {keySelected === "0AS" && userRole === "Stocker" && (
               <ReviewOrderPage id={selectedItem?.orderId} />
             )}
             {keySelected === "1" && userRole === "Stocker" && (
