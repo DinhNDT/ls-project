@@ -17,6 +17,7 @@ export const PaymentHistory = ({ idByRole, userRole }) => {
   const { headers, userInformation } = userContext;
   const { setKeySelected, setSelectedItem } = orderContext;
   const [dataPaymentHis, setDataPaymentHis] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
   const uniqueDescriptions = {};
 
   const onClickOrderId = (orderId) => {
@@ -32,6 +33,7 @@ export const PaymentHistory = ({ idByRole, userRole }) => {
 
       if (paymentHistory.status === 200) {
         setDataPaymentHis(paymentHistory.data);
+        setIsLoading(true);
       }
     } catch (error) {}
   };
@@ -119,6 +121,11 @@ export const PaymentHistory = ({ idByRole, userRole }) => {
   ];
 
   return (
-    <Table rowKey="paymentId" columns={columns} dataSource={dataPaymentHis} />
+    <Table
+      loading={!isLoading}
+      rowKey="paymentId"
+      columns={columns}
+      dataSource={dataPaymentHis}
+    />
   );
 };

@@ -4,6 +4,7 @@ import { formatMoney } from "../../../helpers";
 import { Box, Flex, FormLabel, Text } from "@chakra-ui/react";
 import { AiOutlineQuestionCircle } from "react-icons/ai";
 import PriceListOrderPage from "../../../pages/price-list-order";
+import "./style.css";
 
 const TableSummaryRow = ({
   title,
@@ -17,7 +18,11 @@ const TableSummaryRow = ({
         backgroundColor: isHighLight ? "#fafafa" : "",
       }}
     >
-      <Table.Summary.Cell index={0} colSpan={7}></Table.Summary.Cell>
+      <Table.Summary.Cell
+        index={0}
+        colSpan={7}
+        className="hideCol"
+      ></Table.Summary.Cell>
       <Table.Summary.Cell index={1} colSpan={3} align="center">
         <Flex justifyContent={"space-between"}>
           <Box>
@@ -46,7 +51,7 @@ const TableSummaryRow = ({
   );
 };
 
-export const TableOrder = ({ order, orderBill, id }) => {
+export const TableOrder = ({ order, orderBill, id, isLoadData }) => {
   const orderTable = id ? order : orderBill;
 
   const [modal, setModal] = useState({ isOpen: false, type: 1 });
@@ -153,6 +158,7 @@ export const TableOrder = ({ order, orderBill, id }) => {
   return (
     <>
       <Table
+        loading={!isLoadData}
         bordered
         pagination={false}
         columns={columns}

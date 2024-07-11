@@ -316,10 +316,6 @@ export const PaymentOrder = ({ order, orderReview, paymentStatus }) => {
         onOk={handleOk}
         onCancel={handleCancel}
       >
-        {/* <Text align={"center"} fontWeight={500} fontSize={16} p={3}>
-          Đơn hàng này <span style={{ color: "#4096ff" }}>Đã Thanh Toán</span>{" "}
-          hoặc bị <span style={{ color: "#4096ff" }}>Hủy Thanh Toán</span>.
-        </Text> */}
         <Text align={"center"} fontWeight={500} fontSize={17} p={5}>
           Đơn hàng nãy đã bị{" "}
           <span style={{ color: "#4096ff" }}>Thánh Toán Thất Bại</span> trước

@@ -12,6 +12,7 @@ import {
 } from "react-icons/ai";
 import { FormOrderProduct } from "./FormOrderProduct";
 import { FormAction } from "./FormAction";
+import axios from "axios";
 
 export const OrderProduct = ({
   id,
@@ -100,6 +101,7 @@ export const OrderProduct = ({
               let orderItems = [...order?.items];
               orderItems.splice(i, 1);
               setOrder({ ...order, items: orderItems });
+              apiDeleteItem(record.itemId);
             }}
           >
             <AiFillDelete />
@@ -179,6 +181,14 @@ export const OrderProduct = ({
           <AiFillEye />
         </Flex>
       );
+    }
+  };
+
+  const apiDeleteItem = async (itemId) => {
+    try {
+      await axios.delete(`/Order/item?itemId=${itemId}`);
+    } catch (error) {
+      console.log(error);
     }
   };
 

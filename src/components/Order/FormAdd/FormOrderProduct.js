@@ -3,6 +3,7 @@ import { Form, Input } from "antd";
 import React from "react";
 import { InputFormatPrice } from "../InputFormatPrice";
 import { defaultItem } from ".";
+import axios from "axios";
 
 export const FormOrderProduct = ({
   id,
@@ -13,6 +14,35 @@ export const FormOrderProduct = ({
   handleItemChange,
   handleItemChangeNumber,
 }) => {
+  const handleAddItem = async () => {
+    const payloadAddItem = {
+      ...itemData,
+      height: parseFloat(itemData?.height),
+      length: parseFloat(itemData?.length),
+      quantityItem: parseInt(itemData?.quantityItem),
+      unitPrice: parseFloat(itemData?.unitPrice),
+      unitWeight: parseFloat(itemData?.unitWeight),
+      width: parseFloat(itemData?.width),
+    };
+
+    setOrder({
+      ...order,
+      items: [...order?.items, payloadAddItem],
+    });
+    setItemData(defaultItem);
+
+    if (id) {
+      try {
+        await axios.post(
+          `/Order/createItem?orderId=${order.orderId}`,
+          payloadAddItem
+        );
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  };
+
   return (
     <Form layout="vertical">
       <Flex justifyContent={"space-between"}>
@@ -132,24 +162,7 @@ export const FormOrderProduct = ({
               }}
               size="sm"
               fontWeight="400"
-              onClick={() => {
-                setOrder({
-                  ...order,
-                  items: [
-                    ...order?.items,
-                    {
-                      ...itemData,
-                      height: parseFloat(itemData?.height),
-                      length: parseFloat(itemData?.length),
-                      quantityItem: parseInt(itemData?.quantityItem),
-                      unitPrice: parseFloat(itemData?.unitPrice),
-                      unitWeight: parseFloat(itemData?.unitWeight),
-                      width: parseFloat(itemData?.width),
-                    },
-                  ],
-                });
-                setItemData(defaultItem);
-              }}
+              onClick={handleAddItem}
             >
               Thêm mặt hàng
             </Button>

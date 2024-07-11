@@ -1,4 +1,4 @@
-import { useDisclosure } from "@chakra-ui/react";
+import { IconButton, useDisclosure } from "@chakra-ui/react";
 import { useContext, useEffect, useState } from "react";
 import { IoMdAdd } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
@@ -14,7 +14,7 @@ import {
   getStatusTitle,
   getStatusTitlePayment,
 } from "../../../helpers";
-import { TbDatabaseExport } from "react-icons/tb";
+import { TbDatabaseExport, TbReload } from "react-icons/tb";
 import { Space, Table, Tag, Button } from "antd";
 import {
   AiFillEdit,
@@ -26,6 +26,9 @@ import {
   AiOutlineCloseCircle,
   AiOutlineShop,
 } from "react-icons/ai";
+
+import { IoReload } from "react-icons/io5";
+
 import { OrderContext } from "../../../provider/order";
 import { Button as ButtonChakra } from "@chakra-ui/react";
 import { Flex } from "antd/es";
@@ -52,6 +55,7 @@ function TableComponent({ url = "" }) {
   const userContext = useContext(GlobalContext);
   const { userInformation, headers } = userContext;
   const [reload, setReload] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const orderContext = useContext(OrderContext);
   const { setKeySelected, setSelectedItem, setState, setUrlTrip, keySelected } =
@@ -181,6 +185,7 @@ function TableComponent({ url = "" }) {
               value: 9,
             },
           ],
+      defaultFilteredValue: isRoleStocker ? null : ["2", "3"],
       onFilter: (value, record) => record.status === value,
       width: "15%",
       render: (status) => {
@@ -336,11 +341,14 @@ function TableComponent({ url = "" }) {
           ],
           ...exportData,
         ]);
+        setIsLoading(true);
       } else {
         console.log("Can't get time share");
+        setIsLoading(true);
       }
     } catch (err) {
       console.log(err);
+      setIsLoading(true);
     }
   };
 
@@ -413,6 +421,10 @@ function TableComponent({ url = "" }) {
     }
   };
 
+  const handleReload = () => {
+    setReload(true);
+  };
+
   useEffect(() => {
     if (headers?.Authorization) {
       handleFetchData();
@@ -423,7 +435,7 @@ function TableComponent({ url = "" }) {
     if (reload) handleFetchData();
     const clearTime = setTimeout(() => {
       setReload(false);
-    }, 50);
+    }, 500);
     return () => {
       clearTimeout(clearTime);
     };
@@ -485,10 +497,21 @@ function TableComponent({ url = "" }) {
             Tạo chuyến xe theo các tỉnh
           </Button>
         ) : isRoleStocker && url.includes("order-get") ? null : (
-          <Button type="primary" onClick={handleAdd}>
-            <IoMdAdd />
-          </Button>
+          <>
+            <Button type="primary" onClick={handleAdd}>
+              <IoMdAdd />
+            </Button>
+            <IconButton
+              isLoading={reload}
+              width="45.6px"
+              height="32px"
+              onClick={handleReload}
+              colorScheme="gray"
+              icon={<IoReload fontSize={"18px"} />}
+            />
+          </>
         )}
+
         {isRoleStocker && (
           <>
             {selectedRows.length ? (
@@ -505,6 +528,7 @@ function TableComponent({ url = "" }) {
         )}
       </Flex>
       <Table
+        loading={reload || (data.length === 0 && !isLoading)}
         dataSource={data}
         columns={columns}
         rowSelection={{

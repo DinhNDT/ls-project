@@ -1,0 +1,7 @@
+.hideCol {
+  border-bottom: none !important;
+}
+
+.ant-table-container {
+  border-left: none !important;
+}

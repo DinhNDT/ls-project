@@ -17,7 +17,7 @@ import {
   getStatusTitle,
   getStatusTitlePayment,
 } from "../../../helpers";
-import { Input, Tag, Tooltip } from "antd";
+import { Input, Skeleton, Tag, Tooltip } from "antd";
 import { getStatusIcon } from "../Table";
 import { TableOrder } from "../TableOrder";
 import { FiBox, FiCheckCircle, FiXCircle, FiArrowLeft } from "react-icons/fi";
@@ -57,6 +57,14 @@ const Title = ({ children, title }) => (
   </Box>
 );
 
+const LoadingSkeleton = ({ isLoadData, children, pRows = 5 }) => {
+  if (isLoadData) {
+    return <>{children}</>;
+  }
+
+  return <Skeleton active paragraph={{ rows: pRows }} />;
+};
+
 export const ReviewOrder = ({
   id,
   orderProps,
@@ -71,11 +79,16 @@ export const ReviewOrder = ({
   const { setKeySelected } = orderContext;
   const { userInformation, headers } = userContext;
   const [order, setOrder] = useState(DEFAULT_ORDER);
+  const [isLoadData, setIsLoadData] = useState(false);
   const [companyData, setCompanyData] = useState({});
   const [value, setValue] = useState("");
 
   const orderReview = orderProps || order;
   const companyDataReview = companyDataProps || companyData;
+
+  const handleLoadData = () => {
+    setTimeout(() => setIsLoadData(true), 400);
+  };
 
   const handleFetchData = async () => {
     if (userInformation?.role === "Company") {
@@ -90,6 +103,7 @@ export const ReviewOrder = ({
           let companyData = getCompany.data;
           setOrder({ ...order, companyId: companyData[0]?.companyId });
           setCompanyData(companyData[0]);
+          handleLoadData();
         }
       } catch (err) {
         console.error(err);
@@ -119,6 +133,7 @@ export const ReviewOrder = ({
             if (getCompany.status === 200) {
               let companyData = getCompany.data;
               setCompanyData(companyData[0]);
+              handleLoadData();
             }
           }
         }
@@ -184,37 +199,39 @@ export const ReviewOrder = ({
           <Text fontSize={"medium"} fontWeight={550} mb={4}>
             Thông Tin Gửi Hàng:
           </Text>
-          <Box display={"flex"} flexDirection={"column"} gap={5}>
-            <Title title={"Người Đại Diện:"}>
-              {companyDataReview?.account?.fullName}
-            </Title>
-            <Title title={"Số Điện Thoại:"}>
-              {companyDataReview?.account?.phone}
-            </Title>
-            <Title title={"Ngày Gửi Hàng:"}>
-              {formatDate(orderReview?.dayGet)}
-            </Title>
-            {id ? (
-              <Title title={"Trạng Thái:"}>
-                <Tag
-                  icon={getStatusIcon(orderReview?.status)}
-                  color={getStatusColor(orderReview?.status)}
-                  key={orderReview?.status}
-                  style={{
-                    display: "inline-flex",
-                    alignItems: "center",
-                    gap: "3px",
-                    marginRight: "unset",
-                  }}
-                >
-                  {getStatusTitle(orderReview?.status)}
-                </Tag>
+          <LoadingSkeleton isLoadData={isLoadData}>
+            <Box display={"flex"} flexDirection={"column"} gap={5}>
+              <Title title={"Người Đại Diện:"}>
+                {companyDataReview?.account?.fullName}
               </Title>
-            ) : null}
-            <Title
-              title={"Địa Chỉ:"}
-            >{`${orderReview?.locationDetailGet}, ${orderReview?.wardGet}, ${orderReview?.districtGet}, ${orderReview?.provinceGet}`}</Title>
-          </Box>
+              <Title title={"Số Điện Thoại:"}>
+                {companyDataReview?.account?.phone}
+              </Title>
+              <Title title={"Ngày Gửi Hàng:"}>
+                {formatDate(orderReview?.dayGet)}
+              </Title>
+              {id ? (
+                <Title title={"Trạng Thái:"}>
+                  <Tag
+                    icon={getStatusIcon(orderReview?.status)}
+                    color={getStatusColor(orderReview?.status)}
+                    key={orderReview?.status}
+                    style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: "3px",
+                      marginRight: "unset",
+                    }}
+                  >
+                    {getStatusTitle(orderReview?.status)}
+                  </Tag>
+                </Title>
+              ) : null}
+              <Title
+                title={"Địa Chỉ:"}
+              >{`${orderReview?.locationDetailGet}, ${orderReview?.wardGet}, ${orderReview?.districtGet}, ${orderReview?.provinceGet}`}</Title>
+            </Box>
+          </LoadingSkeleton>
         </Box>
 
         <Box
@@ -228,18 +245,22 @@ export const ReviewOrder = ({
           <Text fontSize={"medium"} fontWeight={550} mb={4}>
             Thông Tin Công Ty:
           </Text>
-          <Box display={"flex"} flexDirection={"column"} gap={5}>
-            <Title title={"Tên Công Ty:"}>
-              {companyDataReview?.companyName}
-            </Title>
-            <Title title={"Email:"}>{companyDataReview?.account?.email}</Title>
-            <Title title={"Số Điện Thoại:"}>
-              {companyDataReview?.account?.phone}
-            </Title>
-            <Title title={"Địa Chỉ:"}>
-              {companyDataReview?.companyLocation}
-            </Title>
-          </Box>
+          <LoadingSkeleton isLoadData={isLoadData} pRows={4}>
+            <Box display={"flex"} flexDirection={"column"} gap={5}>
+              <Title title={"Tên Công Ty:"}>
+                {companyDataReview?.companyName}
+              </Title>
+              <Title title={"Email:"}>
+                {companyDataReview?.account?.email}
+              </Title>
+              <Title title={"Số Điện Thoại:"}>
+                {companyDataReview?.account?.phone}
+              </Title>
+              <Title title={"Địa Chỉ:"}>
+                {companyDataReview?.companyLocation}
+              </Title>
+            </Box>
+          </LoadingSkeleton>
         </Box>
 
         <Box
@@ -253,39 +274,48 @@ export const ReviewOrder = ({
           <Text fontSize={"medium"} fontWeight={550} mb={4}>
             Thông Tin Nhận Hàng:
           </Text>
-          <Box display={"flex"} flexDirection={"column"} gap={5}>
-            <Title title={"Tên Người Nhận:"}>{orderReview?.deliveryTo}</Title>
-            <Title title={"Số Điện Thoại:"}>{orderReview?.deliveryPhone}</Title>
-            <Title title={"Ngày Giao Hàng Dự Kiến:"}>
-              {formatDate(
-                orderBill?.expectedDeliveryDate ||
-                  orderReview?.expectedDeliveryDate
-              )}
-            </Title>
-            {id ? (
-              <Title title={"Trạng Thái Thanh Toán:"}>
-                <Tag
-                  color={getStatusColorPayment(orderReview?.paymentStatus)}
-                  key={orderReview?.paymentStatus}
-                  style={{
-                    display: "inline-flex",
-                    alignItems: "center",
-                    gap: "3px",
-                    marginRight: "unset",
-                  }}
-                >
-                  {getStatusTitlePayment(orderReview?.paymentStatus)}
-                </Tag>
+          <LoadingSkeleton isLoadData={isLoadData}>
+            <Box display={"flex"} flexDirection={"column"} gap={5}>
+              <Title title={"Tên Người Nhận:"}>{orderReview?.deliveryTo}</Title>
+              <Title title={"Số Điện Thoại:"}>
+                {orderReview?.deliveryPhone}
               </Title>
-            ) : null}
-            <Title
-              title={"Địa Chỉ:"}
-            >{`${orderReview?.locationDetailDelivery}, ${orderReview?.wardDelivery}, ${orderReview?.districtDelivery}, ${orderReview?.provinceDelivery}`}</Title>
-          </Box>
+              <Title title={"Ngày Giao Hàng Dự Kiến:"}>
+                {formatDate(
+                  orderBill?.expectedDeliveryDate ||
+                    orderReview?.expectedDeliveryDate
+                )}
+              </Title>
+              {id ? (
+                <Title title={"Trạng Thái Thanh Toán:"}>
+                  <Tag
+                    color={getStatusColorPayment(orderReview?.paymentStatus)}
+                    key={orderReview?.paymentStatus}
+                    style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: "3px",
+                      marginRight: "unset",
+                    }}
+                  >
+                    {getStatusTitlePayment(orderReview?.paymentStatus)}
+                  </Tag>
+                </Title>
+              ) : null}
+              <Title
+                title={"Địa Chỉ:"}
+              >{`${orderReview?.locationDetailDelivery}, ${orderReview?.wardDelivery}, ${orderReview?.districtDelivery}, ${orderReview?.provinceDelivery}`}</Title>
+            </Box>
+          </LoadingSkeleton>
         </Box>
       </Box>
 
-      <TableOrder order={orderReview} orderBill={orderBill} id={id} />
+      <TableOrder
+        order={orderReview}
+        orderBill={orderBill}
+        id={id}
+        isLoadData={isLoadData}
+      />
 
       {id && userInformation?.role === "Staff" && order.status === 2 && (
         <FormControl
