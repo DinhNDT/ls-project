@@ -3,7 +3,9 @@ import * as XLSX from "xlsx";
 import { FORMAT_TIME } from "../components/Order/FormAdd";
 
 function formatDate(inputString) {
-  if (!inputString) return;
+  if (!inputString || inputString === '0001-01-01T00:00:00') {
+    return '-';
+  }
   var outputString = dayjs(inputString).format(FORMAT_TIME);
   return outputString;
 }

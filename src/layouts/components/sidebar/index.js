@@ -95,8 +95,8 @@ const SideBar = () => {
         getItem("Chuyến xe", "sub3", <FiTruck />, [getItem("Lịch sử", "3")]),
         getItem("Kho", "sub4", <FiShoppingCart />, [
           getItem("Chi tiết", "5"),
-          getItem("Nhập", "6"),
-          getItem("Xuất", "7"),
+          getItem("Nhập kho", "6"),
+          getItem("Xuất kho", "7"),
         ]),
         getItem("Đăng xuất", "4", <LogoutOutlined />),
       ]);

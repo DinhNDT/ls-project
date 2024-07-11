@@ -29,7 +29,7 @@ function TableComponent() {
 
   const columns = [
     {
-      title: "Id",
+      title: "Mã chuyến xe",
       dataIndex: "tripId",
       defaultSortOrder: "descend",
       sorter: (a, b) => a?.tripId - b?.tripId,
@@ -76,17 +76,17 @@ function TableComponent() {
       onFilter: (value, record) => record.stocker.stockerName?.includes(value),
     },
     {
-      title: "Tạo ngày đi",
+      title: "Ngày tạo chuyến",
       dataIndex: "createTripDate",
       render: (createTripDate) => <p>{formatDate(createTripDate)}</p>,
     },
     {
-      title: "Ngày giao hàng",
+      title: "Ngày bắt đầu",
       dataIndex: "shipmentDate",
       render: (shipmentDate) => <p>{formatDate(shipmentDate)}</p>,
     },
     {
-      title: "Ngày nhận hàng",
+      title: "Ngày hoàn thành",
       dataIndex: "deliveredDate",
       render: (deliveredDate) => <p>{formatDate(deliveredDate)}</p>,
     },
