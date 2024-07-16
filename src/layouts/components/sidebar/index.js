@@ -9,7 +9,7 @@ import {
   FiShoppingCart,
 } from "react-icons/fi";
 import React, { useContext, useEffect, useState } from "react";
-import { LogoutOutlined, BellOutlined } from "@ant-design/icons";
+import { LogoutOutlined } from "@ant-design/icons";
 import { Breadcrumb, Layout, Menu, theme } from "antd";
 import logo from "../../../assets/img/application.png";
 
@@ -33,6 +33,7 @@ import WeightManagementPage from "../../../pages/admin/weight-management";
 import StockDetailPage from "../../../pages/admin/stock-detail";
 import ReviewOrderPage from "../../../pages/company/order/review-order";
 import { PaymentHistory } from "../../../pages/company/payment-history";
+import { NotiBell } from "./NotiBell";
 
 const { Item } = Breadcrumb;
 const { Header, Content, Footer, Sider } = Layout;
@@ -185,7 +186,7 @@ const SideBar = () => {
               >
                 <Text fontSize="sm">{userInformation?.userName}</Text>
               </VStack>
-              <BellOutlined style={{ fontSize: "17px" }} />
+              <NotiBell />
             </HStack>
           </Flex>
         </Header>

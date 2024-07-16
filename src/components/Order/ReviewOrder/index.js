@@ -146,11 +146,17 @@ export const ReviewOrder = ({
   };
 
   const handleUpdateOrder = async (status) => {
+    let urlDefault = `/Order/api/UpdateOrder?orderId=${order?.orderId}&status=${status}`;
+    let url = "";
+
+    if (status === 4) {
+      url = urlDefault + `&reasonCancel=${value}`;
+    } else {
+      url = urlDefault;
+    }
+
     try {
-      const updateOrder = await axios.put(
-        `/Order/api/UpdateOrder?orderId=${order?.orderId}&status=${status}`,
-        { headers }
-      );
+      const updateOrder = await axios.put(url, { headers });
       if (updateOrder.status === 200) {
         toast({
           title:
@@ -176,6 +182,8 @@ export const ReviewOrder = ({
   useEffect(() => {
     if (id) {
       handleFetchData();
+    } else {
+      handleLoadData();
     }
   }, [id]);
 

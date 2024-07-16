@@ -23,6 +23,7 @@ import PriceListOrderPage from "../pages/price-list-order";
 import StockPage from "../pages/stocker/stock/import-export";
 import StockerStockDetailPage from "../pages/stocker/stock/detail";
 import { RoutePrivate } from "./route-private";
+import TrackingOrder from "../pages/tracking-order";
 
 const routes = [
   {
@@ -48,6 +49,15 @@ const routes = [
     components: (
       <RoutePrivate>
         <RegisterPage />
+      </RoutePrivate>
+    ),
+    role: "guest",
+  },
+  {
+    path: "/tracking/:id",
+    components: (
+      <RoutePrivate>
+        <TrackingOrder />
       </RoutePrivate>
     ),
     role: "guest",

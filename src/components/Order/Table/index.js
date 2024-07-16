@@ -180,10 +180,10 @@ function TableComponent({ url = "" }) {
               text: "Trì hoãn",
               value: 7,
             },
-            {
-              text: "Tồn kho",
-              value: 9,
-            },
+            // {
+            //   text: "Tồn kho",
+            //   value: 9,
+            // },
           ],
       defaultFilteredValue: isRoleStocker ? null : ["2", "3"],
       onFilter: (value, record) => record.status === value,

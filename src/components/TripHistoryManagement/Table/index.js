@@ -96,12 +96,16 @@ function TableComponent() {
       key: "status",
       filters: [
         {
-          text: "Hàng đã về kho",
+          text: "Hàng Đã Về Kho",
           value: 2,
         },
         {
-          text: "Vận Chuyển",
+          text: "Đang Giao Hàng",
           value: 3,
+        },
+        {
+          text: "Đang Lấy Hàng",
+          value: 6,
         },
         {
           text: "Hoàn Thành",
@@ -112,9 +116,9 @@ function TableComponent() {
           value: 5,
         },
       ],
-      onFilter: (value, record) => record.status === value,
+      onFilter: (value, record) => record.status === (value === 6 ? 3 : value),
       width: "15%",
-      render: (status) => {
+      render: (status, record) => {
         return (
           <Tag
             color={getStatusTripColor(status)}
@@ -125,7 +129,9 @@ function TableComponent() {
               gap: "3px",
             }}
           >
-            {getStatusTrip(status)}
+            {(record.type === 2 && status === 3 && "Đang Giao Hàng") ||
+              (record.type === 2 && status === 3 && "Đang Lấy Hàng") ||
+              getStatusTrip(status)}
           </Tag>
         );
       },
@@ -162,8 +168,6 @@ function TableComponent() {
   useEffect(() => {
     handleFetchData();
   }, []);
-
-  console.log("data", data);
 
   return (
     <>

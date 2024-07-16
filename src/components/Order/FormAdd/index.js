@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Box, useToast, Stack, useDisclosure } from "@chakra-ui/react";
 import { GlobalContext } from "../../../provider";
-import { convertOrder } from "../../../helpers";
+import { convertOrder, getWhoEnum } from "../../../helpers";
 import axios from "axios";
 import { OrderContext } from "../../../provider/order";
 import dayjs from "dayjs";
@@ -369,9 +369,10 @@ const CreateOrderForm = ({ id }) => {
           ...order,
           ...orderBill,
           accountId: userInformation?.accounId,
+          whoEnum: getWhoEnum(userInformation?.role),
         };
-        const AddCompany = await axios.post("/Order", payloadPost, { headers });
-        if (AddCompany.status === 200) {
+        const addOrder = await axios.post("/Order", payloadPost, { headers });
+        if (addOrder.status === 200) {
           toast({
             title: "Đã gửi thông tin đơn hàng!",
             status: "success",

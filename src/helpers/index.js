@@ -3,8 +3,8 @@ import * as XLSX from "xlsx";
 import { FORMAT_TIME } from "../components/Order/FormAdd";
 
 function formatDate(inputString) {
-  if (!inputString || inputString === '0001-01-01T00:00:00') {
-    return '-';
+  if (!inputString || inputString === "0001-01-01T00:00:00") {
+    return "-";
   }
   var outputString = dayjs(inputString).format(FORMAT_TIME);
   return outputString;
@@ -113,7 +113,7 @@ function getStatusTitle(status) {
     5: "Vận chuyển",
     6: "Hoàn thành",
     7: "Trì hoãn",
-    9: "Tồn kho",
+    // 9: "Tồn kho",
   };
 
   return statusTitles[status] || "Unknown Status";
@@ -138,7 +138,7 @@ function getStatusColor(status) {
     5: "blue",
     6: "green",
     7: "purple",
-    9: "purple",
+    // 9: "purple",
   };
 
   return statusTitles[status] || "lime";
@@ -179,6 +179,15 @@ function getStatusTripColor(status) {
   return statusTitles[status] || "Unknown Status";
 }
 
+function getWhoEnum(role) {
+  const whoEnum = {
+    Staff: 0,
+    Company: 1,
+  };
+
+  return whoEnum[role] || null;
+}
+
 const exportToExcel = (data, fileName) => {
   const ws = XLSX.utils.aoa_to_sheet(data);
   const columnWidths = Array(data[0].length).fill({ width: 25 });
@@ -195,6 +204,7 @@ export {
   convertOrder,
   convertISODateToDDMMYY,
   getStatusTripColor,
+  getWhoEnum,
   getStatusTitlePayment,
   getStatusColorPayment,
   getStatusTitle,
