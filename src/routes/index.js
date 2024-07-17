@@ -54,7 +54,7 @@ const routes = [
     role: "guest",
   },
   {
-    path: "/tracking/:id",
+    path: "/tracking-order/:id",
     components: (
       <RoutePrivate>
         <TrackingOrder />

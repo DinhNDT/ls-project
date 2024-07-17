@@ -1,18 +1,25 @@
-import { Badge } from "antd";
+import { Badge, Spin } from "antd";
 import React, { useContext, useEffect, useState } from "react";
 import { BellOutlined } from "@ant-design/icons";
-import { Box } from "@chakra-ui/react";
+import { Box, Text } from "@chakra-ui/react";
 import { CardNoti } from "./CardNoti";
 import { GlobalContext } from "../../../provider";
 import axios from "axios";
 import { useClickOutside } from "../../../hooks/use-click-outside";
+import "./style.css";
+
+const SECOND = 5000;
 
 export const NotiBell = () => {
   const [showNoti, setShowNoti] = useState(false);
+  const [reload, setReload] = useState(false);
+  const [dataNoti, setDataNoti] = useState([]);
   const ref = useClickOutside(() => setShowNoti(false));
 
   const userContext = useContext(GlobalContext);
   const { userInformation } = userContext;
+
+  const countNoti = dataNoti.length;
 
   const handleFetchData = async () => {
     try {
@@ -21,7 +28,9 @@ export const NotiBell = () => {
       );
 
       if (dataNoti.status === 200) {
-        // console.log("dataNoti:", dataNoti.data);
+        setDataNoti(
+          dataNoti.data.sort((a, b) => b.notifictionId - a.notifictionId)
+        );
       }
     } catch (error) {}
   };
@@ -34,10 +43,28 @@ export const NotiBell = () => {
     handleFetchData();
   }, []);
 
+  useEffect(() => {
+    if (reload) handleFetchData();
+    const clearTime = setTimeout(() => {
+      setReload(false);
+    }, 500);
+    return () => {
+      clearTimeout(clearTime);
+    };
+  }, [reload]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      handleFetchData();
+    }, SECOND);
+
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <Box ref={ref} position="relative">
       <Box cursor="pointer" userSelect="none" onClick={onShowDropDownNoti}>
-        <Badge count={5} size="small">
+        <Badge count={countNoti} size="small">
           <BellOutlined style={{ fontSize: "17px" }} />
         </Badge>
       </Box>
@@ -49,15 +76,55 @@ export const NotiBell = () => {
           top={"70%"}
           right={0}
           zIndex={99}
+          borderRadius={5}
           lineHeight="normal"
-          p={2}
-          display="flex"
-          flexDirection="column"
-          gap={2}
         >
-          <CardNoti />
-          <CardNoti />
-          <CardNoti />
+          <Box
+            p={3}
+            display="flex"
+            justifyContent={"center"}
+            alignItems={"center"}
+            alignContent={"center"}
+            borderBottom={"1px solid #dadada"}
+          >
+            <Text fontSize="md" marginRight="5px">
+              Thông Báo
+            </Text>
+            <Badge
+              style={{ marginTop: "3px" }}
+              size="small"
+              count={countNoti}
+            />
+          </Box>
+          <Spin spinning={reload} size="default">
+            <Box
+              // p={2}
+              overflowY={"scroll"}
+              height={"200px"}
+              display="flex"
+              flexDirection="column"
+              backgroundColor={"#edf1f4"}
+            >
+              {dataNoti.map((data) => (
+                <CardNoti
+                  key={data.notifictionId}
+                  data={data}
+                  role={userInformation?.role}
+                  setShowNoti={setShowNoti}
+                />
+              ))}
+            </Box>
+          </Spin>
+          <Box
+            onClick={() => setReload(true)}
+            p={4}
+            display="flex"
+            justifyContent={"center"}
+            alignItems={"center"}
+            cursor={"pointer"}
+          >
+            <Text color="#1677ff">Tải lại thông báo</Text>
+          </Box>
         </Box>
       ) : null}
     </Box>

@@ -3,6 +3,8 @@ import { Form, Input, Select } from "antd";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 
+const { Option } = Select;
+
 export const FormCompanyInfo = () => {
   const [provincesList, setProvincesList] = useState([]);
   const [districtsList, setDistrictsList] = useState([]);
@@ -57,7 +59,7 @@ export const FormCompanyInfo = () => {
   return (
     <div spacing={1}>
       <FormControl isRequired>
-        <FormLabel>Tài Khoản</FormLabel>
+        <FormLabel>Tên Tài Khoản</FormLabel>
         <Form.Item
           name="userName"
           rules={[
@@ -183,9 +185,9 @@ export const FormCompanyInfo = () => {
               placeholder="Chọn Quận/Huyện"
             >
               {districtsList.map((district) => (
-                <option key={district.id} value={district.full_name}>
+                <Option key={district.id} value={district.full_name}>
                   {district.full_name}
-                </option>
+                </Option>
               ))}
             </Select>
           </Form.Item>
@@ -203,9 +205,9 @@ export const FormCompanyInfo = () => {
           >
             <Select placeholder="Chọn Xã/Phường">
               {wardsList.map((ward) => (
-                <option key={ward.id} value={ward.full_name}>
+                <Option key={ward.id} value={ward.full_name}>
                   {ward.full_name}
-                </option>
+                </Option>
               ))}
             </Select>
           </Form.Item>

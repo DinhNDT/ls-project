@@ -13,22 +13,22 @@ import {
 } from "@chakra-ui/react";
 import React from "react";
 
-const steps = [
-  { title: "Đang đợi", description: "Contact Info" },
-  { title: "Đã duyệt", description: "Date & Time" },
-  { title: "Hàng đã về kho", description: "Select Rooms" },
-  { title: "Vận chuyển", description: "Select Rooms" },
-  { title: "Hoàn thành", description: "Select Rooms" },
+export const STEPS_TRACKING = [
+  { title: "Đang đợi", description: "Chờ duyệt đơn", key: 2 },
+  { title: "Đã duyệt", description: "Chờ qua kho", key: 3 },
+  { title: "Hàng đã về kho", description: "Chờ vận chuyển", key: 1 },
+  { title: "Vận chuyển", description: "Đang vận chuyển", key: 5 },
+  { title: "Hoàn thành", description: "Đã giao", key: 6 },
 ];
 
-export const StepTracking = () => {
+export const StepTracking = ({ status }) => {
   const { activeStep } = useSteps({
-    index: 1,
-    count: steps.length,
+    index: STEPS_TRACKING.findIndex((value) => value.key === status),
+    count: STEPS_TRACKING.length,
   });
   return (
     <Stepper index={activeStep} colorScheme="pink">
-      {steps.map((step, index) => (
+      {STEPS_TRACKING.map((step, index) => (
         <Step key={index}>
           <StepIndicator>
             <StepStatus

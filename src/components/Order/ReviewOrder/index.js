@@ -395,14 +395,19 @@ export const ReviewOrder = ({
         </div>
       ) : null}
 
-      {userInformation?.role === "Company" &&
-      (order.status === 3 || order.status === 4) ? (
-        <PaymentOrder
-          order={order}
-          orderReview={orderReview}
-          paymentStatus={order.paymentStatus}
-        />
-      ) : null}
+      <Flex justifyContent={"space-between"} alignItems={"flex-end"}>
+        <Tag color="magenta" style={{ fontSize: "17px", padding: "4px" }}>
+          Mã Vận Đơn: {orderReview?.trackingNumber}{" "}
+        </Tag>
+        {userInformation?.role === "Company" &&
+        (order.status === 3 || order.status === 4) ? (
+          <PaymentOrder
+            order={order}
+            orderReview={orderReview}
+            paymentStatus={order.paymentStatus}
+          />
+        ) : null}
+      </Flex>
     </>
   );
 };

@@ -13,8 +13,20 @@ import {
 } from "@chakra-ui/react";
 import { Form, Input } from "antd";
 import imgHomePage from "../../../assets/img/delivery-man.png";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function CallToActionWithVideo() {
+  const navigate = useNavigate();
+
+  const [trackingId, setTrackingId] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const onClickSendTracking = () => {
+    setLoading(true);
+    setTimeout(() => navigate(`tracking-order/${trackingId}`), 300);
+  };
+
   return (
     <Container maxW={"7xl"} data-aos="fade-up">
       <Stack
@@ -38,10 +50,22 @@ export default function CallToActionWithVideo() {
             <Box mt={25}>
               <InputGroup>
                 <InputLeftAddon>Mã đơn hàng:</InputLeftAddon>
-                <InputC type="tel" placeholder="Nhập mã đơn hàng" />
+                <InputC
+                  value={trackingId}
+                  type="tel"
+                  placeholder="Nhập mã đơn hàng"
+                  onChange={(e) => setTrackingId(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && onClickSendTracking()}
+                />
 
                 <InputRightElement width="3.5rem">
-                  <Button h="1.75rem" size="sm" onClick={() => {}}>
+                  <Button
+                    isDisabled={!trackingId}
+                    isLoading={loading}
+                    h="1.75rem"
+                    size="sm"
+                    onClick={onClickSendTracking}
+                  >
                     Gửi
                   </Button>
                 </InputRightElement>

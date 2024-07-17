@@ -2,7 +2,7 @@ import { Text } from "@chakra-ui/react";
 import { Table } from "antd";
 import React from "react";
 
-export const TableItem = () => {
+export const TableItem = ({ data }) => {
   const columns = [
     {
       title: "",
@@ -64,21 +64,21 @@ export const TableItem = () => {
       width: "8%",
       align: "center",
     },
-    {
-      title: "Giá sản phẩm",
-      dataIndex: "unitPrice",
-      key: "unitPrice",
-      // render: (text) => <span>{formatMoney(Math.ceil(text))} VNĐ</span>,
-      width: "15%",
-      align: "center",
-    },
+    // {
+    //   title: "Giá sản phẩm",
+    //   dataIndex: "unitPrice",
+    //   key: "unitPrice",
+    // render: (text) => <span>{formatMoney(Math.ceil(text))} VNĐ</span>,
+    //   width: "15%",
+    //   align: "center",
+    // },
   ];
   return (
     <>
       <Text mb={5} fontSize={"20px"}>
         Mặt hàng vận chuyển
       </Text>
-      <Table columns={columns} />
+      <Table rowKey="itemId" dataSource={data} columns={columns} />
     </>
   );
 };

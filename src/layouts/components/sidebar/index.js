@@ -186,7 +186,7 @@ const SideBar = () => {
               >
                 <Text fontSize="sm">{userInformation?.userName}</Text>
               </VStack>
-              <NotiBell />
+              {userInformation?.role !== "Stocker" ? <NotiBell /> : null}
             </HStack>
           </Flex>
         </Header>
