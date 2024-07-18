@@ -59,7 +59,7 @@ export const FormCompanyInfo = () => {
   return (
     <div spacing={1}>
       <FormControl isRequired>
-        <FormLabel>Tên Tài Khoản</FormLabel>
+        <FormLabel>Tài Khoản</FormLabel>
         <Form.Item
           name="userName"
           rules={[
@@ -160,9 +160,9 @@ export const FormCompanyInfo = () => {
               {provincesList
                 .filter((value) => value.id === "79")
                 .map((province) => (
-                  <option key={province.id} value={province.full_name}>
+                  <Option key={province.id} value={province.full_name}>
                     {province.full_name}
-                  </option>
+                  </Option>
                 ))}
             </Select>
           </Form.Item>

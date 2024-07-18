@@ -397,7 +397,7 @@ function TableComponent({ url = "" }) {
         );
         if (getItemId.status === 200) {
           let getItemToVehicle = getItemId.data;
-          setState(getItemToVehicle);
+          setState({ ...getItemToVehicle, orderId: selectedRows });
           setUrlTrip(`/stocker/create-trip/delivery`);
           setKeySelected("8");
         }

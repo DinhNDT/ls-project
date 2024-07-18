@@ -1,4 +1,4 @@
-import { Badge, Spin } from "antd";
+import { Badge, Empty, Spin } from "antd";
 import React, { useContext, useEffect, useState } from "react";
 import { BellOutlined } from "@ant-design/icons";
 import { Box, Text } from "@chakra-ui/react";
@@ -19,7 +19,7 @@ export const NotiBell = () => {
   const userContext = useContext(GlobalContext);
   const { userInformation } = userContext;
 
-  const countNoti = dataNoti.length;
+  const countNoti = dataNoti.filter((value) => value.status === true).length;
 
   const handleFetchData = async () => {
     try {
@@ -97,23 +97,33 @@ export const NotiBell = () => {
             />
           </Box>
           <Spin spinning={reload} size="default">
-            <Box
-              // p={2}
-              overflowY={"scroll"}
-              height={"200px"}
-              display="flex"
-              flexDirection="column"
-              backgroundColor={"#edf1f4"}
-            >
-              {dataNoti.map((data) => (
-                <CardNoti
-                  key={data.notifictionId}
-                  data={data}
-                  role={userInformation?.role}
-                  setShowNoti={setShowNoti}
+            {dataNoti.length > 0 ? (
+              <Box
+                // p={2}
+                overflowY={"scroll"}
+                height={"200px"}
+                display="flex"
+                flexDirection="column"
+                backgroundColor={"#edf1f4"}
+              >
+                {dataNoti.map((data) => (
+                  <CardNoti
+                    key={data.notifictionId}
+                    data={data}
+                    role={userInformation?.role}
+                    setShowNoti={setShowNoti}
+                    setReload={setReload}
+                  />
+                ))}
+              </Box>
+            ) : (
+              <Box p={2}>
+                <Empty
+                  style={{ width: 200, fontSize: "12px" }}
+                  imageStyle={{ height: 50 }}
                 />
-              ))}
-            </Box>
+              </Box>
+            )}
           </Spin>
           <Box
             onClick={() => setReload(true)}
@@ -122,6 +132,7 @@ export const NotiBell = () => {
             justifyContent={"center"}
             alignItems={"center"}
             cursor={"pointer"}
+            borderTop={"1px solid #dadada"}
           >
             <Text color="#1677ff">Tải lại thông báo</Text>
           </Box>

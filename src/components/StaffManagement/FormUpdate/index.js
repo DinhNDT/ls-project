@@ -6,8 +6,7 @@ import {
   HStack,
   Select,
 } from "@chakra-ui/react";
-import { useState } from "react";
-import { convertISODateToDDMMYY, formatDate } from "../../../helpers";
+import { convertISODateToDDMMYY } from "../../../helpers";
 
 function FormUpdate({ account, setAccount, readOnly }) {
   const handleChangeInput = (name, value) => {
@@ -37,7 +36,6 @@ function FormUpdate({ account, setAccount, readOnly }) {
   ];
 
   const formaDateOfBirth = convertISODateToDDMMYY(account?.dateOfBirth);
-  console.log(formaDateOfBirth);
   return (
     <Stack spacing={4}>
       <FormControl id="fullName" isRequired>

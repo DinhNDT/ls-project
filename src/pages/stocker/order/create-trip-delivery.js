@@ -179,7 +179,7 @@ function CreateTripDeliveryPage({ state, urlTrip }) {
   const hanldeCreteTrip = async () => {
     let url = urlTrip.includes("create-trip/delivery")
       ? "/Trips/api/CreateTripDelivery"
-      : `/Trips/api/CreateTripGet?orderId=${state?.orderId}`;
+      : `/Trips/CreateTripGet?orderId=${state?.orderId}`;
     let navigateUrl = urlTrip.includes("create-trip/delivery")
       ? "/stocker/order-delivery"
       : "/stocker/order-get";
@@ -205,7 +205,15 @@ function CreateTripDeliveryPage({ state, urlTrip }) {
           navigate(navigateUrl);
         }
       }
-    } catch (error) {}
+    } catch (error) {
+      toast({
+        title: "Lỗi hệ thống!.",
+        description: `${error.message}`,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
   };
 
   useEffect(() => {
@@ -294,7 +302,27 @@ function CreateTripDeliveryPage({ state, urlTrip }) {
         <Flex w={"100%"} flexDirection={"column"} gap={10}>
           <Card>
             <CardHeader pb={0}>
-              <Text fontWeight={"bold"}>Gói hàng trên xe thứ nhất</Text>
+              <Flex gap={2} alignItems="center">
+                <Text fontSize="large" fontWeight={"600"}>
+                  Mã đơn hàng:{" "}
+                </Text>
+                {Array.isArray(state.orderId) ? (
+                  state?.orderId?.map((value, index) => (
+                    <Text fontSize="large" fontWeight={"600"}>
+                      <Tag style={{ marginRight: "0" }}>{value}</Tag>
+                      {index < state.orderId.length - 1 && ","}{" "}
+                    </Text>
+                  ))
+                ) : (
+                  <Text fontSize="large" fontWeight={"600"}>
+                    <Tag>{state.orderId}</Tag>
+                  </Text>
+                )}
+              </Flex>
+
+              <Text mt={2} fontWeight={"500"}>
+                Gói hàng trên xe thứ nhất
+              </Text>
             </CardHeader>
             <CardBody>
               <Stack>

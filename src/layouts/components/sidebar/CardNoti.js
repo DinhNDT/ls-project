@@ -7,8 +7,9 @@ import {
   AiOutlineInfoCircle,
 } from "react-icons/ai";
 import { OrderContext } from "../../../provider/order";
+import axios from "axios";
 
-export const CardNoti = ({ role, data, setShowNoti }) => {
+export const CardNoti = ({ role, data, setShowNoti, setReload }) => {
   const orderContext = useContext(OrderContext);
   const { setKeySelected, setSelectedItem } = orderContext;
 
@@ -72,13 +73,41 @@ export const CardNoti = ({ role, data, setShowNoti }) => {
       }
     }
 
+    if (role === "Stocker") {
+      return (
+        <>
+          Bạn có đơn hàng{" "}
+          <span style={{ color: "#1677ff" }}>{data.orderId}</span> cần xác nhận
+          vui lòng kiểm tra
+        </>
+      );
+    }
+
     return <>{data.content}</>;
   };
 
+  const apiUpdateSeenStatusNoti = async () => {
+    try {
+      const statusPUT = await axios.put(
+        `/Notification/notification/update-status/${data.notifictionId}?status=false`
+      );
+      if (statusPUT.status === 200) {
+        setReload(true);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const onClickNoti = () => {
-    setKeySelected("0A");
-    setSelectedItem({ orderId: data.orderId });
+    if (role === "Stocker") {
+      setKeySelected("2");
+    } else {
+      setKeySelected("0A");
+      setSelectedItem({ orderId: data.orderId });
+    }
     setShowNoti(false);
+    apiUpdateSeenStatusNoti();
   };
 
   return (
@@ -89,10 +118,11 @@ export const CardNoti = ({ role, data, setShowNoti }) => {
       cursor={"pointer"}
       borderBottom={"1px solid #cccccc"}
       alignItems={"center"}
-      minW={250}
+      minW={300}
       gap={3}
       p={3}
       onClick={onClickNoti}
+      position="relative"
     >
       <Box>{handleRenderIcon()}</Box>
       <div>
@@ -100,6 +130,18 @@ export const CardNoti = ({ role, data, setShowNoti }) => {
           {handleRenderMes()}
         </Text>
       </div>
+      {data?.status ? (
+        <div
+          style={{
+            position: "absolute",
+            right: 10,
+            width: 7,
+            height: 7,
+            borderRadius: "50%",
+            backgroundColor: "#1677ff",
+          }}
+        ></div>
+      ) : null}
     </Flex>
   );
 };

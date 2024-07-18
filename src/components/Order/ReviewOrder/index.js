@@ -396,10 +396,13 @@ export const ReviewOrder = ({
       ) : null}
 
       <Flex justifyContent={"space-between"} alignItems={"flex-end"}>
-        <Tag color="magenta" style={{ fontSize: "17px", padding: "4px" }}>
-          Mã Vận Đơn: {orderReview?.trackingNumber}{" "}
-        </Tag>
+        {id ? (
+          <Tag color="magenta" style={{ fontSize: "17px", padding: "4px" }}>
+            Mã Vận Đơn: {orderReview?.trackingNumber}{" "}
+          </Tag>
+        ) : null}
         {userInformation?.role === "Company" &&
+        (order.paymentStatus === 0 || order.paymentStatus === 2) &&
         (order.status === 3 || order.status === 4) ? (
           <PaymentOrder
             order={order}

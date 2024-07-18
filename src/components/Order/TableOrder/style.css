@@ -5,3 +5,7 @@
 .ant-table-container {
   border-left: none !important;
 }
+
+.bgHighlight {
+  background-color: #fafafa;
+}

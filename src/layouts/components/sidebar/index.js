@@ -186,7 +186,7 @@ const SideBar = () => {
               >
                 <Text fontSize="sm">{userInformation?.userName}</Text>
               </VStack>
-              {userInformation?.role !== "Stocker" ? <NotiBell /> : null}
+              <NotiBell />
             </HStack>
           </Flex>
         </Header>
@@ -272,6 +272,7 @@ const SideBar = () => {
             {keySelected === "8" && userRole === "Stocker" && (
               <CreateTripDeliveryPage state={state} urlTrip={urlTrip} />
             )}
+
             {/* admin  */}
             {keySelected === "1" && userRole === "Admin" && <StatisticPage />}
             {keySelected === "2" && userRole === "Admin" && (

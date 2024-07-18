@@ -13,17 +13,18 @@ const TableSummaryRow = ({
   isHighLight = false,
 }) => {
   return (
-    <Table.Summary.Row
-      style={{
-        backgroundColor: isHighLight ? "#fafafa" : "",
-      }}
-    >
+    <Table.Summary.Row>
       <Table.Summary.Cell
         index={0}
         colSpan={7}
         className="hideCol"
       ></Table.Summary.Cell>
-      <Table.Summary.Cell index={1} colSpan={3} align="center">
+      <Table.Summary.Cell
+        index={1}
+        colSpan={3}
+        align="center"
+        className={isHighLight ? "bgHighlight" : ""}
+      >
         <Flex justifyContent={"space-between"}>
           <Box>
             <FormLabel
@@ -199,7 +200,7 @@ export const TableOrder = ({ order, orderBill, id, isLoadData }) => {
               content={<>{orderTable?.totalWeight} Kg</>}
             />
             <TableSummaryRow
-              title={"Đơn giá vận chuyển (6):"}
+              title={"Đơn giá (6):"}
               description={"(VNĐ/Kg)"}
               content={<>{formatMoney(Math.ceil(orderTable?.price))} VNĐ</>}
             />
@@ -215,7 +216,7 @@ export const TableOrder = ({ order, orderBill, id, isLoadData }) => {
                   :
                 </Flex>
               }
-              description={"= (5) x (6) + (4)"}
+              description={"(5) x (6) + (4)"}
               isHighLight
               content={
                 <Text color={"#4096ff"} fontWeight={500} fontSize={"medium"}>
