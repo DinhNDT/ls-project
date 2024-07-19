@@ -1,4 +1,4 @@
-import { IconButton, useDisclosure } from "@chakra-ui/react";
+import { IconButton, useDisclosure, useToast } from "@chakra-ui/react";
 import { useContext, useEffect, useState } from "react";
 import { IoMdAdd } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
@@ -50,6 +50,7 @@ export const getStatusIcon = (status) => {
 };
 
 function TableComponent({ url = "" }) {
+  const toast = useToast({ position: "top" });
   const [data, setData] = useState([]);
   const navigate = useNavigate();
   const userContext = useContext(GlobalContext);
@@ -152,10 +153,10 @@ function TableComponent({ url = "" }) {
       filters: isRoleStocker
         ? null
         : [
-            {
-              text: "Hàng đã về kho",
-              value: 1,
-            },
+            // {
+            //   text: "Hàng đã về kho",
+            //   value: 1,
+            // },
             {
               text: "Đang đợi",
               value: 2,
@@ -180,10 +181,10 @@ function TableComponent({ url = "" }) {
               text: "Trì hoãn",
               value: 7,
             },
-            // {
-            //   text: "Tồn kho",
-            //   value: 9,
-            // },
+            {
+              text: "Hàng đã về kho",
+              value: 9,
+            },
           ],
       defaultFilteredValue: isRoleStocker ? null : ["2", "3"],
       onFilter: (value, record) => record.status === value,
@@ -370,12 +371,21 @@ function TableComponent({ url = "" }) {
       );
       if (getItemId.status === 200) {
         let getItemToVehicle = getItemId.data;
-        setState(getItemToVehicle);
+        setState({
+          ...getItemToVehicle,
+          orderId: temporarySelectedIds.map((value) => value.orderId),
+        });
         setUrlTrip(`/stocker/create-trip/delivery`);
         setKeySelected("8");
       }
     } catch (err) {
-      console.error(err);
+      toast({
+        title: "Lỗi hệ thống!.",
+        description: `${err.message}`,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
     }
   };
   const handleAddDataHandMade = async () => {

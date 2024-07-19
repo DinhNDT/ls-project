@@ -106,14 +106,14 @@ function convertISODateToDDMMYY(isoDateString) {
 
 function getStatusTitle(status) {
   const statusTitles = {
-    1: "Hàng đã về kho",
+    // 1: "Hàng đã về kho",
     2: "Đang đợi",
     3: "Đã duyệt",
     4: "Từ chối",
     5: "Vận chuyển",
     6: "Hoàn thành",
     7: "Trì hoãn",
-    // 9: "Tồn kho",
+    9: "Hàng đã về kho",
   };
 
   return statusTitles[status] || "Unknown Status";
@@ -131,14 +131,14 @@ function getStatusTitlePayment(status) {
 
 function getStatusColor(status) {
   const statusTitles = {
-    1: "cyan",
+    // 1: "purple",
     2: "gold",
     3: "green",
     4: "red",
     5: "blue",
     6: "green",
     7: "purple",
-    // 9: "purple",
+    9: "cyan",
   };
 
   return statusTitles[status] || "lime";

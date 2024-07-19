@@ -39,7 +39,7 @@ function CreateTripDeliveryPage({ state, urlTrip }) {
   const [vehicle2, setVehicle2] = useState([]);
 
   const [payload1, setPayload1] = useState({
-    orderTripId: state?.orderTripInVehicle1st || state?.orderId,
+    // orderTripId: state?.orderTripInVehicle1st || state?.orderId,
     vehicleId: state?.vehicleId1St,
     driverId1st: 0,
     driverId2nd: 0,
@@ -47,8 +47,8 @@ function CreateTripDeliveryPage({ state, urlTrip }) {
   });
 
   const [payload2, setPayload2] = useState({
-    orderTripId: state?.orderTripInVehicle2st,
-    vehicleId: state?.vehicleId2St,
+    // orderTripId: state?.orderTripInVehicle2nd,
+    vehicleId: state?.vehicleId2nd,
     driverId1st: 0,
     driverId2nd: 0,
     stockerId: userInformation?.accounId,
@@ -80,33 +80,46 @@ function CreateTripDeliveryPage({ state, urlTrip }) {
           `/Order/item?itemId=${itemOrderTripResponse[0]?.itemId}`,
           { headers }
         );
-        return response.data;
+        return response.data.map((value) => ({
+          ...value,
+          orderTrip: itemOrderTripResponse[0]?.orderTrip,
+        }));
       });
 
       const itemResult = await Promise.all(itemPromise);
       setOrder(itemResult.map((item) => item[0]));
 
-      if (state?.orderTripInVehicle2st?.length) {
-        const promises2 = state?.orderTripInVehicle2st.map(async (id) => {
+      if (state?.orderTripInVehicle2nd?.length) {
+        const promises2 = state?.orderTripInVehicle2nd.map(async (id) => {
           const response = await axios.get(
-            `OrderTrip/itemOrderTrip?orderTripId=${id}`
+            `OrderTrip/itemOrderTrip?orderTripId=${id}`,
+            { headers }
           );
           return response.data;
         });
+
         const results2 = await Promise.all(promises2);
+
         const itemPromise2 = results2.map(async ({ itemOrderTripResponse }) => {
           const response = await axios.get(
-            `/Order/item?itemId=${itemOrderTripResponse[0]?.itemId}`
+            `/Order/item?itemId=${itemOrderTripResponse[0]?.itemId}`,
+            { headers }
           );
-          return response.data;
+          return response.data.map((value) => ({
+            ...value,
+            orderTrip: itemOrderTripResponse[0]?.orderTrip,
+          }));
         });
+
         const itemResult2 = await Promise.all(itemPromise2);
+
         setOrder2(itemResult2.map((item) => item[0]));
       }
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   };
+
   const handleFetchItemData = async () => {
     try {
       const getItem = await axios.get(`/Order/order?orderId=${state.orderId}`, {
@@ -137,9 +150,9 @@ function CreateTripDeliveryPage({ state, urlTrip }) {
           const driverData = getDriver.data;
           setDriver(driverData);
         }
-        if (state?.vehicleId2St) {
+        if (state?.vehicleId2nd) {
           const getVehicle2 = await axios.get(
-            `/Vehicle?vehicleId=${state?.vehicleId2St}`,
+            `/Vehicle?vehicleId=${state?.vehicleId2nd}`,
             { headers }
           );
           if (getVehicle2.status === 200) {
@@ -160,9 +173,9 @@ function CreateTripDeliveryPage({ state, urlTrip }) {
           const driverData = getDriver.data;
           setDriver(driverData);
         }
-        if (state?.vehicleId2St) {
+        if (state?.vehicleId2nd) {
           const getVehicle2 = await axios.get(
-            `/Vehicle?vehicleId=${state?.vehicleId2St}`,
+            `/Vehicle?vehicleId=${state?.vehicleId2nd}`,
             { headers }
           );
           if (getVehicle2.status === 200) {
@@ -222,6 +235,7 @@ function CreateTripDeliveryPage({ state, urlTrip }) {
     }
     handleGetDriverAndVehicle();
   }, [state?.orderTripInVehicle1st, state.orderId]);
+
   useEffect(() => {
     if (urlTrip.includes("create-trip/get")) {
       handleFetchItemData();
@@ -278,6 +292,11 @@ function CreateTripDeliveryPage({ state, urlTrip }) {
       dataIndex: "quantityItem",
       key: "quantityItem",
       align: "center",
+      render: (text, record) => (
+        <span>
+          {state?.tripNumber === 2 ? record?.orderTrip?.quantityItem : text}
+        </span>
+      ),
     },
     // {
     //   title: "Action",
@@ -308,7 +327,7 @@ function CreateTripDeliveryPage({ state, urlTrip }) {
                 </Text>
                 {Array.isArray(state.orderId) ? (
                   state?.orderId?.map((value, index) => (
-                    <Text fontSize="large" fontWeight={"600"}>
+                    <Text key={value} fontSize="large" fontWeight={"600"}>
                       <Tag style={{ marginRight: "0" }}>{value}</Tag>
                       {index < state.orderId.length - 1 && ","}{" "}
                     </Text>
@@ -448,80 +467,119 @@ function CreateTripDeliveryPage({ state, urlTrip }) {
               <CardBody>
                 <Stack>
                   <HStack>
-                    <FormControl isRequired>
-                      <FormLabel>Tài xế 1:</FormLabel>
-                      <Select
-                        value={payload2?.driverId1st}
-                        onChange={(e) =>
-                          handleOnChangeSelect2("driverId1st", e.target.value)
-                        }
-                      >
-                        {driver?.length ? (
-                          <Option>Chọn Tài Xế</Option>
-                        ) : (
-                          <Option>Không có tài xế rảnh</Option>
-                        )}
-                        {driver.map((item) => (
-                          <Option
-                            key={item?.driverId}
-                            value={item?.driverId}
-                            disabled={
-                              parseInt(payload2?.driverId2nd) ===
-                                parseInt(item?.driverId) ||
-                              parseInt(payload1?.driverId1st) ===
-                                parseInt(item?.driverId) ||
-                              parseInt(payload1?.driverId2nd) ===
-                                parseInt(item?.driverId)
-                            }
-                          >
-                            {item?.account?.fullName +
-                              " - " +
-                              item?.account.citizenId}
-                          </Option>
-                        ))}
-                      </Select>
-                    </FormControl>
-                    <FormControl isRequired>
-                      <FormLabel>Tài xế 2:</FormLabel>
-                      <Select
-                        value={payload2?.driverId2nd}
-                        onChange={(e) =>
-                          handleOnChangeSelect2("driverId2nd", e.target.value)
-                        }
-                      >
-                        {driver?.length ? (
-                          <Option>Chọn Tài Xế</Option>
-                        ) : (
-                          <Option>Không có tài xế rảnh</Option>
-                        )}
-                        {driver.map((item) => (
-                          <Option
-                            key={item?.driverId}
-                            value={item?.driverId}
-                            disabled={
-                              parseInt(payload2?.driverId1st) ===
-                                parseInt(item?.driverId) ||
-                              parseInt(payload1?.driverId1st) ===
-                                parseInt(item?.driverId) ||
-                              parseInt(payload1?.driverId2nd) ===
-                                parseInt(item?.driverId)
-                            }
-                          >
-                            {item?.account?.fullName +
-                              " - " +
-                              item?.account.citizenId}
-                          </Option>
-                        ))}
-                      </Select>
-                    </FormControl>
-                    <FormControl isRequired>
-                      <FormLabel>Phương tiện:</FormLabel>
-                      <Input value={vehicle2[0]?.licensePlate} />
-                    </FormControl>
+                    <Box w={"40%"}>
+                      <FormControl isRequired>
+                        <FormLabel>Tài xế 1:</FormLabel>
+                        <Select
+                          style={{ width: "100%" }}
+                          placeholder="Chọn tài xế"
+                          onChange={(value) =>
+                            handleOnChangeSelect2("driverId1st", value)
+                          }
+                        >
+                          {driver.map((item) => (
+                            <Option
+                              key={item?.driverId}
+                              value={item?.driverId}
+                              disabled={
+                                parseInt(payload2?.driverId2nd) ===
+                                  parseInt(item?.driverId) ||
+                                parseInt(payload1?.driverId1st) ===
+                                  parseInt(item?.driverId) ||
+                                parseInt(payload1?.driverId2nd) ===
+                                  parseInt(item?.driverId)
+                              }
+                            >
+                              <div>
+                                <Tag color="blue">
+                                  {item?.account?.fullName}
+                                </Tag>
+                                , Mã số TX:{" "}
+                                <Tag color="orange">{item?.driverId}</Tag>,
+                                Trạng thái:{" "}
+                                <Tag color="green">{item?.status}</Tag>
+                              </div>
+                            </Option>
+                          ))}
+                        </Select>
+                      </FormControl>
+                    </Box>
+
+                    <Box w={"40%"}>
+                      <FormControl isRequired>
+                        <FormLabel>Tài xế 2:</FormLabel>
+                        <Select
+                          style={{ width: "100%" }}
+                          placeholder="Chọn tài xế"
+                          onChange={(value) =>
+                            handleOnChangeSelect2("driverId2nd", value)
+                          }
+                        >
+                          {driver.map((item) => (
+                            <Option
+                              key={item?.driverId}
+                              value={item?.driverId}
+                              disabled={
+                                parseInt(payload2?.driverId1st) ===
+                                  parseInt(item?.driverId) ||
+                                parseInt(payload1?.driverId1st) ===
+                                  parseInt(item?.driverId) ||
+                                parseInt(payload1?.driverId2nd) ===
+                                  parseInt(item?.driverId)
+                              }
+                            >
+                              <div>
+                                <Tag color="blue">
+                                  {item?.account?.fullName}
+                                </Tag>
+                                , Mã số TX:{" "}
+                                <Tag color="orange">{item?.driverId}</Tag>,
+                                Trạng thái:{" "}
+                                <Tag color="green">{item?.status}</Tag>
+                              </div>
+                            </Option>
+                          ))}
+                        </Select>
+                      </FormControl>
+                    </Box>
+
+                    <Box w={"60%"}>
+                      <FormControl isRequired>
+                        <FormLabel>Phương tiện:</FormLabel>
+                        <Select
+                          style={{ width: "100%" }}
+                          placeholder="Chọn phương tiện"
+                          onChange={(value) =>
+                            handleOnChangeSelect("vehicleId", value)
+                          }
+                          value={vehicle2[0]?.vehicleId}
+                          // value={
+                          //   urlTrip.includes("create-trip/delivery")
+                          //     ? vehicle2[0]?.vehicleId
+                          //     : payload2?.vehicleId
+                          // }
+                        >
+                          {vehicle2?.map((item, index) => (
+                            <Option key={index} value={item?.vehicleId}>
+                              Biển số:{" "}
+                              <Tag color="#3d3d3d">{item?.licensePlate}</Tag>,
+                              Trọng lượng:{" "}
+                              <Tag color="geekblue">{item?.type} Kg</Tag>, Số
+                              khối(cm3):{" "}
+                              <Tag color="cyan">{item?.capacity}</Tag>
+                            </Option>
+                          ))}
+                        </Select>
+                      </FormControl>
+                    </Box>
                   </HStack>
                   <FormControl isRequired>
                     <FormLabel>Các mặt hàng:</FormLabel>
-                    <Table dataSource={order2} columns={columns} />
+                    <Table
+                      rowKey="itemId"
+                      dataSource={order2}
+                      columns={columns}
+                    />
                   </FormControl>
                 </Stack>
               </CardBody>

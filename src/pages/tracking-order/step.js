@@ -16,7 +16,7 @@ import React from "react";
 export const STEPS_TRACKING = [
   { title: "Đang đợi", description: "Chờ duyệt đơn", key: 2 },
   { title: "Đã duyệt", description: "Chờ qua kho", key: 3 },
-  { title: "Hàng đã về kho", description: "Chờ vận chuyển", key: 1 },
+  { title: "Hàng đã về kho", description: "Chờ vận chuyển", key: 9 },
   { title: "Vận chuyển", description: "Đang vận chuyển", key: 5 },
   { title: "Hoàn thành", description: "Đã giao", key: 6 },
 ];

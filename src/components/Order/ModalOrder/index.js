@@ -13,6 +13,12 @@ import { formatMoney } from "../../../helpers";
 
 const columns = [
   {
+    title: "Id",
+    dataIndex: "orderId",
+    defaultSortOrder: "descend",
+    sorter: (a, b) => a?.orderId - b?.orderId,
+  },
+  {
     title: "Tỉnh/Thành phố",
     dataIndex: "cityDelivery",
   },
