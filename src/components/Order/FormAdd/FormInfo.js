@@ -170,7 +170,7 @@ export const FormInfo = ({
               <Input
                 disabled={isRoleCompany ? true : !!id}
                 placeholder="Nhập mã số thuế"
-                value={companyData?.account?.citizenId}
+                value={companyData?.companyId}
               />
             </Form.Item>{" "}
             <Form.Item
@@ -252,21 +252,24 @@ export const FormInfo = ({
                 <HStack mb={3} mt={1}>
                   <Select
                     onChange={(event, option) => {
-                      handleChangeOrder("provinceGet", event);
+                      // handleChangeOrder("provinceGet", event);
                       handleChangeOrder("cityGet", event);
                       handleProvinceChange(option.key);
                     }}
                     value={order?.provinceGet}
                     style={{ width: "100%" }}
+                    disabled
                   >
-                    <Option value="">Chọn tỉnh/thành phố</Option>
-                    {provincesList
+                    <Option value="Thành Phố Hồ Chí Minh">
+                      Thành Phố Hồ Chí Minh
+                    </Option>
+                    {/* {provincesList
                       .filter((value) => value.id === "79")
                       .map((province) => (
                         <Option key={province.id} value={province.full_name}>
                           {province.full_name}
                         </Option>
-                      ))}
+                      ))} */}
                   </Select>
                   <Select
                     onChange={(event, option) => {
@@ -309,6 +312,7 @@ export const FormInfo = ({
 
               <Form.Item name="dayGet" required label="Ngày gửi hàng">
                 <DatePicker
+                  showTime
                   onChange={(date) => {
                     handleChangeOrder(
                       "dayGet",

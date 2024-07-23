@@ -6,20 +6,20 @@ import React, { useEffect, useState } from "react";
 const { Option } = Select;
 
 export const FormCompanyInfo = () => {
-  const [provincesList, setProvincesList] = useState([]);
+  // const [provincesList, setProvincesList] = useState([]);
   const [districtsList, setDistrictsList] = useState([]);
   const [wardsList, setWardsList] = useState([]);
 
-  const apiGetPublicProvinces = async () => {
-    try {
-      const response = await axios.get(
-        "https://esgoo.net/api-tinhthanh/1/0.htm"
-      );
-      setProvincesList(response.data.data);
-    } catch (error) {
-      console.log(error.message);
-    }
-  };
+  // const apiGetPublicProvinces = async () => {
+  //   try {
+  //     const response = await axios.get(
+  //       "https://esgoo.net/api-tinhthanh/1/0.htm"
+  //     );
+  //     setProvincesList(response.data.data);
+  //   } catch (error) {
+  //     console.log(error.message);
+  //   }
+  // };
 
   const apiGetPublicDistrict = async (provinceId) => {
     try {
@@ -44,16 +44,17 @@ export const FormCompanyInfo = () => {
     }
   };
 
-  const handleProvinceChange = (provinceId) => {
-    apiGetPublicDistrict(provinceId);
-  };
+  // const handleProvinceChange = (provinceId) => {
+  //   apiGetPublicDistrict(provinceId);
+  // };
 
   const handleDistrictChange = (id) => {
     apiGetPublicWard(id);
   };
 
   useEffect(() => {
-    apiGetPublicProvinces();
+    // apiGetPublicProvinces();
+    apiGetPublicDistrict("79");
   }, []);
 
   return (
@@ -144,27 +145,26 @@ export const FormCompanyInfo = () => {
           <FormLabel>Tỉnh/Thành</FormLabel>
           <Form.Item
             name="province"
-            rules={[
-              {
-                required: true,
-                message: "Vui lòng chọn Tỉnh/Thành",
-              },
-            ]}
+            // rules={[
+            //   {
+            //     required: true,
+            //     message: "Vui lòng chọn Tỉnh/Thành",
+            //   },
+            // ]}
           >
             <Select
-              onChange={(_, option) => {
-                handleProvinceChange(option.key);
-              }}
-              placeholder="Chọn Tỉnh/thành"
+              disabled
+              defaultValue={"Thành Phố Hồ Chí Minh"}
+              // onChange={(_, option) => {
+              //   handleProvinceChange(option.key);
+              // }}
+              // placeholder="Chọn Tỉnh/thành"
             >
-              {provincesList
-                .filter((value) => value.id === "79")
-                .map((province) => (
-                  <Option key={province.id} value={province.full_name}>
-                    {province.full_name}
-                  </Option>
-                ))}
+              <Option key={"79"} value={"Thành Phố Hồ Chí Minh"}>
+                Thành Phố Hồ Chí Minh
+              </Option>
             </Select>
+            {/* <Input defaultValue={"Thành Phố Hồ Chí Minh"} /> */}
           </Form.Item>
         </FormControl>
         <FormControl isRequired>

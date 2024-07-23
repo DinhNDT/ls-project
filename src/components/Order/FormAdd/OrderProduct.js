@@ -31,8 +31,14 @@ export const OrderProduct = ({
 }) => {
   const data = useMemo(
     () =>
-      order.items.map(({ ...rest }, index) => {
-        return { ...rest, key: index.toString() };
+      order.items.map(({ width, height, length, ...rest }, index) => {
+        return {
+          ...rest,
+          key: index.toString(),
+          width: width * 100,
+          height: height * 100,
+          length: length * 100,
+        };
       }),
     [order]
   );
@@ -59,6 +65,7 @@ export const OrderProduct = ({
       key: "length",
       width: "8%",
       align: "center",
+      // render: (text) => <span>{text * 100}</span>,
     },
     {
       title: "Rộng(cm)",
@@ -66,6 +73,7 @@ export const OrderProduct = ({
       key: "width",
       width: "8%",
       align: "center",
+      // render: (text) => <span>{text * 100}</span>,
     },
     {
       title: "Cao(cm)",
@@ -73,6 +81,7 @@ export const OrderProduct = ({
       key: "height",
       width: "8%",
       align: "center",
+      // render: (text) => <span>{text * 100}</span>,
     },
     {
       title: "Giá (vnđ)",

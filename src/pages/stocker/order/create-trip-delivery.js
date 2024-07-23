@@ -262,18 +262,21 @@ function CreateTripDeliveryPage({ state, urlTrip }) {
       dataIndex: "length",
       key: "length",
       align: "center",
+      render: (text) => <span>{text * 100}</span>,
     },
     {
       title: "Rộng(cm)",
       dataIndex: "width",
       key: "width",
       align: "center",
+      render: (text) => <span>{text * 100}</span>,
     },
     {
       title: "Cao(cm)",
       dataIndex: "height",
       key: "height",
       align: "center",
+      render: (text) => <span>{text * 100}</span>,
     },
     {
       title: "Màu sắc",
@@ -440,7 +443,7 @@ function CreateTripDeliveryPage({ state, urlTrip }) {
                             Biển số:{" "}
                             <Tag color="#3d3d3d">{item?.licensePlate}</Tag>,
                             Trọng lượng:{" "}
-                            <Tag color="geekblue">{item?.type} Kg</Tag>, Số
+                            <Tag color="geekblue">{item?.type} Tấn</Tag>, Số
                             khối(cm3): <Tag color="cyan">{item?.capacity}</Tag>
                           </Option>
                         ))}
@@ -564,7 +567,7 @@ function CreateTripDeliveryPage({ state, urlTrip }) {
                               Biển số:{" "}
                               <Tag color="#3d3d3d">{item?.licensePlate}</Tag>,
                               Trọng lượng:{" "}
-                              <Tag color="geekblue">{item?.type} Kg</Tag>, Số
+                              <Tag color="geekblue">{item?.type} Tấn</Tag>, Số
                               khối(cm3):{" "}
                               <Tag color="cyan">{item?.capacity}</Tag>
                             </Option>

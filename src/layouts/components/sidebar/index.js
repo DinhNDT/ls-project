@@ -7,6 +7,7 @@ import {
   FiGlobe,
   FiFileText,
   FiShoppingCart,
+  FiSettings,
 } from "react-icons/fi";
 import React, { useContext, useEffect, useState } from "react";
 import { LogoutOutlined } from "@ant-design/icons";
@@ -34,6 +35,7 @@ import StockDetailPage from "../../../pages/admin/stock-detail";
 import ReviewOrderPage from "../../../pages/company/order/review-order";
 import { PaymentHistory } from "../../../pages/company/payment-history";
 import { NotiBell } from "./NotiBell";
+import UserPage from "../../../pages/user";
 
 const { Item } = Breadcrumb;
 const { Header, Content, Footer, Sider } = Layout;
@@ -84,6 +86,9 @@ const SideBar = () => {
           getItem("Tạo đơn hàng", "2"),
           getItem("Bảng giá dịch vụ", "3"),
           getItem("Lịch sử thanh toán", "4A"),
+        ]),
+        getItem("Cài đặt", "sub2", <FiSettings />, [
+          getItem("Người dùng", "5"),
         ]),
         getItem("Đăng xuất", "4", <LogoutOutlined />),
       ]);
@@ -246,6 +251,9 @@ const SideBar = () => {
                   userRole={userRole}
                 />
               )}
+
+            {keySelected === "5" &&
+              (userRole === "Company" || userRole === "Staff") && <UserPage />}
 
             {/* stocker */}
             {keySelected === "0AS" && userRole === "Stocker" && (

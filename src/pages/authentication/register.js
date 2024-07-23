@@ -69,7 +69,7 @@ export default function RegisterPage() {
     const formSubmit = {
       ...rest,
       img: "https://i.imgur.com/9i2ANHO.jpeg",
-      companyLocation: `${address}, ${ward}, ${district}, ${province}`,
+      companyLocation: `${address}, ${ward}, ${district}, Thành Phố Hồ Chí Minh`,
       dateOfBirth: "2024-06-11T07:55:03.452Z",
       companyId: Number(companyId),
       citizenId: Number(citizenId),

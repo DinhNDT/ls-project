@@ -24,8 +24,8 @@ export const defaultItem = {
   color: "",
 };
 
-export const FORMAT_TIME = "DD/MM/YYYY";
-export const FORMAT_TIME_SUBMIT = "YYYY-MM-DD";
+export const FORMAT_TIME = "DD/MM/YYYY HH:mm";
+export const FORMAT_TIME_SUBMIT = "YYYY-MM-DDTHH:mm";
 
 const CreateOrderForm = ({ id }) => {
   const userContext = useContext(GlobalContext);
@@ -38,7 +38,7 @@ const CreateOrderForm = ({ id }) => {
     companyId: "",
     dayGet: dayjs().format(FORMAT_TIME_SUBMIT),
     locationDetailGet: "",
-    provinceGet: "",
+    provinceGet: "Thành Phố Hồ Chí Minh",
     cityGet: "",
     districtGet: "",
     wardGet: "",
@@ -258,6 +258,9 @@ const CreateOrderForm = ({ id }) => {
       itemValue,
       itemWeight,
       key,
+      width,
+      height,
+      length,
       ...rest
     } = selectedItem;
 
@@ -265,14 +268,25 @@ const CreateOrderForm = ({ id }) => {
     updatedItems[selectedIndex] = selectedItem; // Update the item at the selected index
     setOrder({
       ...order,
-      items: updatedItems,
+      items: updatedItems.map((value) => ({
+        ...value,
+        width: value.width / 100,
+        height: value.height / 100,
+        length: value.length / 100,
+      })),
     });
 
     if (keySelected === "0" && id) {
       try {
         await axios.put(
           `/Order/update-item/${selectedItem.itemId}`,
-          { ...rest, orderId: order.orderId },
+          {
+            ...rest,
+            orderId: order.orderId,
+            width: width / 100,
+            height: height / 100,
+            length: length / 100,
+          },
           { headers }
         );
       } catch (error) {

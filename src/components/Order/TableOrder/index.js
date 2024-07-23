@@ -89,6 +89,7 @@ export const TableOrder = ({ order, orderBill, id, isLoadData }) => {
       key: "length",
       width: "8%",
       align: "center",
+      render: (text) => <span>{text * 100}</span>,
     },
     {
       title: "Rộng(cm)",
@@ -96,6 +97,7 @@ export const TableOrder = ({ order, orderBill, id, isLoadData }) => {
       key: "width",
       width: "8%",
       align: "center",
+      render: (text) => <span>{text * 100}</span>,
     },
     {
       title: "Cao(cm)",
@@ -103,6 +105,7 @@ export const TableOrder = ({ order, orderBill, id, isLoadData }) => {
       key: "height",
       width: "8%",
       align: "center",
+      render: (text) => <span>{text * 100}</span>,
     },
     {
       title: "Màu sắc",

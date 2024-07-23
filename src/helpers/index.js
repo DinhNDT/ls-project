@@ -185,7 +185,7 @@ function getWhoEnum(role) {
     Company: 1,
   };
 
-  return whoEnum[role] || null;
+  return whoEnum[role] ?? null;
 }
 
 const exportToExcel = (data, fileName) => {

@@ -189,6 +189,14 @@ export const ReviewOrder = ({
 
   return (
     <>
+      {id ? (
+        <Tag
+          color="magenta"
+          style={{ fontSize: "16px", padding: "4px", marginBottom: 10 }}
+        >
+          Mã Vận Đơn: {orderReview?.trackingNumber}{" "}
+        </Tag>
+      ) : null}
       <Box
         display={"flex"}
         justifyContent={"space-between"}
@@ -396,11 +404,7 @@ export const ReviewOrder = ({
       ) : null}
 
       <Flex justifyContent={"space-between"} alignItems={"flex-end"}>
-        {id ? (
-          <Tag color="magenta" style={{ fontSize: "17px", padding: "4px" }}>
-            Mã Vận Đơn: {orderReview?.trackingNumber}{" "}
-          </Tag>
-        ) : null}
+        {id ? <div></div> : null}
         {userInformation?.role === "Company" &&
         (order.paymentStatus === 0 || order.paymentStatus === 2) &&
         (order.status === 3 || order.status === 4) ? (
