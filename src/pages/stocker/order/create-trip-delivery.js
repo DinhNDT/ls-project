@@ -428,7 +428,7 @@ function CreateTripDeliveryPage({ state, urlTrip }) {
                             <Tag color="#3d3d3d">{item?.licensePlate}</Tag>,
                             Trọng lượng:{" "}
                             <Tag color="geekblue">{item?.type} Tấn</Tag>, Số
-                            khối(cm3): <Tag color="cyan">{item?.capacity}</Tag>
+                            khối(m3): <Tag color="cyan">{item?.capacity}</Tag>
                           </Option>
                         ))}
                       </Select>
@@ -552,7 +552,7 @@ function CreateTripDeliveryPage({ state, urlTrip }) {
                               <Tag color="#3d3d3d">{item?.licensePlate}</Tag>,
                               Trọng lượng:{" "}
                               <Tag color="geekblue">{item?.type} Tấn</Tag>, Số
-                              khối(cm3):{" "}
+                              khối(m3):{" "}
                               <Tag color="cyan">{item?.capacity}</Tag>
                             </Option>
                           ))}
