@@ -10,7 +10,6 @@ import {
   CardHeader,
   Stack,
   Text,
-  Input,
   useToast,
 } from "@chakra-ui/react";
 
@@ -62,8 +61,12 @@ function CreateTripDeliveryPage({ state, urlTrip }) {
   };
 
   const handleFetchData = async () => {
+    const dataOrderTrip = urlTrip.includes("create-trip/get")
+      ? state?.orderTripInVehicle
+      : state?.orderTripInVehicle1st;
+
     try {
-      const promises = state?.orderTripInVehicle1st?.map(async (id) => {
+      const promises = dataOrderTrip?.map(async (id) => {
         const response = await axios.get(
           `OrderTrip/itemOrderTrip?orderTripId=${id}`,
           { headers }
@@ -120,68 +123,31 @@ function CreateTripDeliveryPage({ state, urlTrip }) {
     }
   };
 
-  const handleFetchItemData = async () => {
-    try {
-      const getItem = await axios.get(`/Order/order?orderId=${state.orderId}`, {
-        headers,
-      });
-      if (getItem.status === 200) {
-        setOrder(getItem.data);
-      }
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
-  };
-
   const handleGetDriverAndVehicle = async () => {
+    const vehicleId = urlTrip.includes("create-trip/get")
+      ? state?.vehicleId
+      : state?.vehicleId1St;
     try {
-      if (urlTrip.includes("stocker/create-trip/get")) {
-        const [getVehicle, getDriver] = await Promise.all([
-          axios.get("/Vehicle", {
-            headers,
-          }),
-          axios.get("/Drivers?status=Online", { headers }),
-        ]);
-        if (getVehicle.status === 200) {
-          const vehicleData = getVehicle.data;
-          setVehicle(vehicleData);
-        }
-        if (getDriver.status === 200) {
-          const driverData = getDriver.data;
-          setDriver(driverData);
-        }
-        if (state?.vehicleId2nd) {
-          const getVehicle2 = await axios.get(
-            `/Vehicle?vehicleId=${state?.vehicleId2nd}`,
-            { headers }
-          );
-          if (getVehicle2.status === 200) {
-            const vehicleData2 = getVehicle2.data;
-            setVehicle2(vehicleData2);
-          }
-        }
-      } else {
-        const [getVehicle, getDriver] = await Promise.all([
-          axios.get(`/Vehicle?vehicleId=${state?.vehicleId1St}`, { headers }),
-          axios.get("/Drivers?status=Online", { headers }),
-        ]);
-        if (getVehicle.status === 200) {
-          const vehicleData = getVehicle.data;
-          setVehicle(vehicleData);
-        }
-        if (getDriver.status === 200) {
-          const driverData = getDriver.data;
-          setDriver(driverData);
-        }
-        if (state?.vehicleId2nd) {
-          const getVehicle2 = await axios.get(
-            `/Vehicle?vehicleId=${state?.vehicleId2nd}`,
-            { headers }
-          );
-          if (getVehicle2.status === 200) {
-            const vehicleData2 = getVehicle2.data;
-            setVehicle2(vehicleData2);
-          }
+      const [getVehicle, getDriver] = await Promise.all([
+        axios.get(`/Vehicle?vehicleId=${vehicleId}`, { headers }),
+        axios.get("/Drivers?status=Online", { headers }),
+      ]);
+      if (getVehicle.status === 200) {
+        const vehicleData = getVehicle.data;
+        setVehicle(vehicleData);
+      }
+      if (getDriver.status === 200) {
+        const driverData = getDriver.data;
+        setDriver(driverData);
+      }
+      if (state?.vehicleId2nd) {
+        const getVehicle2 = await axios.get(
+          `/Vehicle?vehicleId=${state?.vehicleId2nd}`,
+          { headers }
+        );
+        if (getVehicle2.status === 200) {
+          const vehicleData2 = getVehicle2.data;
+          setVehicle2(vehicleData2);
         }
       }
     } catch (error) {
@@ -192,20 +158,46 @@ function CreateTripDeliveryPage({ state, urlTrip }) {
   const hanldeCreteTrip = async () => {
     let url = urlTrip.includes("create-trip/delivery")
       ? "/Trips/api/CreateTripDelivery"
-      : `/Trips/CreateTripGet?orderId=${state?.orderId}`;
+      : "/Trips/api/CreateTripGet";
     let navigateUrl = urlTrip.includes("create-trip/delivery")
       ? "/stocker/order-delivery"
       : "/stocker/order-get";
     try {
       if (state?.tripNumber === 2) {
         const createTrip = [payload1, payload2].map(async (item) => {
-          const result = await axios.post(url, item, { headers });
+          const newPayload = {
+            ...item,
+            orderTripId: urlTrip.includes("create-trip/get")
+              ? state?.orderTripInVehicle
+              : state?.orderTripInVehicle1st,
+            vehicleId: urlTrip.includes("create-trip/get")
+              ? state?.vehicleId
+              : item?.vehicleId,
+          };
+          const result = await axios.post(url, newPayload, { headers });
           return result;
         });
         const promiseAll = await Promise.all(createTrip);
+
+        if (promiseAll.every((value) => value.status === 200)) {
+          toast({
+            title: "Cập nhật đơn hàng thành công!.",
+            status: "success",
+            isClosable: true,
+          });
+        }
       }
       if (state?.tripNumber === 1 || state?.orderId) {
-        const result = await axios.post(url, payload1, {
+        const newPayload = {
+          ...payload1,
+          orderTripId: urlTrip.includes("create-trip/get")
+            ? state?.orderTripInVehicle
+            : state?.orderTripInVehicle1st,
+          vehicleId: urlTrip.includes("create-trip/get")
+            ? state?.vehicleId
+            : payload1?.vehicleId,
+        };
+        const result = await axios.post(url, newPayload, {
           headers,
         });
         if (result.status === 200) {
@@ -230,17 +222,15 @@ function CreateTripDeliveryPage({ state, urlTrip }) {
   };
 
   useEffect(() => {
-    if (state?.orderTripInVehicle1st || state?.orderId) {
+    if (
+      state?.orderTripInVehicle1st ||
+      state?.orderId ||
+      state?.orderTripInVehicle
+    ) {
       handleFetchData();
     }
     handleGetDriverAndVehicle();
   }, [state?.orderTripInVehicle1st, state.orderId]);
-
-  useEffect(() => {
-    if (urlTrip.includes("create-trip/get")) {
-      handleFetchItemData();
-    }
-  }, [urlTrip]);
 
   const columns = [
     {
@@ -328,18 +318,12 @@ function CreateTripDeliveryPage({ state, urlTrip }) {
                 <Text fontSize="large" fontWeight={"600"}>
                   Mã đơn hàng:{" "}
                 </Text>
-                {Array.isArray(state.orderId) ? (
-                  state?.orderId?.map((value, index) => (
-                    <Text key={value} fontSize="large" fontWeight={"600"}>
-                      <Tag style={{ marginRight: "0" }}>{value}</Tag>
-                      {index < state.orderId.length - 1 && ","}{" "}
-                    </Text>
-                  ))
-                ) : (
-                  <Text fontSize="large" fontWeight={"600"}>
-                    <Tag>{state.orderId}</Tag>
+                {state?.orderId?.map((value, index) => (
+                  <Text key={value} fontSize="large" fontWeight={"600"}>
+                    <Tag style={{ marginRight: "0" }}>{value}</Tag>
+                    {index < state.orderId.length - 1 && ","}{" "}
                   </Text>
-                )}
+                ))}
               </Flex>
 
               <Text mt={2} fontWeight={"500"}>
@@ -429,12 +413,12 @@ function CreateTripDeliveryPage({ state, urlTrip }) {
                         onChange={(value) =>
                           handleOnChangeSelect("vehicleId", value)
                         }
-                        // value={payload1?.vehicleId}
-                        value={
-                          urlTrip.includes("create-trip/delivery")
-                            ? vehicle[0]?.vehicleId
-                            : payload1?.vehicleId
-                        }
+                        value={vehicle[0]?.vehicleId}
+                        // value={
+                        //   urlTrip.includes("create-trip/delivery")
+                        //     ? vehicle[0]?.vehicleId
+                        //     : payload1?.vehicleId
+                        // }
                       >
                         {/* <Option>Chọn phương tiện</Option> */}
 

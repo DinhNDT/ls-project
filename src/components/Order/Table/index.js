@@ -389,31 +389,38 @@ function TableComponent({ url = "" }) {
     }
   };
   const handleAddDataHandMade = async () => {
+    const urlAdd = url.includes("stocker/order-get")
+      ? "/Trips/getOrderToVehicle"
+      : "/Trips/api/getItemToVehicle";
+    const urlTrip = url.includes("stocker/order-get")
+      ? "/stocker/create-trip/get"
+      : "/stocker/create-trip/delivery";
+
     try {
-      if (url.includes("stocker/order-get")) {
-        setState({ orderId: selectedRows[0] });
-        setUrlTrip(`/stocker/create-trip/get`);
+      let payload = data
+        ?.filter((item) => selectedRows.includes(item?.orderId))
+        .flatMap((order) => order.items.map((item) => item.itemId));
+
+      const getItemId = await axios[
+        url.includes("stocker/order-get") ? "post" : "put"
+      ](urlAdd, payload, {
+        headers,
+      });
+
+      if (getItemId.status === 200) {
+        let getItemToVehicle = getItemId.data;
+        setState({ ...getItemToVehicle, orderId: selectedRows });
+        setUrlTrip(urlTrip);
         setKeySelected("8");
-      } else {
-        let payload = data
-          ?.filter((item) => selectedRows.includes(item?.orderId))
-          .flatMap((order) => order.items.map((item) => item.itemId));
-        const getItemId = await axios.put(
-          "/Trips/api/getItemToVehicle",
-          payload,
-          {
-            headers,
-          }
-        );
-        if (getItemId.status === 200) {
-          let getItemToVehicle = getItemId.data;
-          setState({ ...getItemToVehicle, orderId: selectedRows });
-          setUrlTrip(`/stocker/create-trip/delivery`);
-          setKeySelected("8");
-        }
       }
     } catch (err) {
-      console.error(err);
+      toast({
+        title: "Lỗi hệ thống!.",
+        description: `${err.message}`,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
     }
   };
   const handleAdd = () => {
@@ -542,7 +549,7 @@ function TableComponent({ url = "" }) {
         dataSource={data}
         columns={columns}
         rowSelection={{
-          type: url.includes("order-delivery") ? "checkbox" : "radio",
+          type: "checkbox",
           ...rowOrderIdSelection,
         }}
         pageSize="6"
