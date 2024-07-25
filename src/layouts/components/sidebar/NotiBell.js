@@ -53,13 +53,13 @@ export const NotiBell = () => {
     };
   }, [reload]);
 
-  // useEffect(() => {
-  //   const interval = setInterval(() => {
-  //     handleFetchData();
-  //   }, SECOND);
+  useEffect(() => {
+    const interval = setInterval(() => {
+      handleFetchData();
+    }, SECOND);
 
-  //   return () => clearInterval(interval);
-  // }, []);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <Box ref={ref} position="relative">
