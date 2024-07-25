@@ -206,9 +206,6 @@ export const ReviewOrder = ({
     } catch (error) {}
   };
 
-  console.log("order:", order);
-
-
   return (
     <>
       {id ? (
