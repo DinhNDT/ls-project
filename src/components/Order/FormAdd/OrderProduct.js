@@ -1,5 +1,5 @@
-import { Box, Flex, Text } from "@chakra-ui/react";
-import { Card, Space, Table } from "antd";
+import { Box, Flex, Text, useToast } from "@chakra-ui/react";
+import { Button, Card, Image, Space, Table, Upload } from "antd";
 import React, { useMemo } from "react";
 
 import { formatMoney } from "../../../helpers";
@@ -13,6 +13,7 @@ import {
 import { FormOrderProduct } from "./FormOrderProduct";
 import { FormAction } from "./FormAction";
 import axios from "axios";
+import { UploadOutlined } from '@ant-design/icons';
 
 export const OrderProduct = ({
   id,
@@ -29,6 +30,8 @@ export const OrderProduct = ({
   handleItemChange,
   handleItemChangeNumber,
 }) => {
+  const toast = useToast({ position: "top" });
+
   const data = useMemo(
     () =>
       order.items.map(({ width, height, length, ...rest }, index) => {
@@ -201,6 +204,45 @@ export const OrderProduct = ({
     }
   };
 
+  const upLoadImage = async (file, options) => {
+    try {
+      const res = await axios.put(
+        `/ordersEvidence/envidence?orderId=${id}`,
+        { image: file },
+        {
+          headers: {
+            "content-type": 'multipart/form-data; boundary=----WebKitFormBoundaryqTqJIxvkWFYqvP5s'
+          }
+        }
+      );
+      if (res.status === 200) {
+        toast({
+          title: "Cập nhật hình ảnh thành công !",
+          status: "success",
+          isClosable: true,
+        });
+        options.onSuccess({ data: "test" }, options.file);
+      }
+    } catch (error) {
+      toast({
+        title: "Cập nhật hình ảnh thất bại !",
+        status: "error",
+        description: `${error.message}`,
+        isClosable: true,
+      });
+    }
+  };
+
+
+  const props = {
+    name: "file",
+    customRequest(options) {
+      const data = new FormData()
+      data.append('file', options.file)
+      upLoadImage(data.get("file"), options)
+    },
+  };
+
   return (
     <Card style={{ marginTop: 15 }} type="inner" title="Thông tin mặt hàng">
       <Flex gap={10}>
@@ -232,12 +274,34 @@ export const OrderProduct = ({
               defaultExpandedRowKeys: ["0"],
             }}
           />
-          <FormAction
-            handleSubmit={handleSubmit}
-            order={order}
-            orderBill={orderBill}
-            onNextToReviewOrder={onNextToReviewOrder}
-          />
+          <Box>
+            {id ? !order?.image ? <>
+              <Text mb={"10px"}>Thêm hình ảnh mặt hàng</Text>
+              <Box height={"90px"} mb={"39px"}>
+                <Upload {...props} >
+                  <Button icon={<UploadOutlined />}>Click để tải ảnh lên</Button>
+                </ Upload>
+              </Box></> : <>
+              <Text mb={"10px"}>Hình ảnh mặt hàng</Text>
+              <Box mb={"3px"}>
+                {/* <Upload {...props} listType={null}>
+                  <Button icon={<UploadOutlined />}>Click để đổi ảnh khác</Button>
+                </ Upload> */}
+              </Box>
+              <Image
+                width={250}
+                height={200}
+                src={order?.image}
+              />
+            </> : null}
+
+            <FormAction
+              handleSubmit={handleSubmit}
+              order={order}
+              orderBill={orderBill}
+              onNextToReviewOrder={onNextToReviewOrder}
+            />
+          </Box>
         </Box>
       </Flex>
     </Card>

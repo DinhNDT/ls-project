@@ -20,6 +20,7 @@ const UserPage = () => {
   const toast = useToast({ position: "top" });
   const [dataCompany, setDataCompany] = useState({});
 
+  const [reload, setReload] = useState(false);
   const [form] = Form.useForm();
   const userContext = useContext(GlobalContext);
   const { headers, userInformation } = userContext;
@@ -112,7 +113,8 @@ const UserPage = () => {
     const payload = {
       ...rest,
       companyLocation: `${address}, ${ward}, ${district}, Thành Phố Hồ Chí Minh`,
-      img: "https://i.imgur.com/9i2ANHO.jpeg",
+      img: dataCompany?.account?.img,
+      // img: "https://i.imgur.com/9i2ANHO.jpeg",
       dateOfBirth: "2024-06-11T07:55:03.452Z",
       userName: dataCompany.account.userName,
       password: dataCompany.account.password,
@@ -150,44 +152,52 @@ const UserPage = () => {
 
   const props = {
     name: "file",
-    action: `https://nhatlocphatexpress.azurewebsites.net/Accounts/api/accounts/upload-image/${userInformation.accounId}`,
     headers: headers,
+    customRequest(options) {
+      const data = new FormData()
+      data.append('file', options.file)
+      upLoadImage(data.get("file"))
+    },
+  };
 
-    onChange(info) {
-      // console.log("info:", typeof info.file.originFileObj);
-      // upLoadImage(info.file.originFileObj);
-
-      if (info.file.status !== "uploading") {
-        console.log(info.file, info.fileList);
-      }
-      if (info.file.status === "done") {
+  const upLoadImage = async (file) => {
+    try {
+      const res = await axios.put(
+        `https://nhatlocphatexpress.azurewebsites.net/Accounts/api/accounts/upload-image/${userInformation.accounId}`,
+        { image: file },
+        {
+          headers: {
+            "content-type": 'multipart/form-data; boundary=----WebKitFormBoundaryqTqJIxvkWFYqvP5s'
+          }
+        }
+      );
+      if (res.status === 200) {
         toast({
           title: "Cập nhật hình ảnh thành công !",
           status: "success",
           isClosable: true,
         });
-      } else if (info.file.status === "error") {
-        toast({
-          title: "Cập nhật hình ảnh thất bại !",
-          status: "error",
-          isClosable: true,
-        });
+        setReload(true);
       }
-    },
-  };
-
-  const upLoadImage = async (image) => {
-    try {
-      const res = await axios.put(
-        `https://nhatlocphatexpress.azurewebsites.net/Accounts/api/accounts/upload-image/${userInformation.accounId}`,
-        { image },
-        { headers }
-      );
-      // console.log("res:", res);
     } catch (error) {
-      console.log(error);
+      toast({
+        title: "Cập nhật hình ảnh thất bại !",
+        status: "error",
+        description: `${error.message}`,
+        isClosable: true,
+      });
     }
   };
+
+  useEffect(() => {
+    if (reload) apiGetCompanyInformation();
+    const clearTime = setTimeout(() => {
+      setReload(false);
+    }, 500);
+    return () => {
+      clearTimeout(clearTime);
+    };
+  }, [reload]);
 
   return (
     <Box position={"relative"}>
@@ -214,7 +224,7 @@ const UserPage = () => {
             icon={<UserOutlined />}
             src={dataCompany?.account?.img}
           />
-          <Upload method="PUT" {...props} fileList={null}>
+          <Upload {...props} fileList={null}>
             <IconButton
               position={"absolute"}
               bottom={0}

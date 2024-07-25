@@ -1,4 +1,4 @@
-import { Modal, Table } from "antd";
+import { Image, Modal, Table } from "antd";
 import React, { useMemo, useState } from "react";
 import { formatMoney } from "../../../helpers";
 import { Box, Flex, FormLabel, Text } from "@chakra-ui/react";
@@ -19,6 +19,18 @@ const TableSummaryRow = ({
         colSpan={7}
         className="hideCol"
       ></Table.Summary.Cell>
+      {/* <Table.Summary.Cell
+        index={0}
+        colSpan={1}
+        
+        className="hideCol"
+      >
+        <Image
+          width={250}
+          height={200}
+          // src={order?.image}
+        />
+      </Table.Summary.Cell> */}
       <Table.Summary.Cell
         index={1}
         colSpan={3}
@@ -232,6 +244,14 @@ export const TableOrder = ({ order, orderBill, id, isLoadData }) => {
         rowKey={(row) =>
           row.itemName + row.itemId + id + row.height + row.quantityItem
         }
+      />
+      <FormLabel textAlign={"left"} margin={"unset"} mb="5px">
+        Hình Ảnh Mặt Hàng:
+      </FormLabel>
+      <Image
+        width={250}
+        height={200}
+        src={order?.image}
       />
       <Modal
         title="Cước vận tải đường bộ (CPT)"

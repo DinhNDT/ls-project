@@ -136,6 +136,7 @@ const SideBar = () => {
     return key;
   };
 
+
   return (
     <Layout
       style={{
@@ -182,6 +183,7 @@ const SideBar = () => {
         >
           <Flex flexDirection="row-reverse">
             <HStack>
+              {/* <Avatar size={"sm"} src={userInformation?.image} /> */}
               <Avatar size={"sm"} src={"https://i.imgur.com/9i2ANHO.jpeg"} />
               <VStack
                 display={{ base: "none", md: "flex" }}
