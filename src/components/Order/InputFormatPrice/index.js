@@ -1,7 +1,12 @@
 import { Input, Tooltip } from "antd";
 import { useEffect, useState } from "react";
 
-export const InputFormatPrice = ({ id, valueInput, handleItemChange }) => {
+export const InputFormatPrice = ({
+  id,
+  valueInput,
+  handleItemChange,
+  width = "100%",
+}) => {
   const [value, setValue] = useState(valueInput ?? 0);
   const formatNumber = (value) =>
     new Intl.NumberFormat("vi-VN", {
@@ -48,6 +53,7 @@ export const InputFormatPrice = ({ id, valueInput, handleItemChange }) => {
       overlayStyle={{ zIndex: "1999" }}
     >
       <Input
+        style={{ width: width }}
         value={valueInput}
         precision={2}
         min={0}

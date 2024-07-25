@@ -48,7 +48,7 @@ export const FormOrderProduct = ({
       <Flex justifyContent={"space-between"}>
         <Stack w={"100%"}>
           <Stack direction="row">
-            <Stack w={"50%"}>
+            <Stack w={"100%"}>
               <Form.Item label="Tên mặt hàng">
                 <Input
                   placeholder="Nhập tên mặt hàng"
@@ -60,6 +60,7 @@ export const FormOrderProduct = ({
           </Stack>
           <Form.Item label="Giá trị đơn hàng (Bảo hiểm 2% giá trị đơn hàng)">
             <InputFormatPrice
+              width="50%"
               id={id}
               hasTooltip={true}
               valueInput={itemData?.unitPrice}

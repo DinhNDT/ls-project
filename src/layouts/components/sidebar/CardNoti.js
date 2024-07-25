@@ -51,7 +51,7 @@ export const CardNoti = ({ role, data, setShowNoti, setReload }) => {
             Đơn hàng <span style={{ color: "#1677ff" }}>{data.orderId}</span>{" "}
             của bạn đã bị hủy
             <br />
-            <span
+            {/* <span
               style={{
                 color: "#B2B2B2",
                 fontStyle: "italic",
@@ -59,7 +59,7 @@ export const CardNoti = ({ role, data, setShowNoti, setReload }) => {
               }}
             >
               Lý do: {data.content?.split("vì")?.at(1) ?? ""}
-            </span>
+            </span> */}
           </>
         );
       }

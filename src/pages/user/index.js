@@ -259,13 +259,13 @@ const UserPage = () => {
             </Box>
           </Flex>
           <Flex gap={5}>
-            <Box width={"50%"}>
+            {/* <Box width={"50%"}>
               <FormLabel>Mã Số Thuế</FormLabel>
               <Form.Item name="companyId">
                 <Input disabled={isEdit} />
               </Form.Item>
-            </Box>
-            <Box width={"50%"}>
+            </Box> */}
+            <Box width={"100%"}>
               <HStack>
                 <FormControl>
                   <FormLabel>Tỉnh/Thành</FormLabel>
@@ -311,7 +311,7 @@ const UserPage = () => {
               <FormControl>
                 <FormLabel>Địa Chỉ</FormLabel>
                 <Form.Item name="address">
-                  <Input disabled={isEdit} />
+                  <Input.TextArea disabled={isEdit} />
                 </Form.Item>
               </FormControl>
             </Box>

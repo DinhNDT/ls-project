@@ -187,6 +187,27 @@ export const ReviewOrder = ({
     }
   }, [id]);
 
+  useEffect(() => {
+    if (id && order.status === 4) {
+      getReasonCancel();
+    }
+  }, [id, order.status]);
+
+  const getReasonCancel = async () => {
+    try {
+      const res = await axios.get(`/Notification/notifications/order/${id}`);
+      let dataNoti = res.data;
+      if (res.status === 200) {
+        let reasonCancel = dataNoti.filter((value) =>
+          value.content.includes("bị hủy vì")
+        )[0].content;
+        setValue(reasonCancel?.split("vì")?.at(1));
+      }
+    } catch (error) {}
+  };
+
+  console.log("order:", order);
+
   return (
     <>
       {id ? (
@@ -333,18 +354,26 @@ export const ReviewOrder = ({
         isLoadData={isLoadData}
       />
 
-      {id && userInformation?.role === "Staff" && order.status === 2 && (
-        <FormControl
-          display={"flex"}
-          justifyContent={"center"}
-          flexDirection={"column"}
-        >
-          <FormLabel textAlign={"left"} margin={"unset"} mb="5px">
-            Lý do hủy đơn hàng (nếu có):
-          </FormLabel>
-          <Input.TextArea onChange={onChangeInputReason} />
-        </FormControl>
-      )}
+      {id &&
+        (userInformation?.role === "Staff" ||
+          userInformation?.role === "Company") &&
+        (order.status === 2 || order.status === 4) && (
+          <FormControl
+            mb={5}
+            display={"flex"}
+            justifyContent={"center"}
+            flexDirection={"column"}
+          >
+            <FormLabel textAlign={"left"} margin={"unset"} mb="5px">
+              Lý do hủy đơn hàng (nếu có):
+            </FormLabel>
+            <Input.TextArea
+              value={value}
+              disabled={userInformation?.role === "Company"}
+              onChange={onChangeInputReason}
+            />
+          </FormControl>
+        )}
 
       {id && userInformation?.role === "Staff" ? (
         <div style={{ display: "flex", justifyContent: "flex-end" }}>
