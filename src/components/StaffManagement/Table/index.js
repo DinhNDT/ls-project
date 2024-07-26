@@ -220,7 +220,7 @@ function TableComponent() {
       width: "15%",
     },
     {
-      title: "Action",
+      title: "Hoạt Động",
       key: "action",
       render: (_, record) => (
         <Space size="middle">

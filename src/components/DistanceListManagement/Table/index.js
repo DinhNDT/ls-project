@@ -247,7 +247,7 @@ function TableComponent() {
       render: (updateDate) => <p>{formatDate(updateDate)}</p>,
     },
     {
-      title: "Action",
+      title: "Hoạt Động",
       key: "action",
       render: (_, record) => (
         <Space size="middle">

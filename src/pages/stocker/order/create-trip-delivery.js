@@ -297,7 +297,7 @@ function CreateTripDeliveryPage({ state, urlTrip }) {
       ),
     },
     // {
-    //   title: "Action",
+    //   title: "Hoạt Động",
     //   key: "action",
     //   align: "center",
     //   render: (_, record) => (

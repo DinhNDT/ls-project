@@ -136,7 +136,6 @@ const SideBar = () => {
     return key;
   };
 
-
   return (
     <Layout
       style={{
@@ -207,8 +206,8 @@ const SideBar = () => {
               margin: "16px 0",
             }}
           >
-            <Item>User</Item>
-            <Item>Manage</Item>
+            <Item>Người Dùng</Item>
+            <Item>Quản Lý</Item>
           </Breadcrumb>
           <div
             style={{

@@ -13,7 +13,7 @@ import {
 import { FormOrderProduct } from "./FormOrderProduct";
 import { FormAction } from "./FormAction";
 import axios from "axios";
-import { UploadOutlined } from '@ant-design/icons';
+import { UploadOutlined } from "@ant-design/icons";
 
 export const OrderProduct = ({
   id,
@@ -94,7 +94,7 @@ export const OrderProduct = ({
       render: (text) => <span>{formatMoney(Math.ceil(text))}</span>,
     },
     {
-      title: "Action",
+      title: "Hoạt Động",
       width: "15%",
       align: "center",
       render: (_, record, i) => (
@@ -211,8 +211,9 @@ export const OrderProduct = ({
         { image: file },
         {
           headers: {
-            "content-type": 'multipart/form-data; boundary=----WebKitFormBoundaryqTqJIxvkWFYqvP5s'
-          }
+            "content-type":
+              "multipart/form-data; boundary=----WebKitFormBoundaryqTqJIxvkWFYqvP5s",
+          },
         }
       );
       if (res.status === 200) {
@@ -233,13 +234,12 @@ export const OrderProduct = ({
     }
   };
 
-
   const props = {
     name: "file",
     customRequest(options) {
-      const data = new FormData()
-      data.append('file', options.file)
-      upLoadImage(data.get("file"), options)
+      const data = new FormData();
+      data.append("file", options.file);
+      upLoadImage(data.get("file"), options);
     },
   };
 
@@ -275,25 +275,30 @@ export const OrderProduct = ({
             }}
           />
           <Box>
-            {id ? !order?.image ? <>
-              <Text mb={"10px"}>Thêm hình ảnh mặt hàng</Text>
-              <Box height={"90px"} mb={"39px"}>
-                <Upload {...props} >
-                  <Button icon={<UploadOutlined />}>Click để tải ảnh lên</Button>
-                </ Upload>
-              </Box></> : <>
-              <Text mb={"10px"}>Hình ảnh mặt hàng</Text>
-              <Box mb={"3px"}>
-                {/* <Upload {...props} listType={null}>
+            {id ? (
+              !order?.image ? (
+                <>
+                  <Text mb={"10px"}>Thêm hình ảnh mặt hàng</Text>
+                  <Box height={"90px"} mb={"39px"}>
+                    <Upload {...props}>
+                      <Button icon={<UploadOutlined />}>
+                        Click để tải ảnh lên
+                      </Button>
+                    </Upload>
+                  </Box>
+                </>
+              ) : (
+                <>
+                  <Text mb={"10px"}>Hình ảnh mặt hàng</Text>
+                  <Box mb={"3px"}>
+                    {/* <Upload {...props} listType={null}>
                   <Button icon={<UploadOutlined />}>Click để đổi ảnh khác</Button>
                 </ Upload> */}
-              </Box>
-              <Image
-                width={250}
-                height={200}
-                src={order?.image}
-              />
-            </> : null}
+                  </Box>
+                  <Image width={250} height={200} src={order?.image} />
+                </>
+              )
+            ) : null}
 
             <FormAction
               handleSubmit={handleSubmit}

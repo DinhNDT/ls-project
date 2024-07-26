@@ -235,7 +235,7 @@ function TableComponent({ url = "" }) {
       align: "center",
     },
     {
-      title: "Action",
+      title: "Hoạt Động",
       key: "action",
       align: "center",
       render: (_, record) => (
