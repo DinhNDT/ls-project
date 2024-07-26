@@ -17,12 +17,12 @@ export const FormOrderProduct = ({
   const handleAddItem = async () => {
     const payloadAddItem = {
       ...itemData,
-      height: parseFloat(itemData?.height / 100),
-      length: parseFloat(itemData?.length / 100),
+      height: parseFloat(itemData?.height) / 100,
+      length: parseFloat(itemData?.length) / 100,
       quantityItem: parseInt(itemData?.quantityItem),
       unitPrice: parseFloat(itemData?.unitPrice),
       unitWeight: parseFloat(itemData?.unitWeight),
-      width: parseFloat(itemData?.width / 100),
+      width: parseFloat(itemData?.width) / 100,
     };
 
     setOrder({

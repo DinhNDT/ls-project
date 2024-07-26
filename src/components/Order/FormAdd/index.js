@@ -265,15 +265,15 @@ const CreateOrderForm = ({ id }) => {
     } = selectedItem;
 
     const updatedItems = [...order.items];
-    updatedItems[selectedIndex] = selectedItem; // Update the item at the selected index
+    updatedItems[selectedIndex] = {
+      ...selectedItem,
+      width: selectedItem.width / 100,
+      height: selectedItem.height / 100,
+      length: selectedItem.length / 100,
+    }; // Update the item at the selected index
     setOrder({
       ...order,
-      items: updatedItems.map((value) => ({
-        ...value,
-        width: value.width / 100,
-        height: value.height / 100,
-        length: value.length / 100,
-      })),
+      items: updatedItems,
     });
 
     if (keySelected === "0" && id) {

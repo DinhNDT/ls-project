@@ -185,6 +185,7 @@ function CreateTripDeliveryPage({ state, urlTrip }) {
             status: "success",
             isClosable: true,
           });
+          if (urlTrip.includes("create-trip/delivery")) setKeySelected("7");
         }
       }
       if (state?.tripNumber === 1 || state?.orderId) {
@@ -206,8 +207,12 @@ function CreateTripDeliveryPage({ state, urlTrip }) {
             status: "success",
             isClosable: true,
           });
-          setKeySelected("2");
-          navigate(navigateUrl);
+          if (urlTrip.includes("create-trip/delivery")) {
+            setKeySelected("7");
+          } else {
+            setKeySelected("2");
+            navigate(navigateUrl);
+          }
         }
       }
     } catch (error) {
@@ -552,8 +557,7 @@ function CreateTripDeliveryPage({ state, urlTrip }) {
                               <Tag color="#3d3d3d">{item?.licensePlate}</Tag>,
                               Trọng lượng:{" "}
                               <Tag color="geekblue">{item?.type} Tấn</Tag>, Số
-                              khối(m3):{" "}
-                              <Tag color="cyan">{item?.capacity}</Tag>
+                              khối(m3): <Tag color="cyan">{item?.capacity}</Tag>
                             </Option>
                           ))}
                         </Select>
