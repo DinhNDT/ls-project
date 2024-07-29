@@ -34,13 +34,13 @@ export const OrderProduct = ({
 
   const data = useMemo(
     () =>
-      order.items.map(({ width, height, length, ...rest }, index) => {
+      order.items.map((value, index) => {
         return {
-          ...rest,
+          ...value,
           key: index.toString(),
-          width: width * 100,
-          height: height * 100,
-          length: length * 100,
+          width: parseFloat((value.width * 100).toFixed(2)),
+          height: parseFloat((value.height * 100).toFixed(2)),
+          length: parseFloat((value.length * 100).toFixed(2)),
         };
       }),
     [order]
@@ -68,7 +68,6 @@ export const OrderProduct = ({
       key: "length",
       width: "8%",
       align: "center",
-      // render: (text) => <span>{text * 100}</span>,
     },
     {
       title: "Rộng(cm)",
@@ -76,7 +75,6 @@ export const OrderProduct = ({
       key: "width",
       width: "8%",
       align: "center",
-      // render: (text) => <span>{text * 100}</span>,
     },
     {
       title: "Cao(cm)",
@@ -84,7 +82,6 @@ export const OrderProduct = ({
       key: "height",
       width: "8%",
       align: "center",
-      // render: (text) => <span>{text * 100}</span>,
     },
     {
       title: "Giá (vnđ)",
@@ -278,7 +275,7 @@ export const OrderProduct = ({
             {id ? (
               !order?.image ? (
                 <>
-                  <Text mb={"10px"}>Thêm hình ảnh mặt hàng</Text>
+                  <Text mb={"10px"}>Hình ảnh mặt hàng</Text>
                   <Box height={"90px"} mb={"39px"}>
                     <Upload {...props}>
                       <Button icon={<UploadOutlined />}>

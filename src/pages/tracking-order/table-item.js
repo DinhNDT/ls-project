@@ -24,7 +24,7 @@ export const TableItem = ({ data }) => {
       key: "length",
       width: "8%",
       align: "center",
-      render: (text) => <span>{text * 100}</span>,
+      render: (text) => <span>{parseFloat((text * 100).toFixed(2))}</span>,
     },
     {
       title: "Rộng(cm)",
@@ -32,7 +32,7 @@ export const TableItem = ({ data }) => {
       key: "width",
       width: "8%",
       align: "center",
-      render: (text) => <span>{text * 100}</span>,
+      render: (text) => <span>{parseFloat((text * 100).toFixed(2))}</span>,
     },
     {
       title: "Cao(cm)",
@@ -40,7 +40,7 @@ export const TableItem = ({ data }) => {
       key: "height",
       width: "8%",
       align: "center",
-      render: (text) => <span>{text * 100}</span>,
+      render: (text) => <span>{parseFloat((text * 100).toFixed(2))}</span>,
     },
     {
       title: "Màu sắc",

@@ -15,23 +15,6 @@ const TableSummaryRow = ({
   return (
     <Table.Summary.Row>
       <Table.Summary.Cell
-        index={0}
-        colSpan={7}
-        className="hideCol"
-      ></Table.Summary.Cell>
-      {/* <Table.Summary.Cell
-        index={0}
-        colSpan={1}
-        
-        className="hideCol"
-      >
-        <Image
-          width={250}
-          height={200}
-          // src={order?.image}
-        />
-      </Table.Summary.Cell> */}
-      <Table.Summary.Cell
         index={1}
         colSpan={3}
         align="center"
@@ -101,7 +84,7 @@ export const TableOrder = ({ order, orderBill, id, isLoadData }) => {
       key: "length",
       width: "8%",
       align: "center",
-      render: (text) => <span>{text * 100}</span>,
+      render: (text) => <span>{parseFloat((text * 100).toFixed(2))}</span>,
     },
     {
       title: "Rộng(cm)",
@@ -109,7 +92,7 @@ export const TableOrder = ({ order, orderBill, id, isLoadData }) => {
       key: "width",
       width: "8%",
       align: "center",
-      render: (text) => <span>{text * 100}</span>,
+      render: (text) => <span>{parseFloat((text * 100).toFixed(2))}</span>,
     },
     {
       title: "Cao(cm)",
@@ -117,7 +100,7 @@ export const TableOrder = ({ order, orderBill, id, isLoadData }) => {
       key: "height",
       width: "8%",
       align: "center",
-      render: (text) => <span>{text * 100}</span>,
+      render: (text) => <span>{parseFloat((text * 100).toFixed(2))}</span>,
     },
     {
       title: "Màu sắc",
@@ -182,6 +165,25 @@ export const TableOrder = ({ order, orderBill, id, isLoadData }) => {
         style={{ marginTop: 10, marginBottom: 35 }}
         summary={() => (
           <Table.Summary fixed>
+            <Table.Summary.Row>
+              <Table.Summary.Cell
+                align="center"
+                index={0}
+                colSpan={7}
+                rowSpan={8}
+                className="hideCol"
+              >
+                {order?.image ? (
+                  <>
+                    <FormLabel textAlign={"left"} margin={"unset"} mb="5px">
+                      Hình Ảnh:
+                    </FormLabel>
+                    <Image width={400} height={400} src={order?.image} />
+                  </>
+                ) : null}
+              </Table.Summary.Cell>
+            </Table.Summary.Row>
+
             <TableSummaryRow
               title={"Khoảng cách vận chuyển (1):"}
               content={<>{orderTable?.distance} Km</>}
@@ -244,14 +246,6 @@ export const TableOrder = ({ order, orderBill, id, isLoadData }) => {
         rowKey={(row) =>
           row.itemName + row.itemId + id + row.height + row.quantityItem
         }
-      />
-      <FormLabel textAlign={"left"} margin={"unset"} mb="5px">
-        Hình Ảnh Mặt Hàng:
-      </FormLabel>
-      <Image
-        width={250}
-        height={200}
-        src={order?.image}
       />
       <Modal
         title="Cước vận tải đường bộ (CPT)"

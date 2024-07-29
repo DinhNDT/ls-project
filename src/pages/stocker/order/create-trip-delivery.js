@@ -60,25 +60,32 @@ function CreateTripDeliveryPage({ state, urlTrip }) {
     setPayload2({ ...payload2, [name]: value });
   };
 
+  const getItemOrderTrip = async (idItem) => {
+    const res = await axios.get(
+      `OrderTrip/itemOrderTrip?orderTripId=${idItem}`,
+      { headers }
+    );
+    return res.data;
+  };
+
+  const handleGetItemOrderTrip = async (dataOrderTrip) => {
+    const results = [];
+    for (const idItem of dataOrderTrip) {
+      const trip = await getItemOrderTrip(idItem);
+      results.push(trip);
+    }
+    return results;
+  };
+
   const handleFetchData = async () => {
     const dataOrderTrip = urlTrip.includes("create-trip/get")
       ? state?.orderTripInVehicle
       : state?.orderTripInVehicle1st;
 
     try {
-      const promises = dataOrderTrip?.map(async (id) => {
-        const response = await axios.get(
-          `OrderTrip/itemOrderTrip?orderTripId=${id}`,
-          { headers }
-        );
-        return response.data;
-      });
+      const results = await handleGetItemOrderTrip(dataOrderTrip);
 
-      if (!promises) return;
-
-      const results = await Promise.all(promises);
-
-      const itemPromise = results.map(async ({ itemOrderTripResponse }) => {
+      const itemPromise = results?.map(async ({ itemOrderTripResponse }) => {
         const response = await axios.get(
           `/Order/item?itemId=${itemOrderTripResponse[0]?.itemId}`,
           { headers }
@@ -257,21 +264,21 @@ function CreateTripDeliveryPage({ state, urlTrip }) {
       dataIndex: "length",
       key: "length",
       align: "center",
-      render: (text) => <span>{text * 100}</span>,
+      render: (text) => <span>{parseFloat((text * 100).toFixed(2))}</span>,
     },
     {
       title: "Rộng(cm)",
       dataIndex: "width",
       key: "width",
       align: "center",
-      render: (text) => <span>{text * 100}</span>,
+      render: (text) => <span>{parseFloat((text * 100).toFixed(2))}</span>,
     },
     {
       title: "Cao(cm)",
       dataIndex: "height",
       key: "height",
       align: "center",
-      render: (text) => <span>{text * 100}</span>,
+      render: (text) => <span>{parseFloat((text * 100).toFixed(2))}</span>,
     },
     {
       title: "Màu sắc",
