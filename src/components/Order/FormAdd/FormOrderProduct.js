@@ -86,6 +86,7 @@ export const FormOrderProduct = ({
                 <Input
                   value={itemData?.quantityItem}
                   min={0}
+                  // max={200}
                   type="number"
                   onChange={(valueString) =>
                     handleItemChangeNumber(

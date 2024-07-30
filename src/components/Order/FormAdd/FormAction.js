@@ -51,7 +51,7 @@ export const FormAction = ({
                 float="right"
                 size="sm"
                 fontWeight="400"
-                isDisabled={!orderBill?.expectedDeliveryDate}
+                // isDisabled={!orderBill?.expectedDeliveryDate}
                 onClick={onClickCreate}
                 rightIcon={<AiOutlineArrowRight />}
               >

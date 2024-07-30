@@ -25,6 +25,7 @@ export const defaultItem = {
 };
 
 export const FORMAT_TIME = "DD/MM/YYYY HH:mm";
+export const FORMAT_SHOW_TIME = "DD/MM/YYYY HH:mm";
 export const FORMAT_TIME_SUBMIT = "YYYY-MM-DDTHH:mm";
 
 const CreateOrderForm = ({ id }) => {
@@ -61,6 +62,7 @@ const CreateOrderForm = ({ id }) => {
 
   const onNextToReviewOrder = () => {
     setPrevToReview(true);
+    handleCreateResponse();
   };
 
   const onBackOrder = () => {
@@ -347,6 +349,11 @@ const CreateOrderForm = ({ id }) => {
         totalInsurance,
         totalValue,
         totalWeight,
+        newNotiID,
+        paymentStatus,
+        image,
+        price,
+        dayDelivery,
         ...rest
       } = order;
 
@@ -355,8 +362,8 @@ const CreateOrderForm = ({ id }) => {
       if (id && keySelected === "0") {
         let payloadPut = {
           ...rest,
-          dayUpdate: dayjs().format(FORMAT_TIME_SUBMIT),
-          expectedDeliveryDate,
+          // dayUpdate: dayjs().format(FORMAT_TIME_SUBMIT),
+          // expectedDeliveryDate,
           accountId: userInformation?.accounId,
           status: true,
         };
@@ -385,6 +392,7 @@ const CreateOrderForm = ({ id }) => {
           accountId: userInformation?.accounId,
           whoEnum: getWhoEnum(userInformation?.role),
         };
+
         const addOrder = await axios.post("/Order", payloadPost, { headers });
         if (addOrder.status === 200) {
           toast({
@@ -411,13 +419,13 @@ const CreateOrderForm = ({ id }) => {
     }
   }, [headers]);
 
-  useEffect(() => {
-    if (!id && order) {
-      if (checkCompletion(order)) {
-        handleCreateResponse();
-      }
-    }
-  }, [id, order]);
+  // useEffect(() => {
+  //   if (!id && order) {
+  //     if (checkCompletion(order)) {
+  //       handleCreateResponse();
+  //     }
+  //   }
+  // }, [id, order]);
 
   return (
     <>

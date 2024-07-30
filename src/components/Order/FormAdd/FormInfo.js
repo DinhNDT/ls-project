@@ -313,6 +313,7 @@ export const FormInfo = ({
               <Form.Item name="dayGet" required label="Ngày gửi hàng">
                 <DatePicker
                   showTime
+                  value={order?.dayGet}
                   onChange={(date) => {
                     handleChangeOrder(
                       "dayGet",
