@@ -24,8 +24,17 @@ const TrackingOrder = () => {
     }
   };
 
+  const genStatus = (id) => {
+    const status = {
+      7: 5,
+    };
+    return status[id] || id;
+  };
+
   const percent =
-    ((STEPS_TRACKING.findIndex((value) => value.key === dataOrder?.status) +
+    ((STEPS_TRACKING.findIndex(
+      (value) => value.key === genStatus(dataOrder?.status)
+    ) +
       1) /
       5) *
     100;
@@ -82,7 +91,7 @@ const TrackingOrder = () => {
             </Box>
           </Flex>
           <Box mt={"40px"}>
-            <StepTracking status={dataOrder?.status} />
+            <StepTracking status={genStatus(dataOrder?.status)} />
           </Box>
           <Box mt={"40px"}>
             <TableItem data={dataOrder?.items} />

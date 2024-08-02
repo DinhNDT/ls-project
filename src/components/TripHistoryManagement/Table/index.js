@@ -7,9 +7,13 @@ import {
   getStatusTrip,
   getStatusTripColor,
 } from "../../../helpers";
+import { AiFillEye } from "react-icons/ai";
+import { OrderContext } from "../../../provider/order";
 
 function TableComponent() {
   const userContext = useContext(GlobalContext);
+  const orderContext = useContext(OrderContext);
+  const { setKeySelected, setSelectedItem } = orderContext;
   const { headers } = userContext;
   const [data, setData] = useState([]);
 
@@ -116,7 +120,7 @@ function TableComponent() {
           value: 5,
         },
       ],
-      onFilter: (value, record) => record.status === (value === 6 ? 3 : value),
+      onFilter: (value, record) => record.status === (value === 6 ? 2 : value),
       width: "15%",
       render: (status, record) => {
         return (
@@ -130,7 +134,7 @@ function TableComponent() {
             }}
           >
             {(record.type === 2 && status === 3 && "Đang Giao Hàng") ||
-              (record.type === 2 && status === 3 && "Đang Lấy Hàng") ||
+              (record.type === 1 && status === 2 && "Đang Lấy Hàng") ||
               getStatusTrip(status)}
           </Tag>
         );
@@ -151,7 +155,7 @@ function TableComponent() {
         },
       ],
       onFilter: (value, record) => record.type === value,
-      width: "15%",
+      width: "10%",
       render: (type) => {
         let bgColor = type === 1 ? "cyan" : "gold";
         let key = type;
@@ -162,6 +166,27 @@ function TableComponent() {
           </Tag>
         );
       },
+    },
+    {
+      title: "Hoạt Động",
+      key: "action",
+      align: "center",
+      render: (_, record) => (
+        <button
+          onClick={() => {
+            // setSelectedItem(record);
+            // if (isRoleStocker) {
+            setKeySelected("3A");
+            setSelectedItem({ tripId: record.tripId });
+            //   setUrlTrip(keySelected);
+            // } else {
+            //   setKeySelected("0A");
+            // }
+          }}
+        >
+          <AiFillEye />
+        </button>
+      ),
     },
   ];
 

@@ -114,10 +114,9 @@ export const TableOrder = ({ order, orderBill, id, isLoadData }) => {
       key: "description",
     },
     {
-      title: "Khối lượng(kg)",
-      dataIndex: "unitWeight",
-      key: "unitWeight",
-      width: "130px",
+      title: "Số lượng s/p trong kiện",
+      dataIndex: "quantityOfPackage",
+      key: "quantityOfPackage",
       align: "center",
     },
     {
@@ -125,6 +124,14 @@ export const TableOrder = ({ order, orderBill, id, isLoadData }) => {
       dataIndex: "quantityItem",
       key: "quantityItem",
       width: "8%",
+      align: "center",
+      render: (text) => <span>{text} kiện</span>,
+    },
+    {
+      title: "Khối lượng(kg)",
+      dataIndex: "unitWeight",
+      key: "unitWeight",
+      width: "130px",
       align: "center",
     },
     {
@@ -169,7 +176,7 @@ export const TableOrder = ({ order, orderBill, id, isLoadData }) => {
               <Table.Summary.Cell
                 align="center"
                 index={0}
-                colSpan={7}
+                colSpan={8}
                 rowSpan={8}
                 className="hideCol"
               >

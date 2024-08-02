@@ -99,7 +99,6 @@ export const NotiBell = () => {
           <Spin spinning={reload} size="default">
             {dataNoti.length > 0 ? (
               <Box
-                // p={2}
                 overflowY={"scroll"}
                 height={"200px"}
                 display="flex"

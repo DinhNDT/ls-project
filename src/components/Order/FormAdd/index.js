@@ -93,33 +93,6 @@ const CreateOrderForm = ({ id }) => {
     setItemData({ ...itemData, [name]: newNumber });
   };
 
-  function checkCompletion(obj) {
-    for (const key in obj) {
-      if (
-        key === "pack" ||
-        key === "supperMarket" ||
-        key === "totalInsurance" ||
-        key === "distance" ||
-        key === "totalWeight" ||
-        key === "deliveryPrice"
-      ) {
-        if (obj[key] === undefined || obj[key] === null) {
-          return false;
-        }
-      } else if (key === "accountId") {
-      } else if (key === "items") {
-        if (!Array.isArray(obj[key])) {
-          return false;
-        }
-      } else {
-        if (!obj[key]) {
-          return false;
-        }
-      }
-    }
-    return true;
-  }
-
   const handleTransferAddress = (companyData) => {
     if (!companyData) return;
 

@@ -122,9 +122,12 @@ export const OrderProduct = ({
   ];
 
   const expandedRowRender = (record) => {
-    const { unitWeight, quantityItem, color, description } = record;
+    const { unitWeight, quantityItem, color, description, quantityOfPackage } =
+      record;
 
-    const data = [{ unitWeight, quantityItem, color, description }];
+    const data = [
+      { unitWeight, quantityItem, color, description, quantityOfPackage },
+    ];
 
     const columnsTableMore = [
       {
@@ -140,6 +143,7 @@ export const OrderProduct = ({
         width: 100,
         key: "quantityItem",
         align: "center",
+        render: (text) => <span>{text} kiện</span>,
       },
       {
         title: "Màu sắc",
@@ -151,6 +155,12 @@ export const OrderProduct = ({
         title: "Mô tả",
         dataIndex: "description",
         key: "description",
+      },
+      {
+        title: "Số lượng s/p trong kiện",
+        dataIndex: "quantityOfPackage",
+        key: "quantityOfPackage",
+        align: "center",
       },
     ];
 

@@ -69,7 +69,7 @@ export const FormOrderProduct = ({
           </Form.Item>
           <Stack>
             <HStack justifyContent={"space-between"}>
-              <Form.Item label="Khối lượng(kg)">
+              <Form.Item label="Khối lượng(kg)" style={{ width: "50%" }}>
                 <Input
                   value={itemData?.unitWeight}
                   min={0}
@@ -82,8 +82,18 @@ export const FormOrderProduct = ({
                   }
                 />
               </Form.Item>
-              <Form.Item label="Số lượng">
+              <Form.Item label="Màu sắc" style={{ width: "50%" }}>
                 <Input
+                  placeholder="Nhập màu sắc"
+                  value={itemData?.color}
+                  onChange={(e) => handleItemChange("color", e.target.value)}
+                />
+              </Form.Item>
+            </HStack>
+            <HStack>
+              <Form.Item label="Số lượng" style={{ width: "50%" }}>
+                <Input
+                  addonAfter="kiện"
                   value={itemData?.quantityItem}
                   min={0}
                   // max={200}
@@ -96,11 +106,20 @@ export const FormOrderProduct = ({
                   }
                 />
               </Form.Item>
-              <Form.Item label="Màu sắc">
+              <Form.Item
+                label="Số lượng sản phẩm trong kiện"
+                style={{ width: "50%" }}
+              >
                 <Input
-                  placeholder="Nhập màu sắc"
-                  value={itemData?.color}
-                  onChange={(e) => handleItemChange("color", e.target.value)}
+                  value={itemData?.quantityOfPackage}
+                  min={0}
+                  type="number"
+                  onChange={(valueString) =>
+                    handleItemChangeNumber(
+                      "quantityOfPackage",
+                      valueString.target.value
+                    )
+                  }
                 />
               </Form.Item>
             </HStack>

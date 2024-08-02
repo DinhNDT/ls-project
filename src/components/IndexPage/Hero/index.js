@@ -11,16 +11,19 @@ import {
   Input as InputC,
   InputRightElement,
 } from "@chakra-ui/react";
-import { Form, Input } from "antd";
+import { Form, Input, Modal } from "antd";
 import imgHomePage from "../../../assets/img/delivery-man.png";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { AiFillCheckCircle } from "react-icons/ai";
 
 export default function CallToActionWithVideo() {
   const navigate = useNavigate();
+  const [form] = Form.useForm();
 
   const [trackingId, setTrackingId] = useState("");
   const [loading, setLoading] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const onClickSendTracking = () => {
     setLoading(true);
@@ -83,21 +86,31 @@ export default function CallToActionWithVideo() {
               Liên hệ với chúng tôi
             </Text>
             <Box mt={25}>
-              <Form layout="vertical" style={{ maxWidth: 600 }} size="middle">
-                <Form.Item label="Họ Và Tên:">
+              <Form
+                form={form}
+                layout="vertical"
+                style={{ maxWidth: 600 }}
+                size="middle"
+              >
+                <Form.Item name="fullName" label="Họ Và Tên:">
                   <Input placeholder="Nhập họ tên" />
                 </Form.Item>
-                <Form.Item label="Số Điện Thoại:">
+                <Form.Item name="number" label="Số Điện Thoại:">
                   <Input placeholder="Nhập số điện thoại" />
                 </Form.Item>
-                <Form.Item label="Email:">
+                <Form.Item name="email" label="Email:">
                   <Input placeholder="Nhập email" />
                 </Form.Item>
-                <Form.Item label="Nội Dung:">
+                <Form.Item name="content" label="Nội Dung:">
                   <Input.TextArea placeholder="Nhập nội dung" />
                 </Form.Item>
               </Form>
-              <Button h="2.55rem" size="md" onClick={() => {}} float={"right"}>
+              <Button
+                h="2.55rem"
+                size="md"
+                onClick={() => setIsModalOpen(true)}
+                float={"right"}
+              >
                 Gửi
               </Button>
             </Box>
@@ -123,6 +136,26 @@ export default function CallToActionWithVideo() {
           </Box>
         </Flex>
       </Stack>
+      <Modal
+        title={
+          <Flex alignItems="center" gap="10px">
+            <AiFillCheckCircle style={{ color: "green", fontSize: "21px" }} />
+            <Text fontSize={"19px"}> Thông báo </Text>
+          </Flex>
+        }
+        open={isModalOpen}
+        onOk={() => {
+          setIsModalOpen(false);
+          form.resetFields();
+        }}
+        onCancel={() => setIsModalOpen(false)}
+        centered
+      >
+        <Text fontSize={"17px"}>
+          Cảm ơn bạn đã gửi thông tin, chúng tôi sẽ phản hồi bạn một cách sớm
+          nhất !
+        </Text>
+      </Modal>
     </Container>
   );
 }

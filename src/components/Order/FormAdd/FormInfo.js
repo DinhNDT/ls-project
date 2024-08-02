@@ -250,27 +250,8 @@ export const FormInfo = ({
               </HStack>
               <Form.Item required label="Địa chỉ">
                 <HStack mb={3} mt={1}>
-                  <Select
-                    onChange={(event, option) => {
-                      // handleChangeOrder("provinceGet", event);
-                      handleChangeOrder("cityGet", event);
-                      handleProvinceChange(option.key);
-                    }}
-                    value={order?.provinceGet}
-                    style={{ width: "100%" }}
-                    disabled
-                  >
-                    <Option value="Thành Phố Hồ Chí Minh">
-                      Thành Phố Hồ Chí Minh
-                    </Option>
-                    {/* {provincesList
-                      .filter((value) => value.id === "79")
-                      .map((province) => (
-                        <Option key={province.id} value={province.full_name}>
-                          {province.full_name}
-                        </Option>
-                      ))} */}
-                  </Select>
+                  <Input value="Thành Phố Hồ Chí Minh" disabled />
+
                   <Select
                     onChange={(event, option) => {
                       handleChangeOrder("districtGet", event);

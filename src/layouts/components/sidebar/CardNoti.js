@@ -121,6 +121,7 @@ export const CardNoti = ({ role, data, setShowNoti, setReload }) => {
       minW={300}
       gap={3}
       p={3}
+      paddingRight={6}
       onClick={onClickNoti}
       position="relative"
     >

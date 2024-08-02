@@ -154,9 +154,9 @@ const UserPage = () => {
     name: "file",
     headers: headers,
     customRequest(options) {
-      const data = new FormData()
-      data.append('file', options.file)
-      upLoadImage(data.get("file"))
+      const data = new FormData();
+      data.append("file", options.file);
+      upLoadImage(data.get("file"));
     },
   };
 
@@ -167,8 +167,9 @@ const UserPage = () => {
         { image: file },
         {
           headers: {
-            "content-type": 'multipart/form-data; boundary=----WebKitFormBoundaryqTqJIxvkWFYqvP5s'
-          }
+            "content-type":
+              "multipart/form-data; boundary=----WebKitFormBoundaryqTqJIxvkWFYqvP5s",
+          },
         }
       );
       if (res.status === 200) {
@@ -279,12 +280,8 @@ const UserPage = () => {
               <HStack>
                 <FormControl>
                   <FormLabel>Tỉnh/Thành</FormLabel>
-                  <Form.Item name="province">
-                    <Select disabled>
-                      <Option key={"79"} value={"Thành Phố Hồ Chí Minh"}>
-                        Thành Phố Hồ Chí Minh
-                      </Option>
-                    </Select>
+                  <Form.Item>
+                    <Input value={"Thành Phố Hồ Chí Minh"} disabled />
                   </Form.Item>
                 </FormControl>
                 <FormControl>

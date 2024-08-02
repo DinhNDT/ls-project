@@ -49,11 +49,6 @@ export const TableItem = ({ data }) => {
       align: "center",
     },
     {
-      title: "Mô tả",
-      dataIndex: "description",
-      key: "description",
-    },
-    {
       title: "Khối lượng(kg)",
       dataIndex: "unitWeight",
       key: "unitWeight",
@@ -66,6 +61,11 @@ export const TableItem = ({ data }) => {
       key: "quantityItem",
       width: "8%",
       align: "center",
+    },
+    {
+      title: "Mô tả",
+      dataIndex: "description",
+      key: "description",
     },
     // {
     //   title: "Giá sản phẩm",
@@ -81,7 +81,12 @@ export const TableItem = ({ data }) => {
       <Text mb={5} fontSize={"20px"}>
         Mặt hàng vận chuyển
       </Text>
-      <Table rowKey="itemId" dataSource={data} columns={columns} />
+      <Table
+        rowKey="itemId"
+        dataSource={data}
+        columns={columns}
+        pagination={{ pageSize: 5 }}
+      />
     </>
   );
 };

@@ -36,6 +36,7 @@ import ReviewOrderPage from "../../../pages/company/order/review-order";
 import { PaymentHistory } from "../../../pages/company/payment-history";
 import { NotiBell } from "./NotiBell";
 import UserPage from "../../../pages/user";
+import TripDetailPage from "../../../pages/stocker/trip-detail";
 
 const { Item } = Breadcrumb;
 const { Header, Content, Footer, Sider } = Layout;
@@ -128,6 +129,7 @@ const SideBar = () => {
     "0A": "1",
     "0AS": urlTrip,
     "2A": "2",
+    "3A": "3",
     8: urlTrip?.includes("get") ? "2" : "1",
   };
   const handleSelectedKey = (key) => {
@@ -268,6 +270,9 @@ const SideBar = () => {
             )}
             {keySelected === "3" && userRole === "Stocker" && (
               <TripHistoryPage />
+            )}
+            {keySelected === "3A" && userRole === "Stocker" && (
+              <TripDetailPage tripId={selectedItem?.tripId} />
             )}
             {keySelected === "5" && userRole === "Stocker" && (
               <StockerStockDetailPage />

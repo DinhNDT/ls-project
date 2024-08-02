@@ -143,28 +143,8 @@ export const FormCompanyInfo = () => {
       <HStack>
         <FormControl isRequired>
           <FormLabel>Tỉnh/Thành</FormLabel>
-          <Form.Item
-            name="province"
-            // rules={[
-            //   {
-            //     required: true,
-            //     message: "Vui lòng chọn Tỉnh/Thành",
-            //   },
-            // ]}
-          >
-            <Select
-              disabled
-              defaultValue={"Thành Phố Hồ Chí Minh"}
-              // onChange={(_, option) => {
-              //   handleProvinceChange(option.key);
-              // }}
-              // placeholder="Chọn Tỉnh/thành"
-            >
-              <Option key={"79"} value={"Thành Phố Hồ Chí Minh"}>
-                Thành Phố Hồ Chí Minh
-              </Option>
-            </Select>
-            {/* <Input defaultValue={"Thành Phố Hồ Chí Minh"} /> */}
+          <Form.Item>
+            <Input value={"Thành Phố Hồ Chí Minh"} disabled />
           </Form.Item>
         </FormControl>
         <FormControl isRequired>

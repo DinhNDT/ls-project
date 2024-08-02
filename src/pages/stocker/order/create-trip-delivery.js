@@ -36,6 +36,7 @@ function CreateTripDeliveryPage({ state, urlTrip }) {
   const [driver, setDriver] = useState([]);
   const [vehicle, setVehicle] = useState([]);
   const [vehicle2, setVehicle2] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const [payload1, setPayload1] = useState({
     // orderTripId: state?.orderTripInVehicle1st || state?.orderId,
@@ -78,6 +79,7 @@ function CreateTripDeliveryPage({ state, urlTrip }) {
   };
 
   const handleFetchData = async () => {
+    setIsLoading(true);
     const dataOrderTrip = urlTrip.includes("create-trip/get")
       ? state?.orderTripInVehicle
       : state?.orderTripInVehicle1st;
@@ -125,8 +127,11 @@ function CreateTripDeliveryPage({ state, urlTrip }) {
 
         setOrder2(itemResult2.map((item) => item[0]));
       }
+
+      setIsLoading(false);
     } catch (error) {
       console.error("Error fetching data:", error);
+      setIsLoading(false);
     }
   };
 
@@ -303,21 +308,23 @@ function CreateTripDeliveryPage({ state, urlTrip }) {
         </span>
       ),
     },
-    // {
-    //   title: "Hoạt Động",
-    //   key: "action",
-    //   align: "center",
-    //   render: (_, record) => (
-    //     <button
-    //       onClick={() => {
-    //         console.log("record:", record);
-    //         // handleRemoveItemSelected(index, item?.orderId)
-    //       }}
-    //     >
-    //       <AiFillDelete />
-    //     </button>
-    //   ),
-    // },
+    {
+      title: "Mã đơn",
+      dataIndex: "orderId",
+      key: "orderId",
+      align: "center",
+      sorter: (a, b) => a.orderId - b.orderId,
+      filters: state?.orderId?.map((value) => ({
+        text: (
+          <>
+            Mã đơn <Tag>{value}</Tag>
+          </>
+        ),
+        value,
+      })),
+      onFilter: (value, record) => record.orderId === value,
+      render: (text) => <span style={{ color: "#1677ff" }}>{text}</span>,
+    },
   ];
 
   return (
@@ -371,8 +378,7 @@ function CreateTripDeliveryPage({ state, urlTrip }) {
                             <div>
                               <Tag color="blue">{item?.account?.fullName}</Tag>,
                               Mã số TX:{" "}
-                              <Tag color="orange">{item?.driverId}</Tag>, Trạng
-                              thái: <Tag color="green">{item?.status}</Tag>
+                              <Tag color="orange">{item?.driverId}</Tag>
                             </div>
                           </Option>
                         ))}
@@ -405,8 +411,7 @@ function CreateTripDeliveryPage({ state, urlTrip }) {
                             <div>
                               <Tag color="blue">{item?.account?.fullName}</Tag>,
                               Mã số TX:{" "}
-                              <Tag color="orange">{item?.driverId}</Tag>, Trạng
-                              thái: <Tag color="green">{item?.status}</Tag>
+                              <Tag color="orange">{item?.driverId}</Tag>
                             </div>
                           </Option>
                         ))}
@@ -416,9 +421,6 @@ function CreateTripDeliveryPage({ state, urlTrip }) {
                   <Box w={"60%"}>
                     <FormControl isRequired>
                       <FormLabel>Phương tiện:</FormLabel>
-                      {/* {urlTrip.includes("create-trip/delivery") && (
-                        <Input value={vehicle[0]?.vehicleId} />
-                      )} */}
                       <Select
                         style={{ width: "100%" }}
                         placeholder="Chọn phương tiện"
@@ -432,8 +434,6 @@ function CreateTripDeliveryPage({ state, urlTrip }) {
                         //     : payload1?.vehicleId
                         // }
                       >
-                        {/* <Option>Chọn phương tiện</Option> */}
-
                         {vehicle?.map((item, index) => (
                           <Option key={index} value={item?.vehicleId}>
                             Biển số:{" "}
@@ -450,6 +450,7 @@ function CreateTripDeliveryPage({ state, urlTrip }) {
                 <FormControl isRequired>
                   <FormLabel>Các mặt hàng:</FormLabel>
                   <Table
+                    loading={isLoading}
                     dataSource={order[0]?.items ? order[0]?.items : order}
                     columns={columns}
                     rowKey="itemId"
@@ -494,9 +495,7 @@ function CreateTripDeliveryPage({ state, urlTrip }) {
                                   {item?.account?.fullName}
                                 </Tag>
                                 , Mã số TX:{" "}
-                                <Tag color="orange">{item?.driverId}</Tag>,
-                                Trạng thái:{" "}
-                                <Tag color="green">{item?.status}</Tag>
+                                <Tag color="orange">{item?.driverId}</Tag>
                               </div>
                             </Option>
                           ))}
@@ -532,9 +531,7 @@ function CreateTripDeliveryPage({ state, urlTrip }) {
                                   {item?.account?.fullName}
                                 </Tag>
                                 , Mã số TX:{" "}
-                                <Tag color="orange">{item?.driverId}</Tag>,
-                                Trạng thái:{" "}
-                                <Tag color="green">{item?.status}</Tag>
+                                <Tag color="orange">{item?.driverId}</Tag>
                               </div>
                             </Option>
                           ))}
@@ -574,6 +571,7 @@ function CreateTripDeliveryPage({ state, urlTrip }) {
                   <FormControl isRequired>
                     <FormLabel>Các mặt hàng:</FormLabel>
                     <Table
+                      loading={isLoading}
                       rowKey="itemId"
                       dataSource={order2}
                       columns={columns}
