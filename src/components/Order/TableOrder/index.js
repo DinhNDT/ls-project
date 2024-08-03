@@ -114,18 +114,18 @@ export const TableOrder = ({ order, orderBill, id, isLoadData }) => {
       key: "description",
     },
     {
-      title: "Số lượng s/p trong kiện",
-      dataIndex: "quantityOfPackage",
-      key: "quantityOfPackage",
-      align: "center",
-    },
-    {
       title: "Số lượng",
       dataIndex: "quantityItem",
       key: "quantityItem",
       width: "8%",
       align: "center",
       render: (text) => <span>{text} kiện</span>,
+    },
+    {
+      title: "Số lượng s/p trong kiện",
+      dataIndex: "quantityOfPackage",
+      key: "quantityOfPackage",
+      align: "center",
     },
     {
       title: "Khối lượng(kg)",
@@ -196,7 +196,7 @@ export const TableOrder = ({ order, orderBill, id, isLoadData }) => {
               content={<>{orderTable?.distance} Km</>}
             />
             <TableSummaryRow
-              title={"Tổng số lượng sản phẩm (2):"}
+              title={"Tổng số lượng kiện (2):"}
               content={totalItem}
             />
             <TableSummaryRow

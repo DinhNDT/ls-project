@@ -28,6 +28,7 @@ import {
 } from "react-icons/ai";
 
 import { IoReload } from "react-icons/io5";
+import "./style.css";
 
 import { OrderContext } from "../../../provider/order";
 import { Button as ButtonChakra } from "@chakra-ui/react";
@@ -545,6 +546,7 @@ function TableComponent({ url = "" }) {
         )}
       </Flex>
       <Table
+        className={isRoleStocker ? "" : "tableHideColSelect"}
         loading={reload || (data.length === 0 && !isLoading)}
         dataSource={data}
         columns={columns}

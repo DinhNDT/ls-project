@@ -4,6 +4,7 @@ import React from "react";
 import { InputFormatPrice } from "../InputFormatPrice";
 import { defaultItem } from ".";
 import axios from "axios";
+import { checkCompleFormItem } from "../../../helpers";
 
 export const FormOrderProduct = ({
   id,
@@ -14,17 +15,17 @@ export const FormOrderProduct = ({
   handleItemChange,
   handleItemChangeNumber,
 }) => {
-  const handleAddItem = async () => {
-    const payloadAddItem = {
-      ...itemData,
-      height: parseFloat(itemData?.height) / 100,
-      length: parseFloat(itemData?.length) / 100,
-      quantityItem: parseInt(itemData?.quantityItem),
-      unitPrice: parseFloat(itemData?.unitPrice),
-      unitWeight: parseFloat(itemData?.unitWeight),
-      width: parseFloat(itemData?.width) / 100,
-    };
+  const payloadAddItem = {
+    ...itemData,
+    height: parseFloat(itemData?.height) / 100,
+    length: parseFloat(itemData?.length) / 100,
+    quantityItem: parseInt(itemData?.quantityItem),
+    unitPrice: parseFloat(itemData?.unitPrice),
+    unitWeight: parseFloat(itemData?.unitWeight),
+    width: parseFloat(itemData?.width) / 100,
+  };
 
+  const handleAddItem = async () => {
     setOrder({
       ...order,
       items: [...order?.items, payloadAddItem],
@@ -184,6 +185,7 @@ export const FormOrderProduct = ({
               size="sm"
               fontWeight="400"
               onClick={handleAddItem}
+              isDisabled={!checkCompleFormItem(payloadAddItem)}
             >
               Thêm mặt hàng
             </Button>

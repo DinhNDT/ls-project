@@ -105,16 +105,20 @@ export const OrderProduct = ({
           >
             <AiFillEdit />
           </button>
-          <button
-            onClick={() => {
-              let orderItems = [...order?.items];
-              orderItems.splice(i, 1);
-              setOrder({ ...order, items: orderItems });
-              apiDeleteItem(record.itemId);
-            }}
-          >
-            <AiFillDelete />
-          </button>
+          {order?.items?.length > 1 ?
+            <button
+              onClick={() => {
+                let orderItems = [...order?.items];
+                orderItems.splice(i, 1);
+                setOrder({ ...order, items: orderItems });
+                if (id) {
+                  apiDeleteItem(record.itemId);
+                }
+              }}
+            >
+              <AiFillDelete />
+            </button> : null
+          }
         </Space>
       ),
     },

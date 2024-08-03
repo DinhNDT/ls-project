@@ -1,0 +1,3 @@
+.tableHideColSelect .ant-table-selection-col, .tableHideColSelect .ant-table-selection-column {
+    display: none;
+}

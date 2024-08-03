@@ -255,6 +255,7 @@ export const FormInfo = ({
                   <Select
                     onChange={(event, option) => {
                       handleChangeOrder("districtGet", event);
+                      handleChangeOrder("wardGet", "")
                       handleDistrictChange(option.key);
                     }}
                     value={order?.districtGet}
@@ -339,6 +340,8 @@ export const FormInfo = ({
                       handleChangeOrder("provinceDelivery", event);
                       handleChangeOrder("cityDelivery", event);
                       handleProvinceChange2(option.key);
+                      handleChangeOrder("districtDelivery", "");
+                      handleChangeOrder("wardDelivery", "")
                     }}
                     value={order?.provinceDelivery}
                     style={{ width: "100%" }}
@@ -353,6 +356,7 @@ export const FormInfo = ({
                   <Select
                     onChange={(event, option) => {
                       handleChangeOrder("districtDelivery", event);
+                      handleChangeOrder("wardDelivery", "")
                       handleDistrictChange2(option.key);
                     }}
                     value={order?.districtDelivery}
