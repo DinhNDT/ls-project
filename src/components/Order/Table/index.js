@@ -153,6 +153,7 @@ function TableComponent({ url = "" }) {
       title: "Trạng thái",
       dataIndex: "status",
       key: "status",
+      align: "center",
       filters: isRoleStocker
         ? null
         : [
