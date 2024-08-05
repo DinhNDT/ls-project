@@ -52,10 +52,17 @@ function TableComponent() {
       render: (exportDate) => <p>{formatDate(exportDate)}</p>,
     },
     {
-      title: "Sản phẩm",
+      title: "Mã sản phẩm",
+      dataIndex: "item",
+      key: "itemId",
+      align: "center",
+      render: (item) => <p>{item?.itemId}</p>,
+    },
+    {
+      title: "Tên sản phẩm",
       dataIndex: "item",
       key: "itemName",
-      render: (item) => <p>{item?.itemName + " - " + item?.itemId}</p>,
+      render: (item) => <p>{item?.itemName}</p>,
       filters: data
         ?.map((item) => ({
           text: item?.item?.itemName,

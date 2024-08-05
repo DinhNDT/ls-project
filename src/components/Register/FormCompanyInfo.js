@@ -60,7 +60,7 @@ export const FormCompanyInfo = () => {
   return (
     <div spacing={1}>
       <FormControl isRequired>
-        <FormLabel>Tài Khoản</FormLabel>
+        <FormLabel>Tên Tài Khoản</FormLabel>
         <Form.Item
           name="userName"
           rules={[
