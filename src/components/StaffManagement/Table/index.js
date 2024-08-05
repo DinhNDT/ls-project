@@ -8,6 +8,7 @@ import {
   ModalBody,
   ModalCloseButton,
   Button,
+  useToast,
 } from "@chakra-ui/react";
 import FormUpdate from "../FormUpdate";
 import { IoMdAdd } from "react-icons/io";
@@ -33,7 +34,7 @@ function TableComponent() {
     img: "",
     status: true,
   };
-
+  const toast = useToast({ position: "top" });
   const [openModalUpdate, setOpenModalUpdate] = useState(false);
   const [openModalAdd, setOpenModalAdd] = useState(false);
   const [itemSelected, setItemSelected] = useState({});
@@ -89,23 +90,30 @@ function TableComponent() {
     }
   };
   const handleCreatePrice = async () => {
+    const url = account?.roleId === "5" ? "/Drivers/api/CreateDriver" : `https://nhatlocphatexpress.azurewebsites.net/Accounts/api/CreateAccounts`
     try {
-      const updatePrice = await axios.post(
-        `https://nhatlocphatexpress.azurewebsites.net/Accounts/api/CreateAccounts`,
-        account,
+      const updatePrice = await axios.post(url, account,
         { headers }
       );
 
       if (updatePrice.status === 200) {
-        alert("Tạo thành công");
+        toast({
+          title: "Tạo thành công.",
+          status: "success",
+          isClosable: true,
+        });
         setReload(true);
         setOpenModalAdd(false);
         setAccount(defaultPrices);
-      } else {
-        alert(updatePrice.data);
       }
     } catch (err) {
-      alert(err.response.data);
+      toast({
+        title: "Lỗi hệ thống!.",
+        description: `${err.message}`,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
     }
   };
 
@@ -182,12 +190,12 @@ function TableComponent() {
           {roleId === 1
             ? "Admin"
             : roleId === 2
-            ? "Staff"
-            : roleId === 3
-            ? "Stocker"
-            : roleId === 4
-            ? "Company"
-            : "Driver"}
+              ? "Staff"
+              : roleId === 3
+                ? "Stocker"
+                : roleId === 4
+                  ? "Company"
+                  : "Driver"}
         </p>
       ),
     },

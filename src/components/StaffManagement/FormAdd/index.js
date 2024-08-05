@@ -1,12 +1,9 @@
 import { convertISODateToDDMMYY } from "../../../helpers";
-import { CardComponent, CardHeader } from "../../Card";
 import {
   FormControl,
   FormLabel,
   Input,
   Stack,
-  useColorModeValue,
-  Textarea,
   HStack,
   Select,
 } from "@chakra-ui/react";
@@ -76,7 +73,7 @@ function FormAdd({ account, setAccount }) {
         <FormControl id="phone" isRequired>
           <FormLabel>Số điện thoại</FormLabel>
           <Input
-            type="text"
+            type="number"
             value={account?.phone}
             onChange={(e) => {
               handleChangeInput("phone", e.target.value);
@@ -109,6 +106,27 @@ function FormAdd({ account, setAccount }) {
           ))}
         </Select>
       </FormControl>
+      {account?.roleId === "5" ? <>
+        <FormControl id="licenseNumber" isRequired>
+          <FormLabel>Giấy phép lái xe</FormLabel>
+          <Input
+            type="number"
+            value={account?.licenseNumber}
+            onChange={(e) => {
+              handleChangeInput("licenseNumber", e.target.value);
+            }}
+          />
+        </FormControl>
+        <FormControl id="citizenId" isRequired>
+          <FormLabel>Căn cước công dân</FormLabel>
+          <Input
+            type="number"
+            value={account?.citizenId}
+            onChange={(e) => {
+              handleChangeInput("citizenId", e.target.value);
+            }}
+          />
+        </FormControl></> : null}
       <FormControl id="password" isRequired>
         <FormLabel>Mật khẩu</FormLabel>
         <Input
