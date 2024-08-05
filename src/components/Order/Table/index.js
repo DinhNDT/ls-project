@@ -87,10 +87,12 @@ function TableComponent({ url = "" }) {
 
   const columns = [
     {
-      title: "Id",
+      title: "Mã đơn",
       dataIndex: "orderId",
       defaultSortOrder: "descend",
       sorter: (a, b) => a?.orderId - b?.orderId,
+      width: "100px",
+      align: "center",
     },
     {
       title: "Công ty",

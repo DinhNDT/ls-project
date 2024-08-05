@@ -44,11 +44,11 @@ export const PaymentHistory = ({ idByRole, userRole }) => {
 
   const columns = [
     {
-      title: "Id",
+      title: "Mã thanh toán",
       dataIndex: "paymentId",
       defaultSortOrder: "descend",
       sorter: (a, b) => a?.orderId - b?.orderId,
-      width: "35px",
+      width: "150px",
     },
     {
       title: "Công ty",

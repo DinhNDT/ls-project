@@ -2,7 +2,7 @@ import { Box, Flex, HStack, Stack } from "@chakra-ui/react";
 import { Card, DatePicker, Form, Input, Select } from "antd";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
-import { FORMAT_TIME, FORMAT_TIME_SUBMIT } from ".";
+import { FORMAT_SHOW_TIME, FORMAT_TIME_SUBMIT } from ".";
 import axios from "axios";
 const { Option } = Select;
 
@@ -255,7 +255,7 @@ export const FormInfo = ({
                   <Select
                     onChange={(event, option) => {
                       handleChangeOrder("districtGet", event);
-                      handleChangeOrder("wardGet", "")
+                      handleChangeOrder("wardGet", "");
                       handleDistrictChange(option.key);
                     }}
                     value={order?.districtGet}
@@ -302,7 +302,7 @@ export const FormInfo = ({
                       dayjs(date).format(FORMAT_TIME_SUBMIT)
                     );
                   }}
-                  format={FORMAT_TIME}
+                  format={FORMAT_SHOW_TIME}
                   minDate={dayjs()}
                 />
               </Form.Item>
@@ -341,7 +341,7 @@ export const FormInfo = ({
                       handleChangeOrder("cityDelivery", event);
                       handleProvinceChange2(option.key);
                       handleChangeOrder("districtDelivery", "");
-                      handleChangeOrder("wardDelivery", "")
+                      handleChangeOrder("wardDelivery", "");
                     }}
                     value={order?.provinceDelivery}
                     style={{ width: "100%" }}
@@ -356,7 +356,7 @@ export const FormInfo = ({
                   <Select
                     onChange={(event, option) => {
                       handleChangeOrder("districtDelivery", event);
-                      handleChangeOrder("wardDelivery", "")
+                      handleChangeOrder("wardDelivery", "");
                       handleDistrictChange2(option.key);
                     }}
                     value={order?.districtDelivery}

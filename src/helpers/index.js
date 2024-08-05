@@ -1,12 +1,12 @@
 import dayjs from "dayjs";
 import * as XLSX from "xlsx";
-import { FORMAT_TIME } from "../components/Order/FormAdd";
+import { FORMAT_SHOW_TIME } from "../components/Order/FormAdd";
 
 function formatDate(inputString) {
   if (!inputString || inputString === "0001-01-01T00:00:00") {
     return "-";
   }
-  var outputString = dayjs(inputString).format(FORMAT_TIME);
+  var outputString = dayjs(inputString).format(FORMAT_SHOW_TIME);
   return outputString;
 }
 
@@ -229,7 +229,7 @@ const fallBackImg =
 
 const checkCompleFormItem = (obj) => {
   return Object.keys(obj).every((key) => !!obj[key]);
-}
+};
 
 export {
   formatDate,

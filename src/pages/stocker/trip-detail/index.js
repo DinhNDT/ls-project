@@ -56,6 +56,13 @@ const TripDetailPage = (id) => {
 
     const columnsTableMore = [
       {
+        title: "Mã đơn",
+        dataIndex: "orderId",
+        key: "orderId",
+        align: "center",
+        render: (_, record) => <span>{record.item.orderId}</span>,
+      },
+      {
         title: "Mã sản phẩm",
         dataIndex: "itemId",
         key: "itemId",

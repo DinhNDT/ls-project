@@ -72,6 +72,7 @@ export const ReviewOrder = ({
   onBackOrder,
   orderBill,
   handleSubmit,
+  setNextToUpdateImg,
 }) => {
   const toast = useToast({ position: "top" });
   const userContext = useContext(GlobalContext);
@@ -82,6 +83,7 @@ export const ReviewOrder = ({
   const [isLoadData, setIsLoadData] = useState(false);
   const [companyData, setCompanyData] = useState({});
   const [value, setValue] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const orderReview = orderProps || order;
   const companyDataReview = companyDataProps || companyData;
@@ -177,6 +179,15 @@ export const ReviewOrder = ({
 
   const onChangeInputReason = (event) => {
     setValue(event.target.value);
+  };
+
+  const handleSubmitCreate = (e) => {
+    setLoading(true);
+    setTimeout(() => {
+      handleSubmit(e, ({ orderId }) => {
+        setNextToUpdateImg({ isNext: true, orderId });
+      });
+    }, 1000);
   };
 
   useEffect(() => {
@@ -414,18 +425,19 @@ export const ReviewOrder = ({
           </Button>
           <Box>
             <Button
+              isLoading={loading}
               bg={"#2b6cb0"}
               color={"white"}
               colorScheme="blue"
               display={"flex"}
               justifyContent={"center"}
               alignItems={"center"}
-              onClick={handleSubmit}
+              onClick={handleSubmitCreate}
               w={250}
               size="sm"
               rightIcon={<FiBox />}
             >
-              Xác Nhận Tạo đơn
+              Gửi thông tin đơn hàng
             </Button>
           </Box>
         </div>

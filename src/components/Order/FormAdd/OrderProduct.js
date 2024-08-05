@@ -105,7 +105,7 @@ export const OrderProduct = ({
           >
             <AiFillEdit />
           </button>
-          {order?.items?.length > 1 ?
+          {order?.items?.length > 1 ? (
             <button
               onClick={() => {
                 let orderItems = [...order?.items];
@@ -117,8 +117,8 @@ export const OrderProduct = ({
               }}
             >
               <AiFillDelete />
-            </button> : null
-          }
+            </button>
+          ) : null}
         </Space>
       ),
     },
@@ -251,6 +251,9 @@ export const OrderProduct = ({
       const data = new FormData();
       data.append("file", options.file);
       upLoadImage(data.get("file"), options);
+    },
+    showUploadList: {
+      showRemoveIcon: false,
     },
   };
 

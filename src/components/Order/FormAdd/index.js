@@ -5,11 +5,11 @@ import { convertOrder, getWhoEnum } from "../../../helpers";
 import axios from "axios";
 import { OrderContext } from "../../../provider/order";
 import dayjs from "dayjs";
-import { ReviewOrder } from "../ReviewOrder";
 import { FormInfo } from "./FormInfo";
 import { ButtonUploadFile } from "./ButtonUploadFile";
 import { ModalUpdateOrderProduct } from "./ModalUpdateOrderProduct";
 import { OrderProduct } from "./OrderProduct";
+import { WrapperReview } from "../WrapperReview";
 
 export const defaultItem = {
   itemName: "",
@@ -24,7 +24,7 @@ export const defaultItem = {
   color: "",
 };
 
-export const FORMAT_TIME = "DD/MM/YYYY HH:mm";
+export const FORMAT_TIME = "DD/MM/YYYY";
 export const FORMAT_SHOW_TIME = "DD/MM/YYYY HH:mm";
 export const FORMAT_TIME_SUBMIT = "YYYY-MM-DDTHH:mm";
 
@@ -299,7 +299,7 @@ const CreateOrderForm = ({ id }) => {
     }
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e, onSuccess = () => {}) => {
     e.preventDefault();
     try {
       const {
@@ -330,7 +330,7 @@ const CreateOrderForm = ({ id }) => {
         ...rest
       } = order;
 
-      const { expectedDeliveryDate } = orderBill;
+      // const { expectedDeliveryDate } = orderBill;
 
       if (id && keySelected === "0") {
         let payloadPut = {
@@ -369,11 +369,11 @@ const CreateOrderForm = ({ id }) => {
         const addOrder = await axios.post("/Order", payloadPost, { headers });
         if (addOrder.status === 200) {
           toast({
-            title: "Đã gửi thông tin đơn hàng!",
+            title: "Gửi thông tin thành công!",
             status: "success",
             isClosable: true,
           });
-          setKeySelected("1");
+          onSuccess(addOrder.data);
         }
       }
     } catch (err) {
@@ -451,8 +451,8 @@ const CreateOrderForm = ({ id }) => {
           </Stack>
         </Box>
       ) : (
-        <ReviewOrder
-          orderProps={order}
+        <WrapperReview
+          order={order}
           companyDataProps={companyData}
           orderBill={orderBill}
           onBackOrder={onBackOrder}

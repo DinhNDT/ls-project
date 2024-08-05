@@ -29,7 +29,7 @@ function TableComponent({ url }) {
   const toast = useToast({ position: "top" });
   const userContext = useContext(GlobalContext);
   const { headers, userInformation } = userContext;
-  const defaultPrices = {
+  const defaultTrips = {
     locationInStock: "",
   };
 
@@ -51,15 +51,16 @@ function TableComponent({ url }) {
       ? "/TransactionItem/api/CreateTransactionItem?type=Nh%E1%BA%ADp%20Kho"
       : "/TransactionItem/api/CreateTransactionItem?type=Xu%E1%BA%A5t%20Kho";
     try {
-      const [getListPrice, getImportOrExport] = await Promise.all([
+      const [getListTrip, getImportOrExport] = await Promise.all([
         axios.get(urlQ, {
           headers,
         }),
         axios.get(imExUrl, { headers }),
       ]);
-      if (getListPrice.status === 200) {
-        const listPriceData = getListPrice.data;
-        setData(listPriceData);
+      if (getListTrip.status === 200) {
+        const listTripData = getListTrip.data;
+
+        setData(listTripData.filter((value) => value.isProcess === 0));
       }
       if (getImportOrExport.status === 200) {
         const exportData = getImportOrExport?.data.map((item, _) => {
@@ -81,18 +82,18 @@ function TableComponent({ url }) {
       console.error(err);
     }
   };
-  const handleUpdatePrice = async () => {
+  const handleUpdateTrip = async () => {
     let urlZ = url.includes("stock-import")
       ? `/TransactionItem?tripId=${selectedRows}&stockerId=${userInformation?.accounId}`
       : `/TransactionItem/api/CreateTransactionExitItem?tripId=${selectedRows}&stockerId=${userInformation?.accounId}`;
     try {
-      const updatePrice = await axios.post(urlZ, locationInStock, { headers });
+      const updateTrip = await axios.post(urlZ, locationInStock, { headers });
 
-      if (updatePrice.status === 200) {
+      if (updateTrip.status === 200) {
         setReload(true);
         setOpenModalUpdate(false);
         setSelectedRows(null);
-        setLocationInStock(defaultPrices);
+        setLocationInStock(defaultTrips);
         toast({
           title: "Cập nhật thành công !",
           status: "success",
@@ -107,10 +108,6 @@ function TableComponent({ url }) {
         isClosable: true,
       });
     }
-  };
-
-  const hanldeUpdateModal = () => {
-    setOpenModalUpdate(true);
   };
 
   const rowSelection = {
@@ -141,7 +138,7 @@ function TableComponent({ url }) {
             Đóng
           </Button>
           <Box w="10px"></Box>
-          <Button type="primary" onClick={handleUpdatePrice}>
+          <Button type="primary" onClick={handleUpdateTrip}>
             {url.includes("/stock-export") ? "Xuất" : "Nhập"}
           </Button>
         </ModalFooter>
@@ -153,7 +150,7 @@ function TableComponent({ url }) {
 
   const columns = [
     {
-      title: "Id",
+      title: "Mã chuyến xe",
       dataIndex: "tripId",
       defaultSortOrder: "descend",
       sorter: (a, b) => a?.tripId - b?.tripId,
@@ -285,7 +282,7 @@ function TableComponent({ url }) {
               if (url.includes("stock-import")) {
                 setOpenModalUpdate(true);
               } else {
-                handleUpdatePrice();
+                handleUpdateTrip();
               }
             }}
           >
