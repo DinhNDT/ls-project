@@ -1,12 +1,12 @@
 import dayjs from "dayjs";
 import * as XLSX from "xlsx";
-import { FORMAT_SHOW_TIME } from "../components/Order/FormAdd";
+import { FORMAT_SHOW_TIME, FORMAT_TIME } from "../components/Order/FormAdd";
 
-function formatDate(inputString) {
+function formatDate(inputString, showTime = true) {
   if (!inputString || inputString === "0001-01-01T00:00:00") {
     return "-";
   }
-  var outputString = dayjs(inputString).format(FORMAT_SHOW_TIME);
+  var outputString = dayjs(inputString).format(showTime ? FORMAT_SHOW_TIME : FORMAT_TIME);
   return outputString;
 }
 

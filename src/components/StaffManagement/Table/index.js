@@ -202,7 +202,7 @@ function TableComponent() {
     {
       title: "Ngày sinh",
       dataIndex: "dateOfBirth",
-      render: (dateOfBirth) => <p>{formatDate(dateOfBirth)}</p>,
+      render: (dateOfBirth) => <p>{formatDate(dateOfBirth, false)}</p>,
     },
     {
       title: "Điện thoại",
