@@ -160,17 +160,17 @@ const TripDetailPage = (id) => {
       title: "Trạng thái",
       dataIndex: "status",
       key: "status",
-      render: (_, record) => (
+      render: (value) => (
         <Tag
-          color={getStatusTripColor(record.trip.status)}
-          key={record.trip.status}
+          color={getStatusTripColor(value)}
+          key={value}
           style={{
             display: "inline-flex",
             alignItems: "center",
             gap: "3px",
           }}
         >
-          {getStatusTrip(record.trip.status)}
+          {getStatusTrip(value)}
         </Tag>
       ),
     },
