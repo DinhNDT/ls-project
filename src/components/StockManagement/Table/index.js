@@ -35,21 +35,14 @@ function TableComponent() {
   };
   const [openModalUpdate, setOpenModalUpdate] = useState(false);
   const [openModalAdd, setOpenModalAdd] = useState(false);
-  const [itemSelected, setItemSelected] = useState({});
   const [data, setData] = useState([]);
   const [reload, setReload] = useState(false);
   const [distance, setDistance] = useState({});
 
-  useEffect(() => {
-    setDistance({
-      location: itemSelected?.location,
-      stockName: itemSelected?.stockName,
-      totalItem: itemSelected?.totalItem,
-    });
-  }, [itemSelected]);
-
   const hanldeUpdateModal = (item) => {
-    setItemSelected(item);
+    console.log("item", item);
+
+    setDistance(item);
     setOpenModalUpdate(true);
   };
 
@@ -68,7 +61,7 @@ function TableComponent() {
   const handleUpdatePrice = async () => {
     try {
       const updatePrice = await axios.put(
-        `/Stock/api/UpdateStock?stockId=${itemSelected?.stockId}`,
+        `/Stock/api/UpdateStock?stockId=${distance?.stockId}`,
         distance,
         { headers }
       );
@@ -84,9 +77,16 @@ function TableComponent() {
         setDistance(defaultPrices);
       }
     } catch (err) {
-      alert(err.response.data);
+      toast({
+        title: "Lỗi hệ thống !",
+        description: `${err.message}`,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
     }
   };
+
   const handleCreatePrice = async () => {
     try {
       const updatePrice = await axios.post(`/Stock/api/CreateStock`, distance, {
@@ -102,11 +102,15 @@ function TableComponent() {
         setReload(true);
         setOpenModalAdd(false);
         setDistance(defaultPrices);
-      } else {
-        alert(updatePrice.data);
       }
     } catch (err) {
-      alert(err.response.data);
+      toast({
+        title: "Lỗi hệ thống !",
+        description: `${err.message}`,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
     }
   };
 
@@ -117,15 +121,23 @@ function TableComponent() {
       });
 
       if (updatePrice.status === 200) {
-        alert("Xóa kho thành công");
+        toast({
+          title: "Xóa kho thành công !",
+          status: "success",
+          isClosable: true,
+        });
         setReload(true);
         setOpenModalAdd(false);
         setDistance(defaultPrices);
-      } else {
-        alert(updatePrice.data);
       }
     } catch (err) {
-      alert(err.response.data);
+      toast({
+        title: "Lỗi hệ thống!.",
+        description: `${err.message}`,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
     }
   };
 
@@ -144,10 +156,10 @@ function TableComponent() {
     <Modal isOpen={openModalUpdate} onClose={() => setOpenModalUpdate(false)}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Update Stock</ModalHeader>
+        <ModalHeader>Cập nhật kho</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          <FormUpdate data={itemSelected} />
+          <FormUpdate distance={distance} setDistance={setDistance} />
         </ModalBody>
         <ModalFooter>
           <Button
@@ -155,10 +167,10 @@ function TableComponent() {
             mr={3}
             onClick={() => setOpenModalUpdate(false)}
           >
-            Close
+            Đóng
           </Button>
           <Button variant="ghost" onClick={handleUpdatePrice}>
-            Update
+            Cập nhật
           </Button>
         </ModalFooter>
       </ModalContent>
@@ -169,10 +181,10 @@ function TableComponent() {
     <Modal isOpen={openModalAdd} onClose={() => setOpenModalAdd(false)}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Create New Stock</ModalHeader>
+        <ModalHeader>Tạo mới kho</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          <FormAdd />
+          <FormAdd distance={distance} setDistance={setDistance} />
         </ModalBody>
         <ModalFooter>
           <Button
@@ -181,10 +193,10 @@ function TableComponent() {
             mr={3}
             onClick={() => setOpenModalAdd(false)}
           >
-            Close
+            Đóng
           </Button>
           <Button colorScheme="blue" onClick={handleCreatePrice}>
-            Create
+            Tạo
           </Button>
         </ModalFooter>
       </ModalContent>
@@ -232,28 +244,20 @@ function TableComponent() {
       key: "action",
       render: (_, record) => (
         <Space size="middle">
-          <a
+          <button
             onClick={() => {
               hanldeUpdateModal(record);
             }}
           >
             <AiFillEdit />
-          </a>
-          <a
+          </button>
+          <button
             onClick={() => {
               handleDeleteStock(record?.stockId);
             }}
           >
             <AiOutlineDelete />
-          </a>
-          <a
-            onClick={() => {
-              setKeySelected("0");
-              setSelectedItem(record);
-            }}
-          >
-            <AiOutlineEye />
-          </a>
+          </button>
         </Space>
       ),
     },
@@ -276,7 +280,7 @@ function TableComponent() {
         dataSource={data}
         columns={columns}
         pageSize="6"
-        rowKey="accountId"
+        rowKey="stockId"
       />
       {ModalUpdate}
       {ModalAdd}

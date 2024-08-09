@@ -15,19 +15,19 @@ function FormAdd({ distance, setDistance }) {
   };
   return (
     <Stack spacing={4}>
-      <FormControl id="distanceId" isRequired>
-        <FormLabel>Province Group</FormLabel>
+      <FormControl id="provinceGroup" isRequired>
+        <FormLabel>Nhóm tỉnh</FormLabel>
         <Input
           type="text"
-          value={distance.distanceId}
+          value={distance.provinceGroup}
           onChange={(e) => {
-            handleChangeInput("distanceId", e.target.value);
+            handleChangeInput("provinceGroup", e.target.value);
           }}
         />
       </FormControl>
       <HStack>
         <FormControl id="minDistance" isRequired>
-          <FormLabel>Min Distance</FormLabel>
+          <FormLabel>Khoảng cách tối thiểu</FormLabel>
           <InputGroup>
             <Input
               type="number"
@@ -40,7 +40,7 @@ function FormAdd({ distance, setDistance }) {
           </InputGroup>
         </FormControl>
         <FormControl id="maxDistance" isRequired>
-          <FormLabel>Max Distance</FormLabel>
+          <FormLabel>Khoảng cách tối đa</FormLabel>
           <InputGroup>
             <Input
               type="number"
@@ -54,7 +54,7 @@ function FormAdd({ distance, setDistance }) {
         </FormControl>
       </HStack>
       <FormControl id="description" isRequired>
-        <FormLabel>Description</FormLabel>
+        <FormLabel>Miêu tả</FormLabel>
         <Textarea
           value={distance.description}
           onChange={(e) => {

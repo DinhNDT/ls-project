@@ -8,6 +8,7 @@ import {
   ModalBody,
   ModalCloseButton,
   Button,
+  useToast,
 } from "@chakra-ui/react";
 
 import { useContext, useEffect, useState } from "react";
@@ -25,6 +26,8 @@ import { AiFillEdit, AiFillEye } from "react-icons/ai";
 
 function TableComponent() {
   const userContext = useContext(GlobalContext);
+  const toast = useToast({ position: "top" });
+
   const { userInformation, headers } = userContext;
   const defaultPrices = {
     listPriceId: "",
@@ -37,31 +40,19 @@ function TableComponent() {
 
   const [openModalUpdate, setOpenModalUpdate] = useState(false);
   const [openModalAdd, setOpenModalAdd] = useState(false);
-  const [itemSelected, setItemSelected] = useState({});
   const [data, setData] = useState([]);
   const [reload, setReload] = useState(false);
   const [prices, setPrices] = useState(defaultPrices);
   const [openModal, setOpenModal] = useState(false);
   const [viewType, setViewType] = useState("");
 
-  useEffect(() => {
-    setPrices({
-      listPriceId: itemSelected?.listPriceId,
-      distanceModeId: itemSelected?.distanceModeId,
-      weightModeId: itemSelected?.weightModeId,
-      price: itemSelected?.price,
-      insurance: itemSelected?.insurance,
-      accountId: itemSelected?.accountId,
-    });
-  }, [itemSelected]);
-
   const handleUpdateModal = (item) => {
-    setItemSelected(item);
+    setPrices(item);
     setOpenModalUpdate(true);
   };
 
   const handleOpenModal = (item) => {
-    setItemSelected(item);
+    setPrices(item);
     setOpenModal(true);
   };
 
@@ -80,19 +71,28 @@ function TableComponent() {
   const handleUpdatePrice = async () => {
     try {
       const updatePrice = await axios.put(
-        `/ListPrices/api/UpdateListPrice?listPriceId=${itemSelected?.listPriceId}`,
+        `/ListPrices/api/UpdateListPrice?listPriceId=${prices?.listPriceId}`,
         prices,
         { headers }
       );
 
       if (updatePrice.status === 200) {
-        alert("Cập nhật thành công");
+        toast({
+          title: "Cập nhật thành công !",
+          status: "success",
+          isClosable: true,
+        });
         setReload(true);
         setOpenModalUpdate(false);
         setPrices(defaultPrices);
       }
     } catch (err) {
-      console.error(err);
+      toast({
+        title: "Lỗi hệ thống !",
+        status: "error",
+        description: `${err.message}`,
+        isClosable: true,
+      });
     }
   };
   const handleCreatePrice = async () => {
@@ -104,13 +104,22 @@ function TableComponent() {
       );
 
       if (updatePrice.status === 200) {
-        alert("Tạo thành công");
+        toast({
+          title: "Tạo thành công !",
+          status: "success",
+          isClosable: true,
+        });
         setReload(true);
         setOpenModalAdd(false);
         setPrices(defaultPrices);
       }
     } catch (err) {
-      console.error(err);
+      toast({
+        title: "Lỗi hệ thống !",
+        status: "error",
+        description: `${err.message}`,
+        isClosable: true,
+      });
     }
   };
 
@@ -126,29 +135,36 @@ function TableComponent() {
   }, [reload]);
 
   let ModalView = (
-    <Modal isOpen={openModal} onClose={() => setOpenModal(false)}>
+    <Modal
+      isOpen={openModal}
+      onClose={() => {
+        setOpenModal(false);
+        setPrices(defaultPrices);
+      }}
+    >
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>{viewType} Information</ModalHeader>
+        <ModalHeader>{viewType}Thông tin</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           {viewType === "Distance" ? (
-            <FormViewDistance
-              distance={itemSelected?.distanceMode}
-              readOnly={true}
-            />
+            <FormViewDistance distance={prices?.distanceMode} readOnly={true} />
           ) : viewType === "Weight" ? (
-            <FormViewWeight
-              distance={itemSelected?.weightMode}
-              readOnly={true}
-            />
+            <FormViewWeight distance={prices?.weightMode} readOnly={true} />
           ) : viewType === "Account" ? (
-            <FormViewStaff account={itemSelected?.account} readOnly={true} />
+            <FormViewStaff account={prices?.account} readOnly={true} />
           ) : null}
         </ModalBody>
         <ModalFooter>
-          <Button colorScheme="blue" mr={3} onClick={() => setOpenModal(false)}>
-            Close
+          <Button
+            colorScheme="blue"
+            mr={3}
+            onClick={() => {
+              setOpenModal(false);
+              setPrices(defaultPrices);
+            }}
+          >
+            Đóng
           </Button>
         </ModalFooter>
       </ModalContent>
@@ -156,14 +172,20 @@ function TableComponent() {
   );
 
   let ModalUpdate = (
-    <Modal isOpen={openModalUpdate} onClose={() => setOpenModalUpdate(false)}>
+    <Modal
+      isOpen={openModalUpdate}
+      onClose={() => {
+        setOpenModalUpdate(false);
+        setPrices(defaultPrices);
+      }}
+    >
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>Cập nhật giá</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           <FormUpdate
-            data={itemSelected}
+            data={prices}
             openModalUpdate={openModalUpdate}
             prices={prices}
             setPrices={setPrices}
@@ -173,7 +195,10 @@ function TableComponent() {
           <Button
             colorScheme="blue"
             mr={3}
-            onClick={() => setOpenModalUpdate(false)}
+            onClick={() => {
+              setOpenModalUpdate(false);
+              setPrices(defaultPrices);
+            }}
           >
             Đóng
           </Button>
@@ -332,12 +357,12 @@ function TableComponent() {
     {
       title: "Ngày tạo",
       dataIndex: "createdDate",
-      render: (createdDate) => <p>{formatDate(createdDate)}</p>,
+      render: (createdDate) => <p>{formatDate(createdDate, false)}</p>,
     },
     {
       title: "Ngày cập nhật",
       dataIndex: "updateDate",
-      render: (updateDate) => <p>{formatDate(updateDate)}</p>,
+      render: (updateDate) => <p>{formatDate(updateDate, false)}</p>,
     },
     {
       title: "Hoạt Động",
@@ -364,6 +389,7 @@ function TableComponent() {
           type="primary"
           onClick={() => {
             setOpenModalAdd(true);
+            setPrices(defaultPrices);
           }}
         >
           <IoMdAdd />

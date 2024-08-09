@@ -6,7 +6,9 @@ function formatDate(inputString, showTime = true) {
   if (!inputString || inputString === "0001-01-01T00:00:00") {
     return "-";
   }
-  var outputString = dayjs(inputString).format(showTime ? FORMAT_SHOW_TIME : FORMAT_TIME);
+  var outputString = dayjs(inputString).format(
+    showTime ? FORMAT_SHOW_TIME : FORMAT_TIME
+  );
   return outputString;
 }
 
@@ -104,6 +106,28 @@ function convertISODateToDDMMYY(isoDateString) {
   return `${year}-${month}-${day}`;
 }
 
+function getStatusVehicle(status) {
+  const statusTitles = {
+    0: "Đã xóa",
+    1: "Đang sẵn sàng",
+    2: "Đang bận",
+    3: "Đang gặp vấn đề",
+  };
+
+  return statusTitles[status] || "Unknown Status";
+}
+
+function getColorStatusVehicle(status) {
+  const statusTitles = {
+    0: "red",
+    1: "green",
+    2: "purple",
+    3: "cyan",
+  };
+
+  return statusTitles[status] || "default";
+}
+
 function getStatusTitle(status) {
   const statusTitles = {
     // 1: "Hàng đã về kho",
@@ -143,6 +167,7 @@ function getStatusColor(status) {
 
   return statusTitles[status] || "lime";
 }
+
 function getStatusColorPayment(status) {
   const statusTitles = {
     0: "geekblue",
@@ -238,6 +263,8 @@ export {
   getDateNowIso,
   convertOrder,
   convertISODateToDDMMYY,
+  getStatusVehicle,
+  getColorStatusVehicle,
   checkCompletion,
   checkCompleFormItem,
   getStatusTripColor,

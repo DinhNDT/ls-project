@@ -39,7 +39,7 @@ function FormAdd({ prices, openModalAdd, setPrices }) {
   };
 
   const handleChangeInput = (name, value) => {
-    setPrices({ ...prices, [name]: value });
+    setPrices((prev) => ({ ...prev, [name]: value }));
   };
 
   useEffect(() => {

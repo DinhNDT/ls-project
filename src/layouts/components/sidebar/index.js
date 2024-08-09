@@ -8,6 +8,7 @@ import {
   FiFileText,
   FiShoppingCart,
   FiSettings,
+  FiMap,
 } from "react-icons/fi";
 import React, { useContext, useEffect, useState } from "react";
 import { LogoutOutlined } from "@ant-design/icons";
@@ -37,6 +38,7 @@ import { PaymentHistory } from "../../../pages/company/payment-history";
 import { NotiBell } from "./NotiBell";
 import UserPage from "../../../pages/user";
 import TripDetailPage from "../../../pages/stocker/trip-detail";
+import VehicleManagementPage from "../../../pages/admin/vehicle-management";
 
 const { Item } = Breadcrumb;
 const { Header, Content, Footer, Sider } = Layout;
@@ -111,9 +113,10 @@ const SideBar = () => {
       setItems([
         getItem("Thống kê", "1", <FiHome />),
         getItem("Người dùng", "2", <FiAward />),
+        getItem("Xe vận chuyển", "1A", <FiTruck />),
         getItem("Kho", "3", <FiPackage />),
         getItem("Bảng giá", "5", <FiShoppingBag />),
-        getItem("Khoảng cách", "6", <FiTruck />),
+        getItem("Khoảng cách", "6", <FiMap />),
         getItem("Trọng lượng", "7", <FiGlobe />),
         getItem("Đăng xuất", "4", <LogoutOutlined />),
       ]);
@@ -295,6 +298,11 @@ const SideBar = () => {
             {keySelected === "3" && userRole === "Admin" && (
               <StockManagementPage />
             )}
+
+            {keySelected === "1A" && userRole === "Admin" && (
+              <VehicleManagementPage />
+            )}
+
             {keySelected === "5" && userRole === "Admin" && (
               <PriceListManagementPage />
             )}

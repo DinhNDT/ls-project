@@ -41,12 +41,6 @@ export default function LoginPage() {
     e.preventDefault();
     setLoading(true);
     try {
-      // check username and password
-      if (!username && !password) {
-        alert("Please field username and password");
-        setLoading(false);
-        return;
-      }
       const payload = { username, password };
       const requestLoginFunction = await axios.post("/Login", payload);
       if (requestLoginFunction.status === 200) {
@@ -80,14 +74,15 @@ export default function LoginPage() {
         toast({
           title: "Đăng nhập thất bại",
           status: "error",
+          description: "Sai tên mật khẩu hoặc tài khoản",
           isClosable: true,
         });
         setLoading(false);
       }
     } catch (err) {
-      console.error(err);
       toast({
         title: "Đăng nhập thất bại",
+        description: "Sai tên mật khẩu hoặc tài khoản",
         status: "error",
         isClosable: true,
       });

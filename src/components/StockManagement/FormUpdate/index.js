@@ -1,29 +1,36 @@
 import { FormControl, FormLabel, Input, Stack } from "@chakra-ui/react";
-import { useState } from "react";
 
-function FormUpdate({ data }) {
-  const { stockId, location, stockName, totalItem } = data;
-
-  const [stock, setStock] = useState({
-    stockId,
-    location,
-    stockName,
-    totalItem,
-  });
+function FormUpdate({ distance, setDistance }) {
+  const handleChangeInput = (name, value) => {
+    setDistance((prev) => ({ ...prev, [name]: value }));
+  };
+  console.log("distance:", distance);
 
   return (
     <Stack spacing={4}>
       <FormControl id="stockName" isRequired>
-        <FormLabel>Stock Name</FormLabel>
-        <Input type="text" value={stock.stockName} />
+        <FormLabel>Tên kho</FormLabel>
+        <Input
+          type="text"
+          value={distance?.stockName}
+          onChange={(e) => handleChangeInput("stockName", e.target.value)}
+        />
       </FormControl>
       <FormControl id="location" isRequired>
-        <FormLabel>Location</FormLabel>
-        <Input type="text" value={stock.location} />
+        <FormLabel>Vị trí</FormLabel>
+        <Input
+          type="text"
+          value={distance?.location}
+          onChange={(e) => handleChangeInput("location", e.target.value)}
+        />
       </FormControl>
       <FormControl id="totalItem" isRequired>
-        <FormLabel>Total Item</FormLabel>
-        <Input type="number" value={stock.totalItem} />
+        <FormLabel>Tổng sản phẩm</FormLabel>
+        <Input
+          type="number"
+          value={distance?.totalItem}
+          onChange={(e) => handleChangeInput("totalItem", e.target.value)}
+        />
       </FormControl>
     </Stack>
   );

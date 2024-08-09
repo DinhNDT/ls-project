@@ -12,11 +12,19 @@ function FormAdd({ account, setAccount }) {
   const handleChangeInput = (name, value) => {
     setAccount({ ...account, [name]: value });
   };
+
+  const handleChangeNumber = (name, value) => {
+    const newNumber = parseInt(value, 10);
+    const reg = /^[0-9]*$/;
+    if (reg.test(value) || value === "") {
+      setAccount((prev) => ({ ...prev, [name]: newNumber }));
+    }
+  };
+
   const roles = [
     {
       roleId: 1,
       roleName: "Admin",
-
     },
     {
       roleId: 2,
@@ -106,27 +114,30 @@ function FormAdd({ account, setAccount }) {
           ))}
         </Select>
       </FormControl>
-      {account?.roleId === "5" ? <>
-        <FormControl id="licenseNumber" isRequired>
-          <FormLabel>Giấy phép lái xe</FormLabel>
-          <Input
-            type="number"
-            value={account?.licenseNumber}
-            onChange={(e) => {
-              handleChangeInput("licenseNumber", e.target.value);
-            }}
-          />
-        </FormControl>
-        <FormControl id="citizenId" isRequired>
-          <FormLabel>Căn cước công dân</FormLabel>
-          <Input
-            type="number"
-            value={account?.citizenId}
-            onChange={(e) => {
-              handleChangeInput("citizenId", e.target.value);
-            }}
-          />
-        </FormControl></> : null}
+      {account?.roleId === "5" ? (
+        <>
+          <FormControl id="licenseNumber" isRequired>
+            <FormLabel>Giấy phép lái xe</FormLabel>
+            <Input
+              type="number"
+              value={account?.licenseNumber}
+              onChange={(e) => {
+                handleChangeNumber("licenseNumber", e.target.value);
+              }}
+            />
+          </FormControl>
+          <FormControl id="citizenId" isRequired>
+            <FormLabel>Căn cước công dân</FormLabel>
+            <Input
+              type="number"
+              value={account?.citizenId}
+              onChange={(e) => {
+                handleChangeNumber("citizenId", e.target.value);
+              }}
+            />
+          </FormControl>
+        </>
+      ) : null}
       <FormControl id="password" isRequired>
         <FormLabel>Mật khẩu</FormLabel>
         <Input

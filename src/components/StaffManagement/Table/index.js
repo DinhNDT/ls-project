@@ -27,7 +27,7 @@ function TableComponent() {
     userName: "",
     password: "",
     phone: "",
-    roleId: "",
+    roleId: "1",
     email: "",
     fullName: "",
     dateOfBirth: "",
@@ -37,24 +37,9 @@ function TableComponent() {
   const toast = useToast({ position: "top" });
   const [openModalUpdate, setOpenModalUpdate] = useState(false);
   const [openModalAdd, setOpenModalAdd] = useState(false);
-  const [itemSelected, setItemSelected] = useState({});
   const [data, setData] = useState([]);
   const [account, setAccount] = useState({});
   const [reload, setReload] = useState(false);
-
-  useEffect(() => {
-    setAccount({
-      userName: itemSelected?.userName,
-      password: itemSelected?.password,
-      phone: itemSelected?.phone,
-      roleId: itemSelected?.roleId,
-      email: itemSelected?.email,
-      fullName: itemSelected?.fullName,
-      dateOfBirth: itemSelected?.dateOfBirth,
-      img: itemSelected?.img,
-      status: true,
-    });
-  }, [itemSelected]);
 
   const handleFetchData = async () => {
     try {
@@ -74,27 +59,38 @@ function TableComponent() {
   const handleUpdatePrice = async () => {
     try {
       const updatePrice = await axios.put(
-        `https://nhatlocphatexpress.azurewebsites.net/Accounts/api/UpdateAccounts?accountId=${itemSelected?.accountId}`,
+        `https://nhatlocphatexpress.azurewebsites.net/Accounts/api/UpdateAccounts?accountId=${account?.accountId}`,
         account,
         { headers }
       );
 
       if (updatePrice.status === 200) {
-        alert("Cập nhật thành công");
+        toast({
+          title: "Cập nhật thành công !",
+          status: "success",
+          isClosable: true,
+        });
         setReload(true);
         setOpenModalUpdate(false);
         setAccount(defaultPrices);
       }
     } catch (err) {
-      alert(err.response.data);
+      toast({
+        title: "Lỗi hệ thống!.",
+        description: `${err.message}`,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
     }
   };
   const handleCreatePrice = async () => {
-    const url = account?.roleId === "5" ? "/Drivers/api/CreateDriver" : `https://nhatlocphatexpress.azurewebsites.net/Accounts/api/CreateAccounts`
+    const url =
+      account?.roleId === "5"
+        ? "/Drivers/api/CreateDriver"
+        : `https://nhatlocphatexpress.azurewebsites.net/Accounts/api/CreateAccounts`;
     try {
-      const updatePrice = await axios.post(url, account,
-        { headers }
-      );
+      const updatePrice = await axios.post(url, account, { headers });
 
       if (updatePrice.status === 200) {
         toast({
@@ -118,7 +114,7 @@ function TableComponent() {
   };
 
   const hanldeUpdateModal = (item) => {
-    setItemSelected(item);
+    setAccount({ ...item, status: true });
     setOpenModalUpdate(true);
   };
 
@@ -130,11 +126,21 @@ function TableComponent() {
       );
 
       if (updatePrice.status === 200) {
-        alert("Xóa thành công");
+        toast({
+          title: "Xóa thành công !",
+          status: "success",
+          isClosable: true,
+        });
         setReload(true);
       }
     } catch (err) {
-      alert(err.response.data);
+      toast({
+        title: "Lỗi hệ thống !",
+        description: `${err.message}`,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
     }
   };
 
@@ -190,12 +196,12 @@ function TableComponent() {
           {roleId === 1
             ? "Admin"
             : roleId === 2
-              ? "Staff"
-              : roleId === 3
-                ? "Stocker"
-                : roleId === 4
-                  ? "Company"
-                  : "Driver"}
+            ? "Staff"
+            : roleId === 3
+            ? "Stocker"
+            : roleId === 4
+            ? "Company"
+            : "Driver"}
         </p>
       ),
     },
@@ -252,7 +258,13 @@ function TableComponent() {
   ];
 
   let ModalUpdate = (
-    <Modal isOpen={openModalUpdate} onClose={() => setOpenModalUpdate(false)}>
+    <Modal
+      isOpen={openModalUpdate}
+      onClose={() => {
+        setOpenModalUpdate(false);
+        setAccount(defaultPrices);
+      }}
+    >
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>Cập nhật người dùng</ModalHeader>
@@ -264,7 +276,10 @@ function TableComponent() {
           <Button
             colorScheme="blue"
             mr={3}
-            onClick={() => setOpenModalUpdate(false)}
+            onClick={() => {
+              setOpenModalUpdate(false);
+              setAccount(defaultPrices);
+            }}
           >
             Đóng
           </Button>
@@ -277,7 +292,13 @@ function TableComponent() {
   );
 
   let ModalAdd = (
-    <Modal isOpen={openModalAdd} onClose={() => setOpenModalAdd(false)}>
+    <Modal
+      isOpen={openModalAdd}
+      onClose={() => {
+        setOpenModalAdd(false);
+        setAccount(defaultPrices);
+      }}
+    >
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>Thêm người dùng mới</ModalHeader>
@@ -290,7 +311,10 @@ function TableComponent() {
             colorScheme="blue"
             variant="ghost"
             mr={3}
-            onClick={() => setOpenModalAdd(false)}
+            onClick={() => {
+              setOpenModalAdd(false);
+              setAccount(defaultPrices);
+            }}
           >
             Đóng
           </Button>
@@ -301,6 +325,7 @@ function TableComponent() {
       </ModalContent>
     </Modal>
   );
+
   useEffect(() => {
     if (headers) handleFetchData();
   }, [headers]);

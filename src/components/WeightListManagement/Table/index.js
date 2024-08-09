@@ -8,6 +8,7 @@ import {
   ModalBody,
   ModalCloseButton,
   Button,
+  useToast,
 } from "@chakra-ui/react";
 import { Space, Table, Button as ButtonAntd } from "antd";
 import { AiFillEdit } from "react-icons/ai";
@@ -20,6 +21,7 @@ import { GlobalContext } from "../../../provider";
 import { formatDate } from "../../../helpers";
 
 function TableComponent() {
+  const toast = useToast({ position: "top" });
   const userContext = useContext(GlobalContext);
   const { headers } = userContext;
   const defaultPrices = {
@@ -28,17 +30,9 @@ function TableComponent() {
   };
   const [openModalUpdate, setOpenModalUpdate] = useState(false);
   const [openModalAdd, setOpenModalAdd] = useState(false);
-  const [itemSelected, setItemSelected] = useState({});
   const [distance, setDistance] = useState({});
   const [data, setData] = useState([]);
   const [reload, setReload] = useState(false);
-
-  useEffect(() => {
-    setDistance({
-      minWeight: itemSelected?.minWeight,
-      maxWeight: itemSelected?.maxWeight,
-    });
-  }, [itemSelected]);
 
   const handleFetchData = async () => {
     try {
@@ -54,44 +48,68 @@ function TableComponent() {
   const handleUpdatePrice = async () => {
     try {
       const updatePrice = await axios.put(
-        `/WeightMode/api/UpdateDistanceMode?weightModeId=${itemSelected?.weightModeId}`,
-        distance,
+        `/WeightMode/api/UpdateDistanceMode?weightModeId=${distance?.weightModeId}`,
+        {
+          minWeight: Number(distance.minWeight),
+          maxWeight: Number(distance.maxWeight),
+        },
         { headers }
       );
 
       if (updatePrice.status === 200) {
-        alert("Cập nhật thành công");
+        toast({
+          title: "Cập nhật thành công !",
+          status: "success",
+          isClosable: true,
+        });
         setReload(true);
         setOpenModalUpdate(false);
         setDistance(defaultPrices);
       }
     } catch (err) {
-      alert(err.response.data);
+      toast({
+        title: "Lỗi hệ thống !",
+        description: `${err.message}`,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
     }
   };
   const handleCreatePrice = async () => {
     try {
       const updatePrice = await axios.post(
         `/WeightMode/api/CreateWeightMode`,
-        distance,
+        {
+          minWeight: Number(distance.minWeight),
+          maxWeight: Number(distance.maxWeight),
+        },
         { headers }
       );
 
       if (updatePrice.status === 200) {
-        alert("Tạo thành công");
+        toast({
+          title: "Tạo thành công !",
+          status: "success",
+          isClosable: true,
+        });
         setReload(true);
         setOpenModalAdd(false);
         setDistance(defaultPrices);
-      } else {
-        alert(updatePrice.data);
       }
     } catch (err) {
-      alert(err.response.data);
+      toast({
+        title: "Lỗi hệ thống !",
+        description: `${err.response.data}`,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
     }
   };
 
   const hanldeUpdateModal = (item) => {
-    setItemSelected(item);
+    setDistance(item);
     setOpenModalUpdate(true);
   };
 
@@ -120,6 +138,8 @@ function TableComponent() {
     </Modal>
   );
 
+  console.log("distance:", distance);
+
   let ModalAdd = (
     <Modal isOpen={openModalAdd} onClose={() => setOpenModalAdd(false)}>
       <ModalOverlay />
@@ -136,7 +156,7 @@ function TableComponent() {
             mr={3}
             onClick={() => setOpenModalAdd(false)}
           >
-            Close
+            Đóng
           </Button>
           <Button colorScheme="blue" onClick={handleCreatePrice}>
             Tạo
@@ -194,12 +214,12 @@ function TableComponent() {
     {
       title: "Ngày tạo",
       dataIndex: "createdDate",
-      drender: (createdDate) => <p>{formatDate(createdDate)}</p>,
+      render: (createdDate) => <p>{formatDate(createdDate, false)}</p>,
     },
     {
       title: "Ngày cập nhật",
       dataIndex: "updateDate",
-      render: (updateDate) => <p>{formatDate(updateDate)}</p>,
+      render: (updateDate) => <p>{formatDate(updateDate, false)}</p>,
     },
     {
       title: "Hoạt Động",
@@ -236,6 +256,7 @@ function TableComponent() {
           type="primary"
           onClick={() => {
             setOpenModalAdd(true);
+            setDistance(defaultPrices);
           }}
         >
           <IoMdAdd />

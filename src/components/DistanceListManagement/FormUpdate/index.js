@@ -17,7 +17,7 @@ function FormUpdate({ distance, setDistance, readOnly }) {
   return (
     <Stack spacing={4}>
       <FormControl id="provinceGroup" isRequired>
-        <FormLabel>Province Group</FormLabel>
+        <FormLabel>Nhóm tỉnh</FormLabel>
         <Input
           type="text"
           value={distance.provinceGroup}
@@ -29,7 +29,7 @@ function FormUpdate({ distance, setDistance, readOnly }) {
       </FormControl>
       <HStack>
         <FormControl id="minDistance" isRequired>
-          <FormLabel>Min Distance</FormLabel>
+          <FormLabel>Khoảng cách tối thiểu</FormLabel>
           <InputGroup>
             <Input
               readOnly={readOnly}
@@ -43,7 +43,7 @@ function FormUpdate({ distance, setDistance, readOnly }) {
           </InputGroup>
         </FormControl>
         <FormControl id="maxDistance" isRequired>
-          <FormLabel>Max Distance</FormLabel>
+          <FormLabel>Khoảng cách tối đa</FormLabel>
           <InputGroup>
             <Input
               readOnly={readOnly}
@@ -58,7 +58,7 @@ function FormUpdate({ distance, setDistance, readOnly }) {
         </FormControl>
       </HStack>
       <FormControl id="description" isRequired>
-        <FormLabel>Description</FormLabel>
+        <FormLabel>Miêu tả</FormLabel>
         <Textarea
           readOnly={readOnly}
           value={distance.description}
