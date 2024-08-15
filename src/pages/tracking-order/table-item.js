@@ -108,7 +108,7 @@ export const TableItem = ({ data }) => {
         rowKey="itemId"
         dataSource={data}
         columns={columns}
-        pagination={{ pageSize: 5 }}
+        pagination={{ pageSize: 4 }}
       />
     </>
   );

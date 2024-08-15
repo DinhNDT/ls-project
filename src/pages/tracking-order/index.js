@@ -57,7 +57,23 @@ const TrackingOrder = () => {
       width={{ base: "600px", md: "600px", lg: "1200px" }}
       marginLeft={"10px"}
       marginRight={"10px"}
+      marginTop={"20px"}
+      marginBottom={"20px"}
     >
+      <Flex gap={"5px"} alignItems="center">
+        <Text fontSize={"20px"}>Mã đơn hàng</Text>
+        <Tag
+          color={"green"}
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: "3px",
+            fontSize: "14px",
+          }}
+        >
+          {dataOrder?.orderId}
+        </Tag>
+      </Flex>
       {loading ? (
         <div
           style={{
@@ -85,22 +101,28 @@ const TrackingOrder = () => {
                 lg: "column-reverse",
               }}
             >
-              <Text fontSize="24px">Tiến trình {percent}%</Text>
-              <Flex alignItems="center" gap={"10px"}>
-                <Text fontSize={"24px"}>Trạng thái</Text>
-                <Tag
-                  icon={getStatusIcon(dataOrder?.status)}
-                  color={getStatusColor(dataOrder?.status)}
-                  style={{
-                    display: "inline-flex",
-                    alignItems: "center",
-                    gap: "3px",
-                    marginTop: "5px",
-                    fontSize: "16px",
-                  }}
-                >
-                  {getStatusTitle(dataOrder?.status)}
-                </Tag>
+              <Text fontSize="21px">Tiến trình {percent}%</Text>
+              <Flex
+                alignItems="center"
+                gap={"10px"}
+                justifyContent="space-between"
+              >
+                <Flex gap={"3px"}>
+                  <Text fontSize={"20px"}>Trạng thái</Text>
+                  <Tag
+                    icon={getStatusIcon(dataOrder?.status)}
+                    color={getStatusColor(dataOrder?.status)}
+                    style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: "3px",
+                      marginTop: "5px",
+                      fontSize: "14px",
+                    }}
+                  >
+                    {getStatusTitle(dataOrder?.status)}
+                  </Tag>
+                </Flex>
               </Flex>
             </Flex>
             <Progress value={percent} colorScheme="pink" borderRadius={5} />
@@ -117,7 +139,7 @@ const TrackingOrder = () => {
               lg: "unset",
             }}
             mb={"25px"}
-            mt={"20px"}
+            mt={"5px"}
           >
             <Box>
               <Text fontSize={{ base: "26px", md: "26px", lg: "36px" }}>
