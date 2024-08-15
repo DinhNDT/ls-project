@@ -1,10 +1,12 @@
-import { Image, Modal, Table } from "antd";
+import { Button, Image, Modal, QRCode, Table } from "antd";
 import React, { useMemo, useState } from "react";
-import { formatMoney } from "../../../helpers";
+import { doDownload, formatMoney } from "../../../helpers";
 import { Box, Flex, FormLabel, Text } from "@chakra-ui/react";
 import { AiOutlineQuestionCircle } from "react-icons/ai";
 import PriceListOrderPage from "../../../pages/price-list-order";
 import "./style.css";
+import { LuDownload } from "react-icons/lu";
+import { URL_TRACKING_ORDER } from "../FormAdd/FormUpdateImg";
 
 const TableSummaryRow = ({
   title,
@@ -47,7 +49,13 @@ const TableSummaryRow = ({
   );
 };
 
-export const TableOrder = ({ order, orderBill, id, isLoadData }) => {
+export const TableOrder = ({
+  order,
+  orderBill,
+  id,
+  isLoadData,
+  trackingNumber,
+}) => {
   const orderTable = id ? order : orderBill;
 
   const [modal, setModal] = useState({ isOpen: false, type: 1 });
@@ -161,6 +169,18 @@ export const TableOrder = ({ order, orderBill, id, isLoadData }) => {
     [order]
   );
 
+  const downloadCanvasQRCode = () => {
+    const canvas = document
+      .getElementById("qrCodeOrder")
+      ?.querySelector("canvas");
+    if (canvas) {
+      const url = canvas.toDataURL();
+      doDownload(url, `QRCode_MaDonHang_${id}.png`);
+    }
+  };
+
+  const qrUrl = `${URL_TRACKING_ORDER}/${trackingNumber}`;
+
   return (
     <>
       <Table
@@ -180,14 +200,41 @@ export const TableOrder = ({ order, orderBill, id, isLoadData }) => {
                 rowSpan={8}
                 className="hideCol"
               >
-                {order?.image ? (
-                  <>
-                    <FormLabel textAlign={"left"} margin={"unset"} mb="5px">
-                      Hình Ảnh:
-                    </FormLabel>
-                    <Image width={400} height={400} src={order?.image} />
-                  </>
-                ) : null}
+                <Box>
+                  {order?.image ? (
+                    <>
+                      <FormLabel textAlign={"left"} margin={"unset"} mb="5px">
+                        Hình Ảnh:
+                      </FormLabel>
+                      <Image width={200} height={200} src={order?.image} />
+                    </>
+                  ) : null}
+
+                  <FormLabel textAlign={"left"} margin={"unset"} mb="5px">
+                    Mã QR đính kèm gói hàng:
+                  </FormLabel>
+                  <Box
+                    id="qrCodeOrder"
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                    w="100%"
+                  >
+                    <QRCode
+                      size={180}
+                      type={"canvas"}
+                      value={qrUrl}
+                      bgColor="#fff"
+                      style={{ marginBottom: 16 }}
+                    />
+                  </Box>
+                  <Button
+                    style={{ width: "160px" }}
+                    icon={<LuDownload fontSize={"19px"} />}
+                    type="default"
+                    onClick={downloadCanvasQRCode}
+                  ></Button>
+                </Box>
               </Table.Summary.Cell>
             </Table.Summary.Row>
 

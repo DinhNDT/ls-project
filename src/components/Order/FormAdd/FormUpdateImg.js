@@ -1,4 +1,4 @@
-import { Text, useToast, Button, Flex } from "@chakra-ui/react";
+import { Text, useToast, Button, Flex, Divider, Box } from "@chakra-ui/react";
 import Dragger from "antd/es/upload/Dragger";
 import React, { useContext } from "react";
 import { InboxOutlined } from "@ant-design/icons";
@@ -6,8 +6,14 @@ import axios from "axios";
 import { RiSkipForwardFill } from "react-icons/ri";
 import { BsSendCheck } from "react-icons/bs";
 import { OrderContext } from "../../../provider/order";
+import { QRCode, Button as ButtonAntd } from "antd";
+import { LuDownload } from "react-icons/lu";
+import { doDownload } from "../../../helpers";
 
-export const FormUpdateImg = ({ id }) => {
+export const URL_TRACKING_ORDER =
+  "https://ls-project-coral.vercel.app/tracking-order";
+
+export const FormUpdateImg = ({ id, trackingNumber }) => {
   const toast = useToast({ position: "top" });
   const orderContext = useContext(OrderContext);
   const { setKeySelected } = orderContext;
@@ -54,23 +60,60 @@ export const FormUpdateImg = ({ id }) => {
     },
   };
 
+  const downloadCanvasQRCode = () => {
+    const canvas = document.getElementById("myqrcode")?.querySelector("canvas");
+    if (canvas) {
+      const url = canvas.toDataURL();
+      doDownload(url, `QRCode_MaDonHang_${id}.png`);
+    }
+  };
+
+  const qrUrl = `${URL_TRACKING_ORDER}/${trackingNumber}`;
+
   return (
-    <Flex justifyContent="space-between" flexDirection="column">
-      <div>
-        <Text mb={"15px"} fontSize={19}>
-          Cập nhật hình ảnh gói hàng
-        </Text>
-        <Dragger {...props}>
-          <p className="ant-upload-drag-icon">
-            <InboxOutlined />
-          </p>
-          <p className="ant-upload-text">
-            Click hoặc kéo thả file vào vùng này để tải ảnh lên !
-          </p>
-          <p className="ant-upload-hint">
-            Hỗ trợ tải lên 1 ảnh. Nghiêm cấm tải lên dữ liệu trái pháp luật !
-          </p>
-        </Dragger>
+    <Flex justifyContent="space-between" flexDirection="column" gap={"100px"}>
+      <div style={{ display: "flex", gap: "10px" }}>
+        <Box width="70%">
+          <Text mb={"15px"} fontSize={19}>
+            Cập nhật hình ảnh gói hàng
+          </Text>
+          <Dragger {...props}>
+            <p className="ant-upload-drag-icon">
+              <InboxOutlined />
+            </p>
+            <p className="ant-upload-text">
+              Click hoặc kéo thả file vào vùng này để tải ảnh lên !
+            </p>
+            <p className="ant-upload-hint">
+              Hỗ trợ tải lên 1 ảnh. Nghiêm cấm tải lên dữ liệu trái pháp luật !
+            </p>
+          </Dragger>
+        </Box>
+        <Divider orientation="vertical" />
+        <Box
+          id="myqrcode"
+          width="30%"
+          display="flex"
+          flexDirection="column"
+          alignItems="center"
+        >
+          <Text mb={"15px"} fontSize={19}>
+            Mã QR thông tin gói hàng
+          </Text>
+          <QRCode
+            size={200}
+            type={"canvas"}
+            value={qrUrl}
+            bgColor="#fff"
+            style={{ marginBottom: 16 }}
+          />
+          <ButtonAntd
+            style={{ width: "180px" }}
+            icon={<LuDownload fontSize={"19px"} />}
+            type="default"
+            onClick={downloadCanvasQRCode}
+          ></ButtonAntd>
+        </Box>
       </div>
       <div
         style={{

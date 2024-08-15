@@ -50,7 +50,6 @@ const MobileNav = ({ onOpen, notHaveSidebar, ...rest }) => {
           <Flex alignItems="center" gap={2}>
             <img src={logo} alt="" width={40} height={40} />
             <Text
-              display={{ base: "none", md: "flex" }}
               fontSize="x-large"
               fontFamily="monospace"
               fontWeight="bold"
@@ -70,18 +69,12 @@ const MobileNav = ({ onOpen, notHaveSidebar, ...rest }) => {
             icon={<FiMenu />}
           />
         )}
-        <Text
-          display={{ base: "flex", md: "none" }}
-          fontSize="2xl"
-          fontFamily="monospace"
-          fontWeight="bold"
-          style={{ cursor: "pointer" }}
-          onClick={() => navigate("/")}
+        <Tabs
+          display={{ base: "none", md: "none", lg: "unset" }}
+          position="relative"
+          variant="unstyled"
         >
-          Logo
-        </Text>
-        <Tabs position="relative" variant="unstyled">
-          <TabList onChange={(value) => console.log(value)}>
+          <TabList>
             <Tab height={75} onClick={() => navigate("/")}>
               Trang chủ
             </Tab>
@@ -101,23 +94,6 @@ const MobileNav = ({ onOpen, notHaveSidebar, ...rest }) => {
         >
           <Button
             as={"a"}
-            display={{ base: "inline-flex", md: "none" }}
-            fontSize={"sm"}
-            fontWeight={600}
-            color={"white"}
-            bg={"pink.400"}
-            // href={"#"}
-            _hover={{
-              bg: "pink.300",
-            }}
-            onClick={() => {
-              navigate("/sign-in");
-            }}
-          >
-            Sign In
-          </Button>
-          <Button
-            as={"a"}
             fontSize={"sm"}
             fontWeight={400}
             display={{ base: "none", md: "inline-flex" }}
@@ -128,12 +104,11 @@ const MobileNav = ({ onOpen, notHaveSidebar, ...rest }) => {
           </Button>
           <Button
             as={"a"}
-            display={{ base: "none", md: "inline-flex" }}
             fontSize={"sm"}
             fontWeight={600}
+            display={{ base: "none", md: "inline-flex" }}
             color={"white"}
             bg={"#F56565"}
-            // href={"#"}
             _hover={{
               bg: "pink.300",
             }}

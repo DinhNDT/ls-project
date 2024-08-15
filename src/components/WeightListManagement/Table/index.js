@@ -138,8 +138,6 @@ function TableComponent() {
     </Modal>
   );
 
-  console.log("distance:", distance);
-
   let ModalAdd = (
     <Modal isOpen={openModalAdd} onClose={() => setOpenModalAdd(false)}>
       <ModalOverlay />

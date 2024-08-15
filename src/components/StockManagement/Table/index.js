@@ -40,8 +40,6 @@ function TableComponent() {
   const [distance, setDistance] = useState({});
 
   const hanldeUpdateModal = (item) => {
-    console.log("item", item);
-
     setDistance(item);
     setOpenModalUpdate(true);
   };

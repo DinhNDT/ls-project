@@ -184,8 +184,8 @@ export const ReviewOrder = ({
   const handleSubmitCreate = (e) => {
     setLoading(true);
     setTimeout(() => {
-      handleSubmit(e, ({ orderId }) => {
-        setNextToUpdateImg({ isNext: true, orderId });
+      handleSubmit(e, ({ orderId, trackingNumber }) => {
+        setNextToUpdateImg({ isNext: true, orderId, trackingNumber });
       });
     }, 1000);
   };
@@ -214,7 +214,7 @@ export const ReviewOrder = ({
         )[0].content;
         setValue(reasonCancel?.split("vì")?.at(1));
       }
-    } catch (error) { }
+    } catch (error) {}
   };
 
   return (
@@ -226,14 +226,16 @@ export const ReviewOrder = ({
             style={{ fontSize: "16px", padding: "4px", marginBottom: 10 }}
           >
             Mã Vận Đơn: {orderReview?.trackingNumber}{" "}
-          </Tag> <br/>
-          {orderReview?.status === 6 && <Tag
-            color="green"
-            style={{ fontSize: "16px", padding: "4px", marginBottom: 10 }}
-          >
-            Đã Giao Hàng Lúc: {formatDate(orderReview?.dayDelivery)}
-          </Tag>}
-
+          </Tag>{" "}
+          <br />
+          {orderReview?.status === 6 && (
+            <Tag
+              color="green"
+              style={{ fontSize: "16px", padding: "4px", marginBottom: 10 }}
+            >
+              Đã Giao Hàng Lúc: {formatDate(orderReview?.dayDelivery)}
+            </Tag>
+          )}
         </>
       ) : null}
       <Box
@@ -338,7 +340,7 @@ export const ReviewOrder = ({
               <Title title={"Ngày Giao Hàng Dự Kiến:"}>
                 {formatDate(
                   orderBill?.expectedDeliveryDate ||
-                  orderReview?.expectedDeliveryDate
+                    orderReview?.expectedDeliveryDate
                 )}
               </Title>
               {id ? (
@@ -370,6 +372,7 @@ export const ReviewOrder = ({
         orderBill={orderBill}
         id={id}
         isLoadData={isLoadData}
+        trackingNumber={orderReview?.trackingNumber}
       />
 
       {id &&
@@ -426,7 +429,7 @@ export const ReviewOrder = ({
           )}
         </div>
       ) : (userInformation?.role === "Staff" ||
-        userInformation?.role === "Company") &&
+          userInformation?.role === "Company") &&
         !id ? (
         <div style={{ display: "flex", justifyContent: "space-between" }}>
           <Button size="sm" rightIcon={<FiArrowLeft />} onClick={onBackOrder}>
@@ -455,8 +458,8 @@ export const ReviewOrder = ({
       <Flex justifyContent={"space-between"} alignItems={"flex-end"}>
         {id ? <div></div> : null}
         {userInformation?.role === "Company" &&
-          (order.paymentStatus === 0 || order.paymentStatus === 2) &&
-          (order.status === 3 || order.status === 4) ? (
+        (order.paymentStatus === 0 || order.paymentStatus === 2) &&
+        (order.status === 3 || order.status === 4) ? (
           <PaymentOrder
             order={order}
             orderReview={orderReview}

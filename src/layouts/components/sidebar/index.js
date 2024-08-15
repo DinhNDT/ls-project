@@ -322,7 +322,7 @@ const SideBar = () => {
             textAlign: "center",
           }}
         >
-          Ant Design ©{new Date().getFullYear()} Created by Ant UED
+          LFH Design ©{new Date().getFullYear()} Created by LFH Team
         </Footer>
       </Layout>
     </Layout>

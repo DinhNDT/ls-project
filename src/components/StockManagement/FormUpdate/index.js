@@ -4,7 +4,6 @@ function FormUpdate({ distance, setDistance }) {
   const handleChangeInput = (name, value) => {
     setDistance((prev) => ({ ...prev, [name]: value }));
   };
-  console.log("distance:", distance);
 
   return (
     <Stack spacing={4}>

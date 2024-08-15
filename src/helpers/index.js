@@ -256,9 +256,19 @@ const checkCompleFormItem = (obj) => {
   return Object.keys(obj).every((key) => !!obj[key]);
 };
 
+const doDownload = (url, fileName) => {
+  const a = document.createElement("a");
+  a.download = fileName;
+  a.href = url;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+};
+
 export {
   formatDate,
   fallBackImg,
+  doDownload,
   formatMoney,
   getDateNowIso,
   convertOrder,

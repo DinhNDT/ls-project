@@ -12,6 +12,7 @@ export const WrapperReview = ({
   const [nextStep, setNextStep] = useState({
     isNext: false,
     orderId: "",
+    trackingNumber: "",
   });
 
   return (
@@ -26,7 +27,10 @@ export const WrapperReview = ({
           setNextToUpdateImg={setNextStep}
         />
       ) : (
-        <FormUpdateImg id={nextStep.orderId} />
+        <FormUpdateImg
+          id={nextStep.orderId}
+          trackingNumber={nextStep.trackingNumber}
+        />
       )}
     </>
   );

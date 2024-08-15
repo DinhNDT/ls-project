@@ -4,8 +4,10 @@ import { STEPS_TRACKING, StepTracking } from "./step";
 import { TableItem } from "./table-item";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
-import { Result, Spin } from "antd";
+import { Result, Spin, Tag } from "antd";
 import { LoadingOutlined } from "@ant-design/icons";
+import { getStatusIcon } from "../../components/Order/Table";
+import { getStatusColor, getStatusTitle } from "../../helpers";
 
 const TrackingOrder = () => {
   const { id } = useParams("id");
@@ -52,7 +54,9 @@ const TrackingOrder = () => {
       boxShadow="rgba(99, 99, 99, 0.2) 0px 2px 8px 0px"
       borderRadius={5}
       p={5}
-      width={1200}
+      width={{ base: "600px", md: "600px", lg: "1200px" }}
+      marginLeft={"10px"}
+      marginRight={"10px"}
     >
       {loading ? (
         <div
@@ -71,26 +75,89 @@ const TrackingOrder = () => {
         </div>
       ) : dataOrder ? (
         <>
-          <Flex justifyContent="space-between">
+          <Box w={"100%"} display={{ base: "unset", md: "unset", lg: "none" }}>
+            <Flex
+              justifyContent="space-between"
+              flexDirection={{
+                base: "column-reverse",
+                sm: "unset",
+                md: "unset",
+                lg: "column-reverse",
+              }}
+            >
+              <Text fontSize="24px">Tiến trình {percent}%</Text>
+              <Flex alignItems="center" gap={"10px"}>
+                <Text fontSize={"24px"}>Trạng thái</Text>
+                <Tag
+                  icon={getStatusIcon(dataOrder?.status)}
+                  color={getStatusColor(dataOrder?.status)}
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "3px",
+                    marginTop: "5px",
+                    fontSize: "16px",
+                  }}
+                >
+                  {getStatusTitle(dataOrder?.status)}
+                </Tag>
+              </Flex>
+            </Flex>
+            <Progress value={percent} colorScheme="pink" borderRadius={5} />
+          </Box>
+          <Flex
+            justifyContent={{
+              base: "normal",
+              md: "normal",
+              lg: "space-between",
+            }}
+            flexDirection={{
+              base: "column",
+              md: "column",
+              lg: "unset",
+            }}
+            mb={"25px"}
+            mt={"20px"}
+          >
             <Box>
-              <Text fontSize={"36px"}>Từ</Text>
-              <Text width={280}>
+              <Text fontSize={{ base: "26px", md: "26px", lg: "36px" }}>
+                Từ
+              </Text>
+              <Text
+                width={{
+                  base: "100%",
+                  md: "100%",
+                  lg: "280px",
+                }}
+              >
                 {`${dataOrder?.locationDetailGet}, ${dataOrder?.wardGet}, ${dataOrder?.districtGet}, ${dataOrder?.provinceGet}`}
               </Text>
             </Box>
-            <Box w={150}>
+            <Box w={150} display={{ base: "none", md: "none", lg: "unset" }}>
               <Text fontSize={"26px"}>Hoàn thành</Text>
               <Text fontSize="33px">{percent}%</Text>
               <Progress value={percent} colorScheme="pink" borderRadius={5} />
             </Box>
-            <Box textAlign={"right"}>
-              <Text fontSize={"36px"}>Đến</Text>
+            <Box
+              textAlign={{
+                base: "unset",
+                md: "unset",
+                lg: "right",
+              }}
+            >
+              <Text fontSize={{ base: "26px", md: "26px", lg: "36px" }}>
+                Đến
+              </Text>
               <Text
-                width={280}
+                width={{
+                  base: "100%",
+                  md: "100%",
+                  lg: "280px",
+                }}
               >{`${dataOrder?.locationDetailDelivery}, ${dataOrder?.wardDelivery}, ${dataOrder?.districtDelivery}, ${dataOrder?.provinceDelivery}`}</Text>
             </Box>
           </Flex>
-          <Box mt={"40px"}>
+          <Box display={{ base: "none", md: "none", lg: "unset" }}>
             <StepTracking status={genStatus(dataOrder?.status)} />
           </Box>
           <Box mt={"40px"}>
