@@ -51,7 +51,7 @@ const TripDetailPage = (id) => {
   const expandedRowRender = (record) => {
     const { orderTripId } = record;
     const data = dataItemOrder?.filter(
-      (value) => value.itemOrderTripResponse[0].orderTripId === orderTripId
+      (value) => value?.itemOrderTripResponse?.[0]?.orderTripId === orderTripId
     );
 
     const columnsTableMore = [
@@ -111,7 +111,7 @@ const TripDetailPage = (id) => {
       <Table
         rowKey="itemId"
         size="small"
-        dataSource={data[0].itemOrderTripResponse}
+        dataSource={data?.[0]?.itemOrderTripResponse}
         columns={columnsTableMore}
         pagination={false}
       />

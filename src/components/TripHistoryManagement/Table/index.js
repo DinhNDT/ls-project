@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { GlobalContext } from "../../../provider";
-import { Table, Tag } from "antd";
+import { Modal, Space, Table, Tag } from "antd";
 import {
   formatDate,
   getStatusTrip,
@@ -9,13 +9,20 @@ import {
 } from "../../../helpers";
 import { AiFillEye } from "react-icons/ai";
 import { OrderContext } from "../../../provider/order";
+import { RiAlarmWarningLine } from "react-icons/ri";
+import { FormVehicleAccident } from "../FormVehicleAccident";
+import { useToast } from "@chakra-ui/react";
 
 function TableComponent() {
+  const toast = useToast({ position: "top" });
+  const [reload, setReload] = useState(false);
   const userContext = useContext(GlobalContext);
   const orderContext = useContext(OrderContext);
   const { setKeySelected, setSelectedItem } = orderContext;
-  const { headers } = userContext;
+  const { headers, userInformation } = userContext;
   const [data, setData] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [tripIdSelected, setTripIdSelected] = useState("");
 
   const handleFetchData = async () => {
     try {
@@ -26,6 +33,46 @@ function TableComponent() {
       }
     } catch (err) {
       console.error(err);
+    }
+  };
+
+  const [payload, setPayload] = useState({
+    vehicleId: "",
+    driverId1st: 0,
+    driverId2nd: 0,
+  });
+
+  const showModal = (tripId) => {
+    setIsModalOpen(true);
+    setTripIdSelected(tripId);
+  };
+
+  const handleOk = async () => {
+    setIsModalOpen(false);
+    try {
+      const updateTrip = await axios.put(
+        `/Trips/api/UpdateForTripAccident?tripId=${tripIdSelected}`,
+        {
+          ...payload,
+          stockerId: userInformation?.accounId,
+        }
+      );
+      if (updateTrip.status === 200) {
+        toast({
+          title: "Cập nhật chuyến xe thành công !",
+          status: "success",
+          isClosable: true,
+        });
+        setReload(true);
+      }
+    } catch (error) {
+      toast({
+        title: "Lỗi hệ thống !",
+        description: `${error.message}`,
+        status: "error",
+        duration: 2000,
+        isClosable: true,
+      });
     }
   };
 
@@ -172,20 +219,26 @@ function TableComponent() {
       key: "action",
       align: "center",
       render: (_, record) => (
-        <button
-          onClick={() => {
-            // setSelectedItem(record);
-            // if (isRoleStocker) {
-            setKeySelected("3A");
-            setSelectedItem({ tripId: record.tripId });
-            //   setUrlTrip(keySelected);
-            // } else {
-            //   setKeySelected("0A");
-            // }
-          }}
-        >
-          <AiFillEye />
-        </button>
+        <Space size="middle">
+          <button
+            style={{ marginTop: "4px" }}
+            onClick={() => {
+              setKeySelected("3A");
+              setSelectedItem({ tripId: record.tripId });
+            }}
+          >
+            <AiFillEye />
+          </button>
+          {record.type === 2 && record.status === 3 ? (
+            <button
+              onClick={() => {
+                showModal(record.tripId);
+              }}
+            >
+              <RiAlarmWarningLine />
+            </button>
+          ) : null}
+        </Space>
       ),
     },
   ];
@@ -194,9 +247,31 @@ function TableComponent() {
     handleFetchData();
   }, []);
 
+  useEffect(() => {
+    if (reload) {
+      handleFetchData();
+      setReload(false);
+    }
+  }, [reload]);
+
   return (
     <>
       <Table dataSource={data} columns={columns} pageSize="6" rowKey="tripId" />
+      <Modal
+        destroyOnClose={true}
+        title="Cập nhật chuyến xe bị hỏng"
+        open={isModalOpen}
+        onOk={handleOk}
+        okText="Cập nhật"
+        cancelText="Đóng"
+        onCancel={() => setIsModalOpen(false)}
+      >
+        <FormVehicleAccident
+          tripIdSelected={tripIdSelected}
+          setPayload={setPayload}
+          payload={payload}
+        />
+      </Modal>
     </>
   );
 }
