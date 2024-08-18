@@ -40,6 +40,16 @@ export default function LoginPage() {
   const handleLoginFunction = async (e) => {
     e.preventDefault();
     setLoading(true);
+    if (username.trim() === "" || password.trim() === "") {
+      toast({
+        title: "Thông tin không đầy đủ",
+        description: "Vui lòng điền đầy đủ tên đăng nhập và mật khẩu.",
+        status: "warning",
+        isClosable: true,
+      });
+      setLoading(false);
+      return;
+    }
     try {
       const payload = { username, password };
       const requestLoginFunction = await axios.post("/Login", payload);
