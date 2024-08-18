@@ -150,6 +150,7 @@ export default function CallToActionWithVideo() {
         }}
         onCancel={() => setIsModalOpen(false)}
         centered
+        cancelButtonProps={{ style: { display: 'none' } }}
       >
         <Text fontSize={"17px"}>
           Cảm ơn bạn đã gửi thông tin, chúng tôi sẽ phản hồi bạn một cách sớm
