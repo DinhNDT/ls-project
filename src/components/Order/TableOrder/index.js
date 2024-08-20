@@ -273,7 +273,12 @@ export const TableOrder = ({
             <TableSummaryRow
               title={"Đơn giá (6):"}
               description={"(VNĐ/Kg)"}
-              content={<>{formatMoney(Math.ceil(orderTable?.price))} VNĐ</>}
+              content={
+                <>
+                  {formatMoney(Math.ceil(orderTable?.price ?? order?.price))}{" "}
+                  VNĐ
+                </>
+              }
             />
             <TableSummaryRow
               title={
