@@ -14,8 +14,8 @@ const PayOS_Client_ID = "d7e80324-10cc-4712-bc94-3b2da33b7ae1";
 const PayOS_Api_Key = "e77c1e4a-3053-4dab-b7ca-f978ee24fc69";
 const PayOS_Checksum_Key =
   "15d88a55456ee28786f00d8dfa08a19093e32437b48d05e2d78597d0b6ce9065";
-const Return_URL = "http://localhost:3000/staff/manage-order";
-const Cancel_URL = "http://localhost:3000/staff/manage-order";
+const Return_URL = `https://${process.env.REACT_APP_URL}/company/manage-order`;
+const Cancel_URL = `https://${process.env.REACT_APP_URL}/company/manage-order`;
 
 const CODE_STATUS = {
   Success: "00",

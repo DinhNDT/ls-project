@@ -10,8 +10,7 @@ import { QRCode, Button as ButtonAntd } from "antd";
 import { LuDownload } from "react-icons/lu";
 import { doDownload } from "../../../helpers";
 
-export const URL_TRACKING_ORDER =
-  "https://ls-project-coral.vercel.app/tracking-order";
+export const URL_TRACKING_ORDER = `https://${process.env.REACT_APP_URL}/tracking-order`;
 
 export const FormUpdateImg = ({ id, trackingNumber }) => {
   const toast = useToast({ position: "top" });

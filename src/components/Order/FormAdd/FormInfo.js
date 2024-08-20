@@ -321,6 +321,7 @@ export const FormInfo = ({
                       handleChangeOrder("deliveryPhone", event.target.value)
                     }
                     value={order?.deliveryPhone}
+                    type="number"
                   />
                 </Form.Item>
                 <Form.Item required label="Họ tên">

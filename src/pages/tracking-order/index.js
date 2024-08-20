@@ -60,7 +60,7 @@ const TrackingOrder = () => {
       marginTop={"20px"}
       marginBottom={"20px"}
     >
-      <Flex gap={"5px"} alignItems="center">
+      <Flex gap={"8px"} alignItems="center">
         <Text fontSize={"20px"}>Mã đơn hàng</Text>
         <Tag
           color={"green"}
@@ -68,6 +68,7 @@ const TrackingOrder = () => {
             display: "inline-flex",
             alignItems: "center",
             gap: "3px",
+            marginTop: "2px",
             fontSize: "14px",
           }}
         >
@@ -107,7 +108,7 @@ const TrackingOrder = () => {
                 gap={"10px"}
                 justifyContent="space-between"
               >
-                <Flex gap={"3px"}>
+                <Flex gap={"8px"} alignItems="center">
                   <Text fontSize={"20px"}>Trạng thái</Text>
                   <Tag
                     icon={getStatusIcon(dataOrder?.status)}
@@ -116,7 +117,7 @@ const TrackingOrder = () => {
                       display: "inline-flex",
                       alignItems: "center",
                       gap: "3px",
-                      marginTop: "5px",
+                      marginTop: "2px",
                       fontSize: "14px",
                     }}
                   >
@@ -145,6 +146,9 @@ const TrackingOrder = () => {
               <Text fontSize={{ base: "26px", md: "26px", lg: "36px" }}>
                 Từ
               </Text>
+              <Text as="i" fontWeight={500}>
+                {`${dataOrder?.company?.companyName} - 0906735659`}
+              </Text>
               <Text
                 width={{
                   base: "100%",
@@ -152,6 +156,9 @@ const TrackingOrder = () => {
                   lg: "280px",
                 }}
               >
+                <span style={{ fontWeight: "500", fontStyle: "italic" }}>
+                  Đ/c:{" "}
+                </span>
                 {`${dataOrder?.locationDetailGet}, ${dataOrder?.wardGet}, ${dataOrder?.districtGet}, ${dataOrder?.provinceGet}`}
               </Text>
             </Box>
@@ -170,13 +177,21 @@ const TrackingOrder = () => {
               <Text fontSize={{ base: "26px", md: "26px", lg: "36px" }}>
                 Đến
               </Text>
+              <Text as="i" fontWeight={500}>
+                {`${dataOrder?.deliveryTo} - ${dataOrder?.deliveryPhone}`}
+              </Text>
               <Text
                 width={{
                   base: "100%",
                   md: "100%",
                   lg: "280px",
                 }}
-              >{`${dataOrder?.locationDetailDelivery}, ${dataOrder?.wardDelivery}, ${dataOrder?.districtDelivery}, ${dataOrder?.provinceDelivery}`}</Text>
+              >
+                <span style={{ fontWeight: "500", fontStyle: "italic" }}>
+                  Đ/c:{" "}
+                </span>
+                {`${dataOrder?.locationDetailDelivery}, ${dataOrder?.wardDelivery}, ${dataOrder?.districtDelivery}, ${dataOrder?.provinceDelivery}`}
+              </Text>
             </Box>
           </Flex>
           <Box display={{ base: "none", md: "none", lg: "unset" }}>
