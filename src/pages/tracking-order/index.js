@@ -48,6 +48,8 @@ const TrackingOrder = () => {
     return () => clearTimeout(timeout);
   }, []);
 
+  console.log("dataOrder:", dataOrder);
+
   return (
     <Box
       backgroundColor="white"
@@ -147,7 +149,7 @@ const TrackingOrder = () => {
                 Từ
               </Text>
               <Text as="i" fontWeight={500}>
-                {`${dataOrder?.company?.companyName} - 0906735659`}
+                {`${dataOrder?.account?.fullName} - ${dataOrder?.account?.phone}`}
               </Text>
               <Text
                 width={{
