@@ -239,19 +239,19 @@ export const TableOrder = ({
             </Table.Summary.Row>
 
             <TableSummaryRow
-              title={"Khoảng cách vận chuyển (1):"}
+              title={"Khoảng cách vận chuyển :"}
               content={<>{orderTable?.distance} Km</>}
             />
             <TableSummaryRow
-              title={"Tổng số lượng kiện (2):"}
+              title={"Tổng số lượng kiện :"}
               content={totalItem}
             />
             <TableSummaryRow
-              title={"Tổng giá trị đơn hàng (3):"}
+              title={"Tổng giá trị đơn hàng :"}
               content={<>{formatMoney(Math.ceil(totalPriceAllItem))} VNĐ</>}
             />
             <TableSummaryRow
-              title={"Giá bảo hiểm đơn hàng (4):"}
+              title={"Giá bảo hiểm đơn hàng (1):"}
               description={"(2% giá trị đơn hàng)"}
               content={
                 <>{formatMoney(Math.ceil(orderTable?.totalInsurance))} VNĐ</>
@@ -260,7 +260,7 @@ export const TableOrder = ({
             <TableSummaryRow
               title={
                 <Flex gap={1} align={"center"}>
-                  Tổng khối lượng (5)
+                  Tổng khối lượng (2)
                   <AiOutlineQuestionCircle
                     style={{ cursor: "pointer" }}
                     onClick={() => showModal(2)}
@@ -271,7 +271,7 @@ export const TableOrder = ({
               content={<>{orderTable?.totalWeight} Kg</>}
             />
             <TableSummaryRow
-              title={"Đơn giá (6):"}
+              title={"Đơn giá (3):"}
               description={"(VNĐ/Kg)"}
               content={
                 <>
@@ -292,7 +292,7 @@ export const TableOrder = ({
                   :
                 </Flex>
               }
-              description={"(5) x (6) + (4)"}
+              description={"(3) x (2) + (1)"}
               isHighLight
               content={
                 <Text color={"#4096ff"} fontWeight={500} fontSize={"medium"}>

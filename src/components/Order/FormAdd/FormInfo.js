@@ -303,7 +303,10 @@ export const FormInfo = ({
                     );
                   }}
                   format={FORMAT_SHOW_TIME}
-                  minDate={dayjs()}
+                  // minDate={dayjs()}
+                  disabledDate={(current) => {
+                    return current && current <= dayjs().endOf('day');
+                  }}
                 />
               </Form.Item>
             </Form>

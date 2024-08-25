@@ -104,7 +104,7 @@ export const FormCompanyInfo = () => {
                 if (!value || getFieldValue("password") === value) {
                   return Promise.resolve();
                 }
-                return Promise.reject(new Error("Mật khậu nhập không khớp"));
+                return Promise.reject(new Error("Mật khẩu nhập không khớp"));
               },
             }),
           ]}

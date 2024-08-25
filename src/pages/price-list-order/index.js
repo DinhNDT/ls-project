@@ -25,7 +25,7 @@ const columns = [
     width: "100px",
   },
   {
-    title: "Hồ Chí Minh, Đồng Nai, Bình Dương, Vũng Tàu và ngược lại",
+    title: "Đồng Nai, Bình Dương, Vũng Tàu và ngược lại",
     dataIndex: "hcmAndSurrounding",
     key: "hcmAndSurrounding",
     width: "190px",
@@ -42,7 +42,7 @@ const columns = [
   },
   {
     title:
-      "Hà Giang, Tuyên Quang, Cao Bằng, Bắc Kạn, Lai Châu, Điện Biên, Lào Cai, Sơn La, Yên Bái, Hòa Bình, Kon Tum, Gia Lai, Lâm Đồng",
+      "Hà Giang, Tuyên Quang, Cao Bằng, Bắc Kạn, Lai Châu, Điện Biên, Lào Cai, Sơn La, Yên Bái, Hòa Bình",
     dataIndex: "distantAreas",
     key: "distantAreas",
   },
