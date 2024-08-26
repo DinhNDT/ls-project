@@ -2,7 +2,7 @@ import { Box, Flex, Text, useToast } from "@chakra-ui/react";
 import { Button, Card, Image, Space, Table, Upload } from "antd";
 import React, { useMemo } from "react";
 
-import { formatMoney } from "../../../helpers";
+import { fallBackImg, formatMoney } from "../../../helpers";
 import { nanoid } from "nanoid";
 import {
   AiFillDelete,
@@ -29,6 +29,7 @@ export const OrderProduct = ({
   setItemData,
   handleItemChange,
   handleItemChangeNumber,
+  handleChangeOrder,
 }) => {
   const toast = useToast({ position: "top" });
 
@@ -234,6 +235,9 @@ export const OrderProduct = ({
           isClosable: true,
         });
         options.onSuccess({ data: "test" }, options.file);
+        if (id) {
+          handleChangeOrder("image", res.data);
+        }
       }
     } catch (error) {
       toast({
@@ -289,29 +293,18 @@ export const OrderProduct = ({
             }}
           />
           <Box>
+            <Text mb={"10px"}>Hình ảnh mặt hàng</Text>
             {id ? (
-              !order?.image ? (
-                <>
-                  <Text mb={"10px"}>Hình ảnh mặt hàng</Text>
-                  <Box height={"90px"} mb={"39px"}>
-                    <Upload {...props}>
-                      <Button icon={<UploadOutlined />}>
-                        Click để tải ảnh lên
-                      </Button>
-                    </Upload>
-                  </Box>
-                </>
-              ) : (
-                <>
-                  <Text mb={"10px"}>Hình ảnh mặt hàng</Text>
-                  <Box mb={"3px"}>
-                    {/* <Upload {...props} listType={null}>
-                  <Button icon={<UploadOutlined />}>Click để đổi ảnh khác</Button>
-                </ Upload> */}
-                  </Box>
-                  <Image width={250} height={200} src={order?.image} />
-                </>
-              )
+              <>
+                <Image width={250} height={200} src={order?.image} />
+                <Box height={"90px"} mb={"39px"}>
+                  <Upload {...props} showUploadList={false}>
+                    <Button icon={<UploadOutlined />}>
+                      {!order?.image ? "Tải ảnh lên" : "Cập nhật ảnh"}
+                    </Button>
+                  </Upload>
+                </Box>
+              </>
             ) : null}
 
             <FormAction

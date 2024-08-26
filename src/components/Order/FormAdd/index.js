@@ -54,6 +54,7 @@ const CreateOrderForm = ({ id }) => {
     supperMarket: 0,
     accountId: null,
     items: [],
+    image: "",
   });
 
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -392,14 +393,6 @@ const CreateOrderForm = ({ id }) => {
     }
   }, [headers]);
 
-  // useEffect(() => {
-  //   if (!id && order) {
-  //     if (checkCompletion(order)) {
-  //       handleCreateResponse();
-  //     }
-  //   }
-  // }, [id, order]);
-
   return (
     <>
       {!id && !nextToReview && (
@@ -447,6 +440,7 @@ const CreateOrderForm = ({ id }) => {
               setItemData={setItemData}
               handleItemChange={handleItemChange}
               handleItemChangeNumber={handleItemChangeNumber}
+              handleChangeOrder={handleChangeOrder}
             />
           </Stack>
         </Box>
