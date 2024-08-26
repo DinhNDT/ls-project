@@ -129,7 +129,7 @@ function TableComponent() {
     {
       title: "Ngày tạo chuyến",
       dataIndex: "createTripDate",
-      render: (createTripDate) => <p>{formatDate(createTripDate)}</p>,
+      render: (createTripDate) => <p>{formatDate(createTripDate, false)}</p>,
     },
     {
       title: "Ngày bắt đầu",

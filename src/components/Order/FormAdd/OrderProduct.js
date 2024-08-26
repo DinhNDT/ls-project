@@ -292,10 +292,10 @@ export const OrderProduct = ({
               defaultExpandedRowKeys: ["0"],
             }}
           />
-          <Box>
-            <Text mb={"10px"}>Hình ảnh mặt hàng</Text>
+          <Box>           
             {id ? (
               <>
+                <Text mb={"10px"}>Hình ảnh mặt hàng</Text>
                 <Image width={250} height={200} src={order?.image} />
                 <Box height={"90px"} mb={"39px"}>
                   <Upload {...props} showUploadList={false}>

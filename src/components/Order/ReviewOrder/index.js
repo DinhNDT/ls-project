@@ -340,7 +340,7 @@ export const ReviewOrder = ({
               <Title title={"Ngày Giao Hàng Dự Kiến:"}>
                 {formatDate(
                   orderBill?.expectedDeliveryDate ||
-                    orderReview?.expectedDeliveryDate
+                    orderReview?.expectedDeliveryDate,false
                 )}
               </Title>
               {id ? (

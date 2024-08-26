@@ -44,7 +44,7 @@ function TableComponent() {
     {
       title: "Ngày nhập",
       dataIndex: "importDate",
-      render: (importDate) => <p>{formatDate(importDate)}</p>,
+      render: (importDate) => <p>{formatDate(importDate, false)}</p>,
     },
     {
       title: "Ngày xuất",

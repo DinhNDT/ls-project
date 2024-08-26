@@ -181,10 +181,10 @@ function getStatusColorPayment(status) {
 function getStatusTrip(status) {
   const statusTitles = {
     1: "Đã xóa",
-    2: "Hàng đã về kho",
+    2: "Đang đợi",
     3: "Vận chuyển",
     4: "Hoàn thành",
-    5: "Đang nhận",
+    5: "Xe gặp sự cố",
     6: "Đang nhận",
   };
 
@@ -197,7 +197,7 @@ function getStatusTripColor(status) {
     2: "magenta",
     3: "blue",
     4: "green",
-    5: "volcano",
+    5: "#FF4500",
     6: "purple",
   };
 

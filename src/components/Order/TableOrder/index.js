@@ -330,6 +330,9 @@ export const TableOrder = ({
             <Text fontSize={"medium"}>
               • Trọng lượng quy đổi = (Dài x Rộng x Cao) (cm3) / 3000.
             </Text>
+            <Text fontWeight={700} fontSize={"medium"}>
+              • Tổng khối lượng = Trọng lượng quy đổi nếu trọng lượng thực tế nhỏ hơn trọng lượng quy đổi.
+            </Text>
           </Box>
         )}
       </Modal>
