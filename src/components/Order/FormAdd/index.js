@@ -37,7 +37,7 @@ const CreateOrderForm = ({ id }) => {
   const [order, setOrder] = useState({
     orderDate: dayjs().format(FORMAT_TIME_SUBMIT),
     companyId: "",
-    dayGet: dayjs().format(FORMAT_TIME_SUBMIT),
+    dayGet: dayjs().add(1, "day").format(FORMAT_TIME_SUBMIT),
     locationDetailGet: "",
     provinceGet: "Thành Phố Hồ Chí Minh",
     cityGet: "",

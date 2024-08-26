@@ -1,9 +1,8 @@
 import { Text, useToast, Button, Flex, Divider, Box } from "@chakra-ui/react";
 import Dragger from "antd/es/upload/Dragger";
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { InboxOutlined } from "@ant-design/icons";
 import axios from "axios";
-import { RiSkipForwardFill } from "react-icons/ri";
 import { BsSendCheck } from "react-icons/bs";
 import { OrderContext } from "../../../provider/order";
 import { QRCode, Button as ButtonAntd } from "antd";
@@ -14,6 +13,8 @@ export const URL_TRACKING_ORDER = `https://${process.env.REACT_APP_URL}/tracking
 
 export const FormUpdateImg = ({ id, trackingNumber }) => {
   const toast = useToast({ position: "top" });
+  const [isUpdated, setIsUpdated] = useState(false);
+  const [showWarning, setShowWarning] = useState(false);
   const orderContext = useContext(OrderContext);
   const { setKeySelected } = orderContext;
 
@@ -36,6 +37,8 @@ export const FormUpdateImg = ({ id, trackingNumber }) => {
           isClosable: true,
         });
         options.onSuccess({ data: "image" }, options.file);
+        setIsUpdated(true);
+        setShowWarning(false);
       }
     } catch (error) {
       toast({
@@ -57,6 +60,7 @@ export const FormUpdateImg = ({ id, trackingNumber }) => {
     showUploadList: {
       showRemoveIcon: false,
     },
+    maxCount: 1,
   };
 
   const downloadCanvasQRCode = () => {
@@ -67,16 +71,42 @@ export const FormUpdateImg = ({ id, trackingNumber }) => {
     }
   };
 
+  const handleConfirm = () => {
+    if (isUpdated) {
+      setKeySelected("1");
+    } else {
+      setShowWarning(true);
+    }
+  };
+
   const qrUrl = `${URL_TRACKING_ORDER}/${trackingNumber}`;
+
+  useEffect(() => {
+    const unloadCallback = (event) => {
+      event.preventDefault();
+      event.returnValue = "";
+      return "";
+    };
+
+    window.addEventListener("beforeunload", unloadCallback);
+    return () => {
+      window.removeEventListener("beforeunload", unloadCallback);
+    };
+  }, []);
 
   return (
     <Flex justifyContent="space-between" flexDirection="column" gap={"100px"}>
       <div style={{ display: "flex", gap: "10px" }}>
         <Box width="70%">
           <Text mb={"15px"} fontSize={19}>
-            Cập nhật hình ảnh gói hàng
+            Cập nhật hình ảnh gói hàng{" "}
+            <span style={{ color: "#ff4d4f" }}>*</span>
           </Text>
-          <Dragger {...props}>
+
+          <Dragger
+            {...props}
+            style={{ border: showWarning ? "1px solid red" : "unset" }}
+          >
             <p className="ant-upload-drag-icon">
               <InboxOutlined />
             </p>
@@ -87,6 +117,12 @@ export const FormUpdateImg = ({ id, trackingNumber }) => {
               Hỗ trợ tải lên 1 ảnh. Nghiêm cấm tải lên dữ liệu trái pháp luật !
             </p>
           </Dragger>
+
+          {showWarning && (
+            <Text color="#ff4d4f" fontSize="16px">
+              Vui lòng cập nhật hình ảnh gói hàng
+            </Text>
+          )}
         </Box>
         <Divider orientation="vertical" />
         <Box
@@ -117,17 +153,10 @@ export const FormUpdateImg = ({ id, trackingNumber }) => {
       <div
         style={{
           display: "flex",
-          justifyContent: "space-between",
+          justifyContent: "flex-end",
           marginTop: "30px",
         }}
       >
-        <Button
-          size="sm"
-          rightIcon={<RiSkipForwardFill />}
-          onClick={() => setKeySelected("1")}
-        >
-          Bỏ qua
-        </Button>
         <Button
           bg={"#2b6cb0"}
           color={"white"}
@@ -135,7 +164,7 @@ export const FormUpdateImg = ({ id, trackingNumber }) => {
           display={"flex"}
           justifyContent={"center"}
           alignItems={"center"}
-          onClick={() => setKeySelected("1")}
+          onClick={handleConfirm}
           w={150}
           size="sm"
           rightIcon={<BsSendCheck />}

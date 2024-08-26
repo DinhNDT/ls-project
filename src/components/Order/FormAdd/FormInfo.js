@@ -224,7 +224,7 @@ export const FormInfo = ({
             <Form
               form={form}
               layout="vertical"
-              initialValues={{ dayGet: dayjs() }}
+              initialValues={{ dayGet: dayjs().add(1, "day") }}
             >
               <HStack>
                 <Form.Item required label="Số điện thoại">
@@ -303,10 +303,7 @@ export const FormInfo = ({
                     );
                   }}
                   format={FORMAT_SHOW_TIME}
-                  // minDate={dayjs()}
-                  disabledDate={(current) => {
-                    return current && current <= dayjs().endOf('day');
-                  }}
+                  minDate={dayjs().add(1, "day")}
                 />
               </Form.Item>
             </Form>

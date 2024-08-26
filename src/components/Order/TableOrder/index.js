@@ -210,30 +210,34 @@ export const TableOrder = ({
                     </>
                   ) : null}
 
-                  <FormLabel textAlign={"left"} margin={"unset"} mb="5px">
-                    Mã QR đính kèm gói hàng:
-                  </FormLabel>
-                  <Box
-                    id="qrCodeOrder"
-                    display="flex"
-                    alignItems="center"
-                    justifyContent="center"
-                    w="100%"
-                  >
-                    <QRCode
-                      size={180}
-                      type={"canvas"}
-                      value={qrUrl}
-                      bgColor="#fff"
-                      style={{ marginBottom: 16 }}
-                    />
-                  </Box>
-                  <Button
-                    style={{ width: "160px" }}
-                    icon={<LuDownload fontSize={"19px"} />}
-                    type="default"
-                    onClick={downloadCanvasQRCode}
-                  ></Button>
+                  {trackingNumber ? (
+                    <>
+                      <FormLabel textAlign={"left"} margin={"unset"} mb="5px">
+                        Mã QR đính kèm gói hàng:
+                      </FormLabel>
+                      <Box
+                        id="qrCodeOrder"
+                        display="flex"
+                        alignItems="center"
+                        justifyContent="center"
+                        w="100%"
+                      >
+                        <QRCode
+                          size={180}
+                          type={"canvas"}
+                          value={qrUrl}
+                          bgColor="#fff"
+                          style={{ marginBottom: 16 }}
+                        />
+                      </Box>
+                      <Button
+                        style={{ width: "160px" }}
+                        icon={<LuDownload fontSize={"19px"} />}
+                        type="default"
+                        onClick={downloadCanvasQRCode}
+                      />
+                    </>
+                  ) : null}
                 </Box>
               </Table.Summary.Cell>
             </Table.Summary.Row>
