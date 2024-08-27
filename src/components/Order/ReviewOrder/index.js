@@ -184,9 +184,12 @@ export const ReviewOrder = ({
   const handleSubmitCreate = (e) => {
     setLoading(true);
     setTimeout(() => {
-      handleSubmit(e, ({ orderId, trackingNumber }) => {
-        setNextToUpdateImg({ isNext: true, orderId, trackingNumber });
-      });
+      handleSubmit(
+        e,
+        ({ orderId, trackingNumber }) =>
+          setNextToUpdateImg({ isNext: true, orderId, trackingNumber }),
+        () => setLoading(false)
+      );
     }, 1000);
   };
 
@@ -340,7 +343,8 @@ export const ReviewOrder = ({
               <Title title={"Ngày Giao Hàng Dự Kiến:"}>
                 {formatDate(
                   orderBill?.expectedDeliveryDate ||
-                    orderReview?.expectedDeliveryDate,false
+                    orderReview?.expectedDeliveryDate,
+                  false
                 )}
               </Title>
               {id ? (

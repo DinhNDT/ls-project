@@ -60,7 +60,7 @@ const data = [
   },
   {
     key: "2",
-    weight: "2 - 1,000 kg",
+    weight: "3 - 1,000 kg",
     innerCity: "2,050",
     hcmAndSurrounding: "2,850",
     to300km: "3,750",

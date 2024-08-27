@@ -300,7 +300,7 @@ const CreateOrderForm = ({ id }) => {
     }
   };
 
-  const handleSubmit = async (e, onSuccess = () => {}) => {
+  const handleSubmit = async (e, onSuccess = () => {}, onError = () => {}) => {
     e.preventDefault();
     try {
       const {
@@ -378,12 +378,23 @@ const CreateOrderForm = ({ id }) => {
         }
       }
     } catch (err) {
+      const messageError = err?.response?.data?.errors;
+
       toast({
-        title: "Không thể tạo đơn!",
-        description: `${err.message}`,
-        status: "error",
+        title: "Không thể tạo đơn, vui lòng kiểm tra lại !",
+        description: (
+          <>
+            {messageError
+              ? Object.keys(messageError).map((key) => (
+                  <div>• {messageError[key][0]}</div>
+                ))
+              : `${err.message}`}
+          </>
+        ),
+        status: messageError ? "warning" : "error",
         isClosable: true,
       });
+      onError();
     }
   };
 
