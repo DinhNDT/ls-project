@@ -12,6 +12,7 @@ import { OrderContext } from "../../../provider/order";
 import { RiAlarmWarningLine } from "react-icons/ri";
 import { FormVehicleAccident } from "../FormVehicleAccident";
 import { useToast } from "@chakra-ui/react";
+import { FiUserCheck } from "react-icons/fi";
 
 function TableComponent() {
   const toast = useToast({ position: "top" });
@@ -147,7 +148,11 @@ function TableComponent() {
       key: "status",
       filters: [
         {
-          text: "Hàng Đã Về Kho",
+          text: "Đã xóa",
+          value: 1,
+        },
+        {
+          text: "Đang đợi",
           value: 2,
         },
         {
@@ -163,7 +168,7 @@ function TableComponent() {
           value: 4,
         },
         {
-          text: "Đã Xóa",
+          text: "Xe gặp sự cố",
           value: 5,
         },
       ],
@@ -238,10 +243,37 @@ function TableComponent() {
               <RiAlarmWarningLine />
             </button>
           ) : null}
+          {record.type === 2 && record.status === 4 ? (
+            <button onClick={() => handleCompleteTrip(record.tripId)}>
+              <FiUserCheck />
+            </button>
+          ) : null}
         </Space>
       ),
     },
   ];
+
+  const handleCompleteTrip = async (tripId) => {
+    try {
+      const res = await axios.put(`/Stocker/update-status/${tripId}`);
+      if (res.status === 200) {
+        toast({
+          title: "Đã hoàn thành chuyến xe !",
+          status: "success",
+          isClosable: true,
+        });
+        setReload(true);
+      }
+    } catch (error) {
+      toast({
+        title: "Lỗi hệ thống !",
+        description: `${error.message}`,
+        status: "error",
+        duration: 2000,
+        isClosable: true,
+      });
+    }
+  };
 
   useEffect(() => {
     handleFetchData();

@@ -2,7 +2,7 @@ import { Box, Flex, Text, useToast } from "@chakra-ui/react";
 import { Button, Card, Image, Space, Table, Upload } from "antd";
 import React, { useMemo } from "react";
 
-import { fallBackImg, formatMoney } from "../../../helpers";
+import { formatMoney } from "../../../helpers";
 import { nanoid } from "nanoid";
 import {
   AiFillDelete,
@@ -292,7 +292,7 @@ export const OrderProduct = ({
               defaultExpandedRowKeys: ["0"],
             }}
           />
-          <Box>           
+          <Box>
             {id ? (
               <>
                 <Text mb={"10px"}>Hình ảnh mặt hàng</Text>
