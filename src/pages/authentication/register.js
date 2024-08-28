@@ -24,7 +24,7 @@ import imgRegister from "../../assets/img/resume.png";
 import Aos from "aos";
 
 const LINK_POLICY =
-  "https://drive.google.com/uc?id=1T_8qwLfZq7vr4xJsbvHzU4caPiWJM8qB&export=download";
+  "https://drive.google.com/uc?id=1ZL6ljuKDs5WCN2STsYO47V9zUkJRGSSR&export=download";
 
 export default function RegisterPage() {
   const [form] = Form.useForm();

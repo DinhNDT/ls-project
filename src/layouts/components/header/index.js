@@ -78,9 +78,6 @@ const MobileNav = ({ onOpen, notHaveSidebar, ...rest }) => {
             <Tab height={75} onClick={() => navigate("/")}>
               Trang chủ
             </Tab>
-            <Tab>Cước vận chuyển</Tab>
-            <Tab>Hỗ trợ</Tab>
-            <Tab>Về chúng tôi</Tab>
           </TabList>
           <TabIndicator height="2px" bg="blue.500" borderRadius="1px" />
         </Tabs>
