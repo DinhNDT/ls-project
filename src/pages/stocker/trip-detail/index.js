@@ -86,7 +86,7 @@ const TripDetailPage = (id) => {
         dataIndex: "quantityItem",
         key: "quantityItem",
         align: "center",
-        render: (_, record) => <span>{record.item.quantityItem}</span>,
+        render: (_, record) => <span>{record?.orderTrip?.quantityItem}</span>,
       },
       {
         title: "Giá (vnđ)",

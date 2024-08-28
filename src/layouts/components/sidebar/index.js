@@ -141,6 +141,12 @@ const SideBar = () => {
     return key;
   };
 
+  const handleSubKey = () => {
+    if (userRole === "Stocker") return ["sub2", "sub3", "sub4"];
+
+    return ["sub1"];
+  };
+
   return (
     <Layout
       style={{
@@ -171,7 +177,7 @@ const SideBar = () => {
         </div>
         <Menu
           theme="dark"
-          defaultOpenKeys={[userRole === "Stocker" ? "sub2" : "sub1"]}
+          defaultOpenKeys={handleSubKey()}
           defaultSelectedKeys={["1"]}
           selectedKeys={[handleSelectedKey(keySelected)]}
           mode="inline"

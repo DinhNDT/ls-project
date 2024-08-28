@@ -39,7 +39,7 @@ function CreateTripDeliveryPage({ state, urlTrip }) {
   const [isLoading, setIsLoading] = useState(false);
 
   const [payload1, setPayload1] = useState({
-    // orderTripId: state?.orderTripInVehicle1st || state?.orderId,
+    orderTripId: state?.orderTripInVehicle1st,
     vehicleId: state?.vehicleId1St,
     driverId1st: 0,
     driverId2nd: 0,
@@ -47,7 +47,7 @@ function CreateTripDeliveryPage({ state, urlTrip }) {
   });
 
   const [payload2, setPayload2] = useState({
-    // orderTripId: state?.orderTripInVehicle2nd,
+    orderTripId: state?.orderTripInVehicle2nd,
     vehicleId: state?.vehicleId2nd,
     driverId1st: 0,
     driverId2nd: 0,
@@ -67,6 +67,30 @@ function CreateTripDeliveryPage({ state, urlTrip }) {
       { headers }
     );
     return res.data;
+  };
+
+  const postTrip = async (url, newPayload) => {
+    const result = await axios.post(url, newPayload, { headers });
+
+    return result;
+  };
+
+  const handlePostTrips = async (url, dataOrderTrip) => {
+    const results = [];
+    for (const payload of dataOrderTrip) {
+      const newPayload = {
+        ...payload,
+        orderTripId: urlTrip.includes("create-trip/get")
+          ? state?.orderTripInVehicle
+          : payload?.orderTripId,
+        vehicleId: urlTrip.includes("create-trip/get")
+          ? state?.vehicleId
+          : payload?.vehicleId,
+      };
+      const tripSuccess = await postTrip(url, newPayload);
+      results.push(tripSuccess);
+    }
+    return results;
   };
 
   const handleGetItemOrderTrip = async (dataOrderTrip) => {
@@ -176,20 +200,7 @@ function CreateTripDeliveryPage({ state, urlTrip }) {
       : "/stocker/order-get";
     try {
       if (state?.tripNumber === 2) {
-        const createTrip = [payload1, payload2].map(async (item) => {
-          const newPayload = {
-            ...item,
-            orderTripId: urlTrip.includes("create-trip/get")
-              ? state?.orderTripInVehicle
-              : state?.orderTripInVehicle1st,
-            vehicleId: urlTrip.includes("create-trip/get")
-              ? state?.vehicleId
-              : item?.vehicleId,
-          };
-          const result = await axios.post(url, newPayload, { headers });
-          return result;
-        });
-        const promiseAll = await Promise.all(createTrip);
+        const promiseAll = await handlePostTrips(url, [payload1, payload2]);
 
         if (promiseAll.every((value) => value.status === 200)) {
           toast({
@@ -200,12 +211,12 @@ function CreateTripDeliveryPage({ state, urlTrip }) {
           if (urlTrip.includes("create-trip/delivery")) setKeySelected("7");
         }
       }
-      if (state?.tripNumber === 1 || state?.orderId) {
+      if (state?.tripNumber === 1) {
         const newPayload = {
           ...payload1,
           orderTripId: urlTrip.includes("create-trip/get")
             ? state?.orderTripInVehicle
-            : state?.orderTripInVehicle1st,
+            : payload1?.orderTripId,
           vehicleId: urlTrip.includes("create-trip/get")
             ? state?.vehicleId
             : payload1?.vehicleId,
