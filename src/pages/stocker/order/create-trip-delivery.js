@@ -211,7 +211,7 @@ function CreateTripDeliveryPage({ state, urlTrip }) {
           if (urlTrip.includes("create-trip/delivery")) setKeySelected("7");
         }
       }
-      if (state?.tripNumber === 1) {
+      if (state?.tripNumber === 1 || state?.orderTripInVehicle) {
         const newPayload = {
           ...payload1,
           orderTripId: urlTrip.includes("create-trip/get")
