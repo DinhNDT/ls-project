@@ -59,7 +59,7 @@ export const FormOrderProduct = ({
               </Form.Item>
             </Stack>
           </Stack>
-          <Form.Item label="Giá trị đơn hàng (Bảo hiểm 2% giá trị đơn hàng)">
+          <Form.Item label="Giá trị mặt hàng (Bảo hiểm 2% giá trị đơn hàng)">
             <InputFormatPrice
               width="50%"
               id={id}

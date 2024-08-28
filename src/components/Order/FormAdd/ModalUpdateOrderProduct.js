@@ -54,7 +54,7 @@ export const ModalUpdateOrderProduct = ({
 
             <FormControl isRequired>
               <FormLabel>
-                Giá trị đơn hàng (Bảo hiểm 2% giá trị đơn hàng)
+                Giá trị mặt hàng (Bảo hiểm 2% giá trị đơn hàng)
               </FormLabel>
               <InputFormatPrice
                 valueInput={selectedItem?.unitPrice}
